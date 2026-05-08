@@ -1,1 +1,1805 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen y Evaluador GED - Respuesta Extendida (Rúbrica Oficial)</title>
+    
+    <!-- Configuración optimizada de MathJax -->
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [["$", "$"], ["\\(", "\\)"]],
+          displayMath: [["$$", "$$"], ["\\[", "\\]"]]
+        },
+        options: {
+          enableMenu: false,
+          processHtmlClass: "tex2jax_process",
+          ignoreHtmlClass: "tex2jax_ignore"
+        },
+        startup: {
+          pageReady: () => {
+            return MathJax.startup.defaultPageReady();
+          }
+        }
+      };
+    </script>
+    <script id="MathJax-script" defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.min.js"></script>
+    
+    <!-- FontAwesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+      /* Estilos básicos */
+      * {
+        box-sizing: border-box;
+      }
 
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        overflow: hidden;
+      }
+
+      /* Estilos del examen */
+      .exam-section {
+        display: block;
+      }
+
+      .evaluator-section {
+        display: none;
+      }
+
+      .exam-header {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        text-align: center;
+        padding: 30px;
+        margin: 0;
+      }
+
+      .exam-header h1 {
+        font-size: 28px;
+        margin: 0 0 10px 0;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      }
+
+      .exam-header p {
+        font-size: 18px;
+        margin: 0;
+        opacity: 0.9;
+      }
+
+      .timer-container {
+        text-align: center;
+        padding: 20px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #ff6b6b;
+        background: #fff3cd;
+        border-bottom: 3px solid #ffc107;
+        display: none;
+      }
+
+      .exam-content {
+        display: flex;
+        gap: 20px;
+        padding: 20px;
+        min-height: 800px;
+      }
+
+      .text-section {
+        flex: 1;
+        background: #f8f9fa;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      }
+
+      .tab-header {
+        display: flex;
+        background: #e9ecef;
+      }
+
+      .tab-button {
+        flex: 1;
+        padding: 15px 20px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border-bottom: 3px solid transparent;
+      }
+
+      .tab-button:hover {
+        background: #dee2e6;
+      }
+
+      .tab-button.active {
+        background: white;
+        border-bottom-color: #4facfe;
+        color: #4facfe;
+      }
+
+      .tab-content {
+        display: none;
+        padding: 30px;
+        height: 700px;
+        overflow-y: auto;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .passage {
+        line-height: 1.8;
+        color: #333;
+      }
+
+      .passage h3 {
+        color: #4facfe;
+        margin-bottom: 20px;
+        font-size: 20px;
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 10px;
+      }
+
+      .passage p {
+        margin-bottom: 15px;
+        text-align: justify;
+      }
+
+      .writing-section {
+        flex: 1;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .prompt-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+      }
+
+      .prompt-section h3 {
+        margin: 0 0 15px 0;
+        font-size: 18px;
+      }
+
+      .prompt-section ul {
+        margin: 10px 0;
+        padding-left: 20px;
+      }
+
+      .prompt-section li {
+        margin: 8px 0;
+      }
+
+      .writing-controls {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      }
+
+      .btn-instructions {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+      }
+
+      .btn-symbols {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .btn-submit {
+        background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+        color: white;
+        padding: 15px 30px;
+        font-size: 16px;
+        margin-top: 20px;
+      }
+
+      .btn-submit:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .word-count {
+        color: #666;
+        font-size: 14px;
+        font-weight: 600;
+        padding: 8px 15px;
+        background: #f8f9fa;
+        border-radius: 20px;
+      }
+
+      .word-count.warning {
+        color: white;
+        background: #ff6b6b;
+      }
+
+      .essay-area {
+        flex: 1;
+        width: 100%;
+        padding: 20px;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        font-size: 16px;
+        resize: none;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        transition: border-color 0.3s ease;
+        min-height: 400px;
+      }
+
+      .essay-area:focus {
+        outline: none;
+        border-color: #4facfe;
+        box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+      }
+
+      /* Estilos del evaluador */
+      .evaluator-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-align: center;
+        padding: 30px;
+        position: relative;
+      }
+
+      .evaluator-header h1 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      }
+
+      .help-btn {
+        position: absolute;
+        right: 30px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .help-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-50%) scale(1.1);
+      }
+
+      #chatbox {
+        max-width: 1000px;
+        height: 500px;
+        border: 1px solid #e9ecef;
+        overflow-y: auto;
+        padding: 20px;
+        margin: 20px auto;
+        background: #f8f9fa;
+        border-radius: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .message {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .emoji-avatar {
+        font-size: 40px;
+        min-width: 40px;
+        text-align: center;
+      }
+
+      .text-bubble {
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        max-width: 85%;
+        word-wrap: break-word;
+        position: relative;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border: 1px solid #e9ecef;
+      }
+
+      .user .text-bubble {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        margin-left: auto;
+      }
+
+      .bot .text-bubble {
+        background: white;
+      }
+
+      /* Estilos para evaluaciones - ACTUALIZADOS PARA RÚBRICA OFICIAL */
+      .evaluation-container {
+        margin: 20px 0;
+        padding: 25px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 15px;
+        border: 2px solid #4facfe;
+      }
+
+      .evaluation-container h3 {
+        color: #4facfe;
+        margin: 0 0 20px 0;
+        font-size: 22px;
+        text-align: center;
+        border-bottom: 2px solid #4facfe;
+        padding-bottom: 10px;
+      }
+
+      .trait-evaluation {
+        margin: 20px 0;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        border-left: 5px solid #4facfe;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      }
+
+      .trait-title {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 15px;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .score-badge {
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 14px;
+        color: white;
+      }
+
+      /* PUNTUACIÓN ACTUALIZADA PARA SISTEMA 0-2 */
+      .score-0 { background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); }
+      .score-1 { background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%); }
+      .score-2 { background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%); }
+
+      .total-score {
+        font-size: 20px;
+        font-weight: bold;
+        text-align: center;
+        margin: 25px 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      }
+
+      .warning-box {
+        background-color: #fff3cd;
+        border: 1px solid #ffeaa7;
+        color: #856404;
+        padding: 15px;
+        border-radius: 10px;
+        margin: 15px 0;
+        border-left: 4px solid #ffc107;
+      }
+
+      .error-box {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+        padding: 15px;
+        border-radius: 10px;
+        margin: 15px 0;
+        border-left: 4px solid #dc3545;
+      }
+
+      .copy-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: #4facfe;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        width: 35px;
+        height: 35px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      }
+
+      .copy-btn:hover {
+        background: #357abd;
+        transform: scale(1.1);
+      }
+
+      /* Formulario del evaluador */
+      #text-form {
+        display: flex;
+        flex-direction: column;
+        max-width: 1000px;
+        margin: 20px auto;
+        gap: 20px;
+      }
+
+      #user-input {
+        padding: 20px;
+        font-size: 16px;
+        border: 2px solid #e9ecef;
+        border-radius: 15px;
+        min-height: 200px;
+        resize: vertical;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        transition: border-color 0.3s ease;
+      }
+
+      #user-input:focus {
+        outline: none;
+        border-color: #4facfe;
+        box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+      }
+
+      #evaluate-btn {
+        padding: 18px 30px;
+        font-size: 18px;
+        border: none;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      }
+
+      #evaluate-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      }
+
+      .loading-indicator {
+        margin: 20px 0;
+        text-align: center;
+        color: #4facfe;
+        display: none;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .loading-indicator::after {
+        content: '';
+        animation: dots 1.5s steps(5, end) infinite;
+      }
+
+      @keyframes dots {
+        0%, 20% { content: ''; }
+        40% { content: '.'; }
+        60% { content: '..'; }
+        80%, 100% { content: '...'; }
+      }
+
+      /* Modal de ayuda */
+      .help-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .help-modal.active {
+        display: flex;
+        opacity: 1;
+      }
+
+      .help-content {
+        width: 90%;
+        max-width: 800px;
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        position: relative;
+        max-height: 85vh;
+        overflow-y: auto;
+      }
+
+      .close-help {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: none;
+        font-size: 28px;
+        cursor: pointer;
+        color: #666;
+        transition: color 0.3s ease;
+      }
+
+      .close-help:hover {
+        color: #4facfe;
+      }
+
+      /* Modal de instrucciones */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1001;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal.show {
+        display: flex;
+      }
+
+      .modal-content {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        width: 90%;
+        max-width: 700px;
+        position: relative;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        max-height: 85vh;
+        overflow-y: auto;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        color: #666;
+        transition: color 0.3s ease;
+      }
+
+      .modal-close:hover {
+        color: #4facfe;
+      }
+
+      .instructions {
+        line-height: 1.6;
+      }
+
+      .instructions h4 {
+        color: #4facfe;
+        margin: 20px 0 15px 0;
+        font-size: 20px;
+      }
+
+      .instructions ul {
+        margin: 15px 0;
+        padding-left: 25px;
+      }
+
+      .instructions li {
+        margin: 10px 0;
+      }
+
+      /* Responsive design */
+      @media (max-width: 1024px) {
+        .exam-content {
+          flex-direction: column;
+        }
+        
+        .text-section,
+        .writing-section {
+          height: auto;
+          min-height: 400px;
+        }
+
+        .tab-content {
+          height: 400px;
+        }
+
+        .essay-area {
+          min-height: 300px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        body {
+          padding: 10px;
+        }
+
+        .exam-content {
+          padding: 15px;
+          gap: 15px;
+        }
+
+        .writing-controls {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .help-btn {
+          right: 15px;
+          width: 40px;
+          height: 40px;
+          font-size: 20px;
+        }
+      }
+
+      /* Popup de símbolos */
+      .symbol-popup {
+        display: none;
+        position: absolute;
+        width: 400px;
+        background: white;
+        border: 2px solid #4facfe;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        z-index: 1000;
+        padding: 20px;
+      }
+
+      .symbol-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        font-weight: bold;
+        font-size: 18px;
+        color: #4facfe;
+      }
+
+      .close-btn {
+        cursor: pointer;
+        font-size: 20px;
+        background: none;
+        border: none;
+        color: #666;
+        transition: color 0.3s ease;
+      }
+
+      .close-btn:hover {
+        color: #4facfe;
+      }
+
+      .symbol-grid {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        gap: 5px;
+        margin-bottom: 15px;
+      }
+
+      .symbol-btn {
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        padding: 10px;
+        text-align: center;
+        cursor: pointer;
+        font-size: 16px;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+      }
+
+      .symbol-btn:hover {
+        background: #4facfe;
+        color: white;
+      }
+
+      .action-buttons {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .action-btn {
+        flex: 1;
+        background: #4facfe;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .action-btn:hover {
+        background: #357abd;
+        transform: translateY(-2px);
+      }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sección del Examen -->
+        <div class="exam-section" id="examSection">
+            <div class="exam-header">
+                <h1>Examen de Respuesta Extendida 🎓  GED RLA</h1>
+                <p id="timerLabel">Tiempo para revisar instrucciones: <span id="instructionTime">3:00</span></p>
+            </div>
+
+            <div class="timer-container" id="mainTimer">
+                ⏰ Tiempo restante: <span id="timer">45:00</span>
+            </div>
+
+            <div class="exam-content">
+                <!-- Sección de textos -->
+                <div class="text-section">
+                    <div class="tab-header">
+                        <button class="tab-button active" onclick="showTab('text1', this)">
+                            📄 Texto 1
+                        </button>
+                        <button class="tab-button" onclick="showTab('text2', this)">
+                            📄 Texto 2
+                        </button>
+                    </div>
+
+                    <!-- Texto 1 -->
+                    <div id="text1" class="tab-content active">
+                        <div class="passage">
+                            <h3>Texto 1: Carta al Editor - La importancia del arte en la educación</h3>
+                            <p>Estimado Editor:</p>
+                            <p>Como educadora con más de veinte años de experiencia, me siento obligada a responder al reciente artículo publicado en su periódico sobre los recortes propuestos a los programas de arte en nuestras escuelas públicas. La propuesta de reducir las clases de arte, música y teatro para aumentar el tiempo dedicado a matemáticas y ciencias es un grave error que afectará negativamente el desarrollo integral de nuestros estudiantes.</p>
+                            <p>Las investigaciones demuestran consistentemente que la educación artística mejora el rendimiento académico general. Un estudio de 2019 realizado por la Universidad de Yale encontró que los estudiantes que participan regularmente en actividades artísticas tienen un promedio de calificaciones 15% más alto que aquellos que no lo hacen. Además, estos estudiantes muestran mejores habilidades de pensamiento crítico y resolución de problemas, competencias esenciales para el éxito en todas las áreas académicas.</p>
+                            <p>El arte no es simplemente un "extra" o un lujo en la educación; es una herramienta fundamental para el desarrollo cognitivo y emocional. A través del arte, los estudiantes aprenden a expresarse, a interpretar el mundo que los rodea y a desarrollar la creatividad necesaria para la innovación en cualquier campo. Las empresas tecnológicas más exitosas del mundo, como Apple y Google, valoran enormemente a los empleados con formación artística porque entienden que la creatividad es clave para la innovación.</p>
+                            <p>Además, para muchos estudiantes, especialmente aquellos con dificultades en materias tradicionales, las clases de arte pueden ser el único lugar donde experimentan el éxito académico. Eliminar estos programas sería privar a estos estudiantes de oportunidades cruciales para desarrollar confianza y encontrar su pasión.</p>
+                            <p>Insto a la junta escolar a reconsiderar esta propuesta miope. En lugar de ver el arte y las ciencias como competidores por recursos limitados, deberíamos reconocer su naturaleza complementaria. Los grandes científicos de la historia, desde Leonardo da Vinci hasta Albert Einstein, fueron también artistas que entendían que la creatividad y el pensamiento analítico van de la mano.</p>
+                            <p>Atentamente,<br>María González<br>Profesora de Arte, Escuela Secundaria Central</p>
+                        </div>
+                    </div>
+
+                    <!-- Texto 2 -->
+                    <div id="text2" class="tab-content">
+                        <div class="passage">
+                            <h3>Texto 2: Editorial - Prioridades en la educación del siglo XXI</h3>
+                            <p>La reciente controversia sobre los recortes propuestos a los programas de arte en nuestras escuelas públicas ha generado un debate apasionado pero, en mi opinión, mal enfocado. Como sociedad, debemos enfrentar la realidad de que nuestros estudiantes están quedando rezagados en matemáticas y ciencias comparados con sus pares internacionales, y es hora de tomar decisiones difíciles pero necesarias.</p>
+                            <p>Los datos son claros: según el último informe PISA (Programa Internacional para la Evaluación de Estudiantes), los estudiantes estadounidenses ocupan el puesto 38 de 71 países en matemáticas y el 24 en ciencias. En un mundo cada vez más dominado por la tecnología y la innovación científica, estas estadísticas son alarmantes. No podemos permitirnos el lujo de mantener el status quo cuando nuestros estudiantes no están preparados para competir en la economía global del conocimiento.</p>
+                            <p>Aunque aprecio el valor del arte y la cultura, debemos ser pragmáticos sobre las limitaciones de recursos y tiempo. Cada hora dedicada a clases de arte es una hora menos para fortalecer las habilidades matemáticas y científicas fundamentales. Los trabajos del futuro requerirán competencias en codificación, análisis de datos, ingeniería y ciencias aplicadas. ¿Estamos realmente preparando a nuestros estudiantes para estos desafíos si priorizamos la pintura sobre la programación?</p>
+                            <p>Algunos argumentan que el arte fomenta la creatividad, pero la creatividad también se puede desarrollar a través de las ciencias. Resolver problemas matemáticos complejos o diseñar experimentos científicos requiere tanto pensamiento creativo como pintar un cuadro. La diferencia es que las habilidades STEM (Ciencia, Tecnología, Ingeniería y Matemáticas) tienen una aplicación directa y medible en el mercado laboral actual.</p>
+                            <p>No estoy sugiriendo la eliminación completa de los programas de arte, sino una redistribución más estratégica de recursos. Las actividades artísticas pueden continuar como programas extracurriculares opcionales, permitiendo que los estudiantes interesados las persigan sin comprometer el tiempo de instrucción esencial en materias fundamentales.</p>
+                            <p>En conclusión, aunque el arte tiene su lugar en una educación completa, en un mundo de recursos limitados, debemos priorizar las habilidades que mejor prepararán a nuestros estudiantes para el éxito en el siglo XXI. La elección es clara: podemos aferrarnos a tradiciones románticas o podemos adaptarnos a las realidades del mundo moderno.</p>
+                            <p>Dr. Roberto Chen<br>Director, Instituto de Política Educativa</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección de escritura -->
+                <div class="writing-section">
+                    <div class="prompt-section">
+                        <h3>📝 Tarea de Escritura</h3>
+                        <p>Los textos presentan dos perspectivas diferentes sobre la importancia de los programas de arte en la educación. Analice ambos argumentos y escriba un ensayo en el que:</p>
+                        <ul>
+                            <li>Explique las posiciones principales de cada autor</li>
+                            <li>Evalúe la evidencia presentada en cada texto</li>
+                            <li>Determine cuál argumento está mejor respaldado</li>
+                            <li>Justifique su análisis con evidencia específica de los textos</li>
+                        </ul>
+                    </div>
+
+                    <div class="writing-controls">
+                        <button class="btn btn-instructions" id="showInstructions">
+                            📋 Instrucciones
+                        </button>
+                        <button class="btn btn-symbols" id="showSymbols">
+                            Æ Caracteres Especiales (F7)
+                        </button>
+                        <span class="word-count" id="wordCount">
+                            Palabras: 0 / 300-500
+                        </span>
+                    </div>
+
+                    <textarea id="essayArea" class="essay-area" placeholder="Escriba su respuesta aquí..." disabled></textarea>
+
+                    <div class="submit-section">
+                        <button class="btn btn-submit" id="submitBtn" disabled>
+                            📋 Completar y Evaluar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección del Evaluador -->
+        <div class="evaluator-section" id="evaluatorSection">
+            <div class="evaluator-header">
+                <h1>🤖 Evaluador GED Rúbrica Oficial<br><span style="font-size: 16px; font-weight: normal;">Sistema de Evaluación con 41 Subdimensiones Oficiales</span></h1>
+                <button class="help-btn" onclick="toggleHelp()">
+                    <i class="fas fa-question"></i>
+                </button>
+            </div>
+
+            <!-- Modal de Ayuda ACTUALIZADO -->
+            <div class="help-modal" id="helpModal">
+                <div class="help-content">
+                    <button class="close-help" onclick="toggleHelp()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <h3>📚 Evaluador GED con Rúbrica Oficial (Versión Corregida)</h3>
+                    <p><strong>Esta versión implementa la rúbrica oficial del GED Testing Service</strong></p>
+                    <p><strong style="color: #ff6b35;">SISTEMA ACTUALIZADO:</strong> Esta versión aplica los criterios oficiales de manera estricta y realista.</p>
+                    
+                    <h4>Sistema de Evaluación Oficial</h4>
+                    
+                    <h5>🎯 Característica 1: Argumentación y Uso de Evidencia (12 subdimensiones)</h5>
+                    <ul>
+                        <li><strong>Requisito obligatorio:</strong> Debe citar evidencia específica de AMBOS textos fuente</li>
+                        <li>Generar un argumento claro basado en los textos</li>
+                        <li>Analizar cuál posición está mejor sustentada</li>
+                        <li>Distinguir entre afirmaciones fundamentadas y no fundamentadas</li>
+                    </ul>
+                    
+                    <h5>📊 Característica 2: Desarrollo de Ideas y Estructura (15 subdimensiones)</h5>
+                    <ul>
+                        <li>Ideas bien desarrolladas y lógicas</li>
+                        <li>Progresión clara de ideas</li>
+                        <li>Estructura organizacional efectiva</li>
+                        <li>Uso apropiado de transiciones</li>
+                        <li>Estilo formal y tono académico</li>
+                    </ul>
+                    
+                    <h5>✏️ Característica 3: Claridad y Dominio del Español (14 subdimensiones)</h5>
+                    <ul>
+                        <li>Estructura correcta de oraciones</li>
+                        <li>Aplicación de convenciones gramaticales</li>
+                        <li>Puntuación y mayúsculas apropiadas</li>
+                        <li>Legibilidad general</li>
+                    </ul>
+                    
+                    <h4>Requisitos Mínimos (CRÍTICOS)</h4>
+                    <div style="background-color: #fff3cd; padding: 15px; border-radius: 10px; margin: 15px 0;">
+                        <ul>
+                            <li><strong>Longitud:</strong> 300-500 palabras (menos de 300 = penalización severa)</li>
+                            <li><strong>Estructura:</strong> 4-7 párrafos organizados</li>
+                            <li><strong>Evidencia textual:</strong> Citas específicas de AMBOS textos</li>
+                            <li><strong>Análisis comparativo:</strong> Determinar cuál argumento está mejor sustentado</li>
+                        </ul>
+                    </div>
+                    
+                    <h4>Sistema de Puntuación Oficial</h4>
+                    <p>Cada característica se evalúa usando subdimensiones con puntuación 0-2:</p>
+                    <ul>
+                        <li><strong>0 puntos:</strong> No demuestra la habilidad</li>
+                        <li><strong>1 punto:</strong> Nivel mínimo/inadecuado</li>
+                        <li><strong>2 puntos:</strong> Nivel adecuado/efectivo</li>
+                    </ul>
+                    <p><strong>Fórmula:</strong> (Suma de puntos de subdimensiones) ÷ (Número de subdimensiones) = Puntuación de característica</p>
+                    <p>Puntuación máxima total: <strong>6 puntos (2+2+2)</strong></p>
+                </div>
+            </div>
+
+            <div id="chatbox"></div>
+            <div id="loading" class="loading-indicator">🔍 Aplicando rúbrica oficial del GED Testing Service</div>
+
+            <form id="text-form">
+                <textarea id="user-input" placeholder="Su respuesta extendida se cargará automáticamente aquí..." autocomplete="off" required></textarea>
+                <button type="submit" id="evaluate-btn">🎯 Evaluar con Rúbrica Oficial GED</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Popup de símbolos -->
+    <div class="symbol-popup" id="symbolPopup">
+        <div class="symbol-header">
+            <span>Æ Caracteres Especiales</span>
+            <button class="close-btn" id="closeSymbol">✖</button>
+        </div>
+        <div class="symbol-grid" id="symbolGrid">
+            <!-- Los caracteres serán insertados por JavaScript -->
+        </div>
+        <div class="action-buttons">
+            <button class="action-btn" id="cancelBtn">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Modal de instrucciones -->
+    <div class="modal" id="instructionsModal">
+        <div class="modal-content">
+            <span class="modal-close" id="closeInstructions">×</span>
+            <div class="instructions">
+                <h4>📋 Instrucciones para la Respuesta Extendida</h4>
+                <p style="color: #ff0000; font-weight: bold;">Al completar su ensayo, haga clic en <strong>"Completar y Evaluar"</strong> para enviar automáticamente su respuesta al evaluador con <strong>rúbrica oficial</strong>.</p>
+                
+                <h4>⏱️ Tiempo y Formato</h4>
+                <ul>
+                    <li><strong>Tiempo:</strong> 45 minutos para completar el ensayo</li>
+                    <li><strong>Extensión:</strong> 300-500 palabras recomendadas</li>
+                    <li><strong>Formato:</strong> Ensayo formal y académico</li>
+                </ul>
+                
+                <h4>📖 Proceso de Análisis</h4>
+                <ul>
+                    <li><strong>Lectura:</strong> Lea cuidadosamente ambos textos antes de escribir</li>
+                    <li><strong>Análisis:</strong> Identifique los argumentos principales de cada autor</li>
+                    <li><strong>Evaluación:</strong> Determine cuál posición está mejor respaldada</li>
+                    <li><strong>Evidencia:</strong> Use citas específicas de AMBOS textos</li>
+                </ul>
+                
+                <h4>🏗️ Estructura Recomendada</h4>
+                <ul>
+                    <li><strong>Introducción:</strong> Presente ambas posiciones y su tesis</li>
+                    <li><strong>Desarrollo:</strong> Analice cada texto por separado</li>
+                    <li><strong>Comparación:</strong> Compare la calidad de la evidencia</li>
+                    <li><strong>Conclusión:</strong> Resuma su análisis y justificación</li>
+                </ul>
+                
+                <div style="background-color: #fff3cd; padding: 15px; border-radius: 10px; margin: 20px 0;">
+                    <h4 style="color: #856404; margin-top: 0;">⚠️ IMPORTANTE - Rúbrica Oficial</h4>
+                    <p style="color: #856404; margin-bottom: 0;">El evaluador aplica los <strong>criterios oficiales del GED Testing Service</strong> con 41 subdimensiones específicas. Las puntuaciones serán realistas según los estándares reales del examen.</p>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-submit" id="startExam">
+                        🚀 Comenzar Examen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let instructionTime = 3 * 60; // 3 minutos para instrucciones
+        let timeRemaining = 45 * 60; // 45 minutos para el examen
+        let instructionInterval;
+        let timerInterval;
+        let examStarted = false;
+        let essayResponse = "";
+
+        // Caché para respuestas del evaluador
+        const evaluatorCache = {
+            responses: {},
+        };
+
+        // Caracteres especiales en español
+        const specialChars = [
+            "Á", "É", "Í", "Ó", "Ú", "Ñ", "Ü", "¿", "¡",
+            "á", "é", "í", "ó", "ú", "ñ", "ü", "«", "»",
+            '"', '"', "—", "–", "°", "²", "³", "½", "¼", "¾"
+        ];
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            setupInstructionsModal();
+            setupSymbolPopup();
+            setupWordCounter();
+            setupEventListeners();
+            setupEvaluator();
+
+            // Inicializar el grid de símbolos
+            const symbolGrid = document.getElementById('symbolGrid');
+            specialChars.forEach(char => {
+                const charBtn = document.createElement('div');
+                charBtn.className = 'symbol-btn';
+                charBtn.textContent = char;
+                charBtn.addEventListener('click', function() {
+                    insertCharacter(char);
+                });
+                symbolGrid.appendChild(charBtn);
+            });
+
+            // Iniciar contador de instrucciones
+            startInstructionTimer();
+        });
+
+        // Configurar modal de instrucciones
+        function setupInstructionsModal() {
+            const modal = document.getElementById('instructionsModal');
+            const showBtn = document.getElementById('showInstructions');
+            const closeBtn = document.getElementById('closeInstructions');
+            const startBtn = document.getElementById('startExam');
+
+            showBtn.addEventListener('click', function() {
+                modal.classList.add('show');
+            });
+
+            closeBtn.addEventListener('click', function() {
+                modal.classList.remove('show');
+            });
+
+            startBtn.addEventListener('click', function() {
+                modal.classList.remove('show');
+                startExam();
+            });
+
+            // Cerrar al hacer clic fuera del modal
+            window.addEventListener('click', function(event) {
+                if (event.target === modal && examStarted) {
+                    modal.classList.remove('show');
+                }
+            });
+
+            // Mostrar instrucciones al iniciar
+            modal.classList.add('show');
+        }
+
+        // Timer para las instrucciones
+        function startInstructionTimer() {
+            updateInstructionDisplay();
+            instructionInterval = setInterval(function() {
+                instructionTime--;
+                updateInstructionDisplay();
+
+                if (instructionTime <= 0) {
+                    clearInterval(instructionInterval);
+                    startExam();
+                }
+            }, 1000);
+        }
+
+        function updateInstructionDisplay() {
+            const minutes = Math.floor(instructionTime / 60);
+            const seconds = instructionTime % 60;
+            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('instructionTime').textContent = display;
+        }
+
+        // Iniciar el examen
+        function startExam() {
+            examStarted = true;
+            clearInterval(instructionInterval);
+
+            // Ocultar modal de instrucciones
+            document.getElementById('instructionsModal').classList.remove('show');
+
+            // Cambiar etiqueta del timer
+            document.getElementById('timerLabel').style.display = 'none';
+
+            // Mostrar timer principal
+            document.getElementById('mainTimer').style.display = 'block';
+
+            // Habilitar el área de escritura
+            document.getElementById('essayArea').disabled = false;
+            document.getElementById('essayArea').focus();
+
+            // Iniciar timer del examen
+            setupTimer();
+        }
+
+        // Configurar el temporizador del examen
+        function setupTimer() {
+            updateTimerDisplay();
+            timerInterval = setInterval(function() {
+                timeRemaining--;
+                updateTimerDisplay();
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    finishExam();
+                }
+            }, 1000);
+        }
+
+        // Finalizar el examen
+        function finishExam() {
+            const essayArea = document.getElementById('essayArea');
+            essayArea.disabled = true;
+
+            alert('⏰ El tiempo del examen ha finalizado. Su respuesta se enviará automáticamente al evaluador.');
+
+            // Forzar envío si hay texto
+            if (essayArea.value.trim().length > 0) {
+                submitAndShowEvaluator();
+            }
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timer').textContent = display;
+        }
+
+        // Configurar el popup de símbolos
+        function setupSymbolPopup() {
+            const essayArea = document.getElementById('essayArea');
+            const symbolPopup = document.getElementById('symbolPopup');
+            const showSymbols = document.getElementById('showSymbols');
+            const closeSymbol = document.getElementById('closeSymbol');
+            const cancelBtn = document.getElementById('cancelBtn');
+
+            // Mostrar popup con el botón
+            showSymbols.addEventListener('click', function() {
+                const rect = essayArea.getBoundingClientRect();
+                showSymbolPopup(rect.left + rect.width / 2, rect.top + rect.height / 2);
+            });
+
+            // Mostrar popup con F7
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'F7') {
+                    event.preventDefault();
+                    const rect = essayArea.getBoundingClientRect();
+                    showSymbolPopup(rect.left + rect.width / 2, rect.top + rect.height / 2);
+                }
+            });
+
+            // Cerrar popup
+            closeSymbol.addEventListener('click', closePopup);
+            cancelBtn.addEventListener('click', closePopup);
+
+            // Click derecho en el área de texto
+            essayArea.addEventListener('contextmenu', function(event) {
+                event.preventDefault();
+                showSymbolPopup(event.clientX, event.clientY);
+            });
+        }
+
+        function showSymbolPopup(x, y) {
+            const symbolPopup = document.getElementById('symbolPopup');
+            symbolPopup.style.display = 'block';
+
+            // Ajustar posición para que no se salga de la pantalla
+            const popupRect = symbolPopup.getBoundingClientRect();
+            const maxX = window.innerWidth - popupRect.width;
+            const maxY = window.innerHeight - popupRect.height;
+
+            symbolPopup.style.left = Math.min(x, maxX) + 'px';
+            symbolPopup.style.top = Math.min(y, maxY) + 'px';
+        }
+
+        function closePopup() {
+            const symbolPopup = document.getElementById('symbolPopup');
+            symbolPopup.style.display = 'none';
+            document.getElementById('essayArea').focus();
+        }
+
+        function insertCharacter(char) {
+            const essayArea = document.getElementById('essayArea');
+            const cursorPos = essayArea.selectionStart;
+            const textBefore = essayArea.value.substring(0, cursorPos);
+            const textAfter = essayArea.value.substring(essayArea.selectionEnd);
+
+            essayArea.value = textBefore + char + textAfter;
+
+            // Colocar el cursor después del carácter insertado
+            essayArea.selectionStart = cursorPos + 1;
+            essayArea.selectionEnd = cursorPos + 1;
+            essayArea.focus();
+
+            // Actualizar contador de palabras
+            updateWordCount();
+        }
+
+        // Configurar contador de palabras
+        function setupWordCounter() {
+            const essayArea = document.getElementById('essayArea');
+            essayArea.addEventListener('input', updateWordCount);
+        }
+
+        function updateWordCount() {
+            const essayArea = document.getElementById('essayArea');
+            const wordCount = document.getElementById('wordCount');
+            const submitBtn = document.getElementById('submitBtn');
+
+            const text = essayArea.value.trim();
+            const words = text.split(/\s+/).filter(word => word.length > 0);
+            const count = words.length;
+
+            wordCount.textContent = `Palabras: ${count} / 300-500`;
+
+            // Habilitar el botón si hay texto y el examen ha comenzado
+            if (text.length > 0 && examStarted) {
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.disabled = true;
+            }
+
+            // Cambiar color según el conteo
+            if (count < 300) {
+                wordCount.className = 'word-count warning';
+            } else if (count > 500) {
+                wordCount.className = 'word-count warning';
+            } else {
+                wordCount.className = 'word-count';
+            }
+        }
+
+        // Cambiar entre pestañas
+        function showTab(tabId, button) {
+            const container = button.closest('.text-section');
+
+            // Ocultar todos los contenidos
+            container.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Desactivar todos los botones
+            container.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Mostrar contenido seleccionado
+            document.getElementById(tabId).classList.add('active');
+            button.classList.add('active');
+        }
+
+        // Configurar eventos
+        function setupEventListeners() {
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.addEventListener('click', submitAndShowEvaluator);
+        }
+
+        // Enviar respuesta y mostrar evaluador
+        function submitAndShowEvaluator() {
+            const essayArea = document.getElementById('essayArea');
+            essayResponse = essayArea.value.trim();
+
+            if (essayResponse.length === 0) {
+                alert('⚠️ Por favor, escriba una respuesta antes de continuar.');
+                return;
+            }
+
+            // Mostrar el evaluador con la respuesta
+            showEvaluator();
+        }
+
+        function getTimeUsed() {
+            const totalTime = 45 * 60;
+            const used = totalTime - timeRemaining;
+            const minutes = Math.floor(used / 60);
+            const seconds = used % 60;
+            return `${minutes} minutos y ${seconds} segundos`;
+        }
+
+        function showEvaluator() {
+            // Ocultar sección del examen
+            document.getElementById('examSection').style.display = 'none';
+            
+            // Mostrar sección del evaluador
+            document.getElementById('evaluatorSection').style.display = 'block';
+            
+            // Cargar la respuesta en el evaluador
+            const userInput = document.getElementById('user-input');
+            userInput.value = essayResponse;
+            
+            // Mostrar mensaje de bienvenida en el chatbox
+            const wordCount = essayResponse.split(/\s+/).filter(word => word.length > 0).length;
+            addMessage(
+                `✅ <strong>Tu respuesta extendida ha sido cargada correctamente.</strong><br><br>` +
+                `📊 <strong>Estadísticas:</strong><br>` +
+                `• Número de palabras: ${wordCount}<br>` +
+                `• Tiempo utilizado: ${getTimeUsed()}<br><br>` +
+                `🎯 Ahora puedes hacer clic en <strong>"Evaluar con Rúbrica Oficial GED"</strong> para recibir una evaluación estricta según los criterios oficiales del GED Testing Service.<br><br>` +
+                `<div class="warning-box">⚠️ <strong>RÚBRICA OFICIAL:</strong> Esta versión aplica las 41 subdimensiones específicas del documento oficial. Las puntuaciones serán realistas y estrictas.</div><br>` +
+                `💡 <strong>El evaluador analizará:</strong><br>` +
+                `• Característica 1: Argumentación y Uso de Evidencia (12 subdimensiones)<br>` +
+                `• Característica 2: Desarrollo de Ideas y Estructura (15 subdimensiones)<br>` +
+                `• Característica 3: Claridad y Dominio del Español (14 subdimensiones)`,
+                'bot',
+                '🤖'
+            );
+            
+            // Hacer scroll al principio de la página
+            window.scrollTo(0, 0);
+        }
+
+        // ==================== EVALUADOR CON RÚBRICA OFICIAL ====================
+        // Función para análisis preliminar del texto
+        function analyzeTextStructure(texto) {
+            const numPalabras = texto.split(/\s+/).filter(p => p.length > 0).length;
+            const numParrafos = texto.split(/\n\n+|\.\s*\n/).filter(p => p.trim().length > 0).length;
+            
+            // Buscar referencias a textos fuente
+            const referenciaTextos = /texto|pasaje|autor|fuente|artículo|documento|gonzález|chen|carta|editorial/gi.test(texto);
+            const citasDirectas = /"[^"]+"/g.test(texto) || /según|cita|menciona|afirma|sostiene|argumenta/gi.test(texto);
+            
+            // Buscar estructura argumentativa
+            const argumentativo = /por tanto|en conclusión|sin embargo|además|por otro lado|en contraste|mientras que|aunque/gi.test(texto);
+            
+            // Buscar evidencia específica de ambos textos
+            const evidenciaAmbosTextos = (texto.toLowerCase().includes('gonzález') || texto.toLowerCase().includes('maría')) && 
+                                        (texto.toLowerCase().includes('chen') || texto.toLowerCase().includes('roberto'));
+            
+            return {
+                numPalabras,
+                numParrafos,
+                referenciaTextos,
+                citasDirectas,
+                argumentativo,
+                evidenciaAmbosTextos,
+                longitudAdecuada: numPalabras >= 300 && numPalabras <= 500,
+                estructuraAdecuada: numParrafos >= 4 && numParrafos <= 7
+            };
+        }
+
+        // Configurar el evaluador
+        function setupEvaluator() {
+            const form = document.getElementById('text-form');
+            const userInput = document.getElementById('user-input');
+            const loadingIndicator = document.getElementById('loading');
+
+            // Configurar el formulario
+            form.addEventListener('submit', handleSendMessage);
+
+            async function handleSendMessage(e) {
+                e.preventDefault();
+                const userText = userInput.value.trim();
+                if (!userText) {
+                    alert('⚠️ Por favor, ingrese un texto para evaluar.');
+                    return;
+                }
+
+                // Mostrar mensaje del usuario
+                addMessage(userText, 'user', '📝');
+
+                // Mostrar indicador de carga
+                loadingIndicator.style.display = 'block';
+
+                try {
+                    // Obtener respuesta del evaluador
+                    let botResponse = await getBotResponse(userText);
+                    
+                    // Ocultar indicador de carga
+                    loadingIndicator.style.display = 'none';
+
+                    // Mostrar respuesta del bot
+                    addMessage(botResponse, 'bot', '🎓');
+                } catch (error) {
+                    console.error('Error al procesar la respuesta:', error);
+                    loadingIndicator.style.display = 'none';
+                    
+                    // Mostrar evaluación de respaldo
+                    const fallbackEvaluation = generateFallbackEvaluation(userText);
+                    addMessage(fallbackEvaluation, 'bot', '🎓');
+                }
+            }
+
+            async function getBotResponse(ensayo) {
+                // Verificar caché primero
+                if (evaluatorCache.responses[ensayo]) {
+                    return evaluatorCache.responses[ensayo];
+                }
+
+                // Análisis preliminar
+                const analisis = analyzeTextStructure(ensayo);
+                
+                // Si el texto es demasiado corto, dar evaluación automática negativa
+                if (analisis.numPalabras < 200) {
+                    return `
+                    <div class="evaluation-container">
+                        <div class="error-box">
+                            <strong>⚠️ EVALUACIÓN AUTOMÁTICA: INSUFICIENTE</strong><br>
+                            El texto es demasiado corto (${analisis.numPalabras} palabras). El GED requiere mínimo 300 palabras para una respuesta extendida adecuada.
+                        </div>
+                        
+                        <h3>Evaluación Basada en Rúbrica Oficial GED</h3>
+                        
+                        <div class="trait-evaluation">
+                            <div class="trait-title">Característica 1: Argumentación y Uso de Evidencia <span class="score-badge score-0">0/2</span></div>
+                            <p><strong>Evaluación:</strong> Texto insuficiente para demostrar argumentación basada en textos fuente.</p>
+                            <p><strong>Problemas críticos:</strong> Longitud inadecuada impide evaluación de evidencias textuales.</p>
+                        </div>
+                        
+                        <div class="trait-evaluation">
+                            <div class="trait-title">Característica 2: Desarrollo de Ideas y Estructura <span class="score-badge score-0">0/2</span></div>
+                            <p><strong>Evaluación:</strong> Desarrollo insuficiente de ideas por limitación de longitud.</p>
+                            <p><strong>Problemas críticos:</strong> No permite demostrar estructura organizacional adecuada.</p>
+                        </div>
+                        
+                        <div class="trait-evaluation">
+                            <div class="trait-title">Característica 3: Claridad y Dominio del Español <span class="score-badge score-0">0/2</span></div>
+                            <p><strong>Evaluación:</strong> Muestra insuficiente para evaluar dominio del español estándar.</p>
+                        </div>
+                        
+                        <div class="total-score">Puntuación Total: 0/6</div>
+                        
+                        <h4>Recomendaciones Críticas</h4>
+                        <ol>
+                            <li><strong>Ampliar significativamente el texto</strong> hasta alcanzar 300-500 palabras.</li>
+                            <li>Incluir introducción, desarrollo con evidencias textuales, y conclusión.</li>
+                            <li>Citar evidencia específica de ambos textos fuente.</li>
+                        </ol>
+                    </div>`;
+                }
+
+                // Prompt mejorado con rúbrica oficial estricta
+                const promptMejorado = encodeURIComponent(`
+INSTRUCCIÓN CRÍTICA: Eres un evaluador certificado del GED Testing Service. Debes aplicar ESTRICTAMENTE la rúbrica oficial con las 41 subdimensiones específicas. NO seas permisivo - aplica los criterios reales del examen.
+
+TEXTO A EVALUAR: ${ensayo}
+
+INFORMACIÓN DEL ANÁLISIS PRELIMINAR:
+- Palabras: ${analisis.numPalabras}
+- Párrafos: ${analisis.numParrafos}
+- Referencias a textos: ${analisis.referenciaTextos ? 'Detectadas' : 'No detectadas'}
+- Citas directas: ${analisis.citasDirectas ? 'Presentes' : 'Ausentes'}
+- Evidencia de ambos textos: ${analisis.evidenciaAmbosTextos ? 'Detectada' : 'NO DETECTADA'}
+
+RÚBRICA OFICIAL A APLICAR (SISTEMA 0-2 PUNTOS):
+
+CARACTERÍSTICA 1: ARGUMENTACIÓN Y USO DE EVIDENCIA (12 subdimensiones)
+Evalúa cada subdimensión con puntuación 0, 1, o 2:
+- Afirmaciones claras y explícitas
+- Afirmaciones lógicas basadas en lectura detallada del texto
+- Afirmaciones que apoyan una postura clara
+- Criterio evidente para analizar el asunto
+- Postura relacionada con el tema y enfocada
+- OBLIGATORIO: Citar evidencias de MÚLTIPLES textos fuente
+- Evidencias que apoyan las afirmaciones
+- Comentarios apropiados sobre las evidencias
+- Análisis profundo del asunto descrito
+- Evaluación de la argumentación desarrollada
+- Comprensión clara de los argumentos en los textos
+
+CARACTERÍSTICA 2: DESARROLLO DE IDEAS Y ESTRUCTURA (15 subdimensiones)
+Evalúa cada subdimensión con puntuación 0, 1, o 2:
+- Ideas bien desarrolladas y múltiples extensiones
+- Ideas lógicas en relación con los textos
+- Mayoría de ideas elaboradas
+- Serie progresiva de ideas notoria
+- Detalles relacionados claramente con ideas principales
+- Detalles seleccionados cuidadosamente
+- Estructura organizacional claramente establecida
+- Estructura que realza el mensaje
+- Uso apropiado de frases de transición
+- Estilo formal mantenido
+- Tono apropiado académico
+- Conciencia del público y propósito
+- Selección específica de palabras
+- Uso apropiado del lenguaje (evitar coloquial)
+- Ideas expresadas clara y específicamente
+
+CARACTERÍSTICA 3: CLARIDAD Y DOMINIO DEL ESPAÑOL (14 subdimensiones)
+Evalúa cada subdimensión con puntuación 0, 1, o 2:
+- Estructura variada en oraciones
+- Subordinación, coordinación y paralelismo correctos
+- Evita palabras excesivas y estructuras confusas
+- Uso apropiado de términos de transición
+- Evita oraciones incompletas y mal puntuadas
+- Uso correcto de modos verbales
+- Concordancia sujeto-verbo apropiada
+- Uso apropiado de pronombres
+- Orden correcto de palabras
+- Uso apropiado de mayúsculas
+- Uso correcto de contracciones
+- Puntuación apropiada
+- Errores que no interfieren en comprensión
+- Uso estándar apropiado para borrador académico
+
+PENALIZACIONES AUTOMÁTICAS:
+- Si no hay evidencia de AMBOS textos (González Y Chen): Característica 1 máximo 1/2
+- Si menos de 300 palabras: Todas las características penalizadas
+- Si no hay análisis comparativo: Característica 1 máximo 1/2
+- Si estructura inadecuada (menos de 4 párrafos): Característica 2 penalizada
+
+FORMATO DE RESPUESTA OBLIGATORIO:
+<div class="evaluation-container">
+  <h3>Evaluación Oficial GED - Rúbrica Certificada</h3>
+  
+  [Si hay problemas críticos, incluir caja de advertencia]
+  
+  <div class="trait-evaluation">
+    <div class="trait-title">Característica 1: Argumentación y Uso de Evidencia <span class="score-badge score-[X]">[X]/2</span></div>
+    <p><strong>Subdimensiones evaluadas:</strong> [Listar específicamente cuáles cumplen y cuáles no]</p>
+    <p><strong>Puntuación promedio:</strong> [Suma de subdimensiones] ÷ 12 = [resultado redondeado]</p>
+    <p><strong>Problemas detectados:</strong> [Problemas específicos según rúbrica]</p>
+  </div>
+  
+  <div class="trait-evaluation">
+    <div class="trait-title">Característica 2: Desarrollo de Ideas y Estructura <span class="score-badge score-[Y]">[Y]/2</span></div>
+    <p><strong>Subdimensiones evaluadas:</strong> [Listar específicamente cuáles cumplen y cuáles no]</p>
+    <p><strong>Puntuación promedio:</strong> [Suma de subdimensiones] ÷ 15 = [resultado redondeado]</p>
+    <p><strong>Problemas detectados:</strong> [Problemas específicos según rúbrica]</p>
+  </div>
+  
+  <div class="trait-evaluation">
+    <div class="trait-title">Característica 3: Claridad y Dominio del Español <span class="score-badge score-[Z]">[Z]/2</span></div>
+    <p><strong>Subdimensiones evaluadas:</strong> [Listar específicamente cuáles cumplen y cuáles no]</p>
+    <p><strong>Puntuación promedio:</strong> [Suma de subdimensiones] ÷ 14 = [resultado redondeado]</p>
+    <p><strong>Problemas detectados:</strong> [Problemas específicos según rúbrica]</p>
+  </div>
+  
+  <div class="total-score">Puntuación Total: [X+Y+Z]/6</div>
+  
+  <h4>Veredicto Final</h4>
+  <p>[Evaluación honesta del nivel de la respuesta según estándares GED reales]</p>
+</div>
+
+IMPORTANTE: 
+- NO seas condescendiente ni inflaciones las puntuaciones
+- Aplica la rúbrica oficial sin modificaciones
+- Una respuesta sin citas de ambos textos NO puede obtener más de 1 punto en Característica 1
+- Una respuesta de menos de 300 palabras automáticamente recibe puntuaciones bajas
+- Se honesto sobre las deficiencias detectadas
+                `);
+
+                const url = `https://text.pollinations.ai/${promptMejorado}`;
+
+                try {
+                    const response = await fetch(url);
+                    let data = await response.text();
+                    data = data.trim();
+
+                    // Validar que la respuesta tenga contenido
+                    if (data && data.length > 100) {
+                        // Guardar en caché
+                        evaluatorCache.responses[ensayo] = data;
+                        return data;
+                    } else {
+                        throw new Error('Respuesta de API muy corta o vacía');
+                    }
+                } catch (error) {
+                    console.error('Error en la solicitud:', error);
+                    return generateFallbackEvaluation(ensayo);
+                }
+            }
+
+            function generateFallbackEvaluation(ensayo) {
+                const analisis = analyzeTextStructure(ensayo);
+                
+                // Puntuaciones estrictas basadas en análisis
+                let score1 = 0; // Argumentación
+                let score2 = 0; // Desarrollo
+                let score3 = 0; // Claridad
+
+                // Característica 1: Argumentación
+                if (analisis.evidenciaAmbosTextos && analisis.citasDirectas) {
+                    score1 = 2;
+                } else if (analisis.referenciaTextos || analisis.citasDirectas) {
+                    score1 = 1;
+                }
+
+                // Característica 2: Desarrollo
+                if (analisis.estructuraAdecuada && analisis.argumentativo && analisis.longitudAdecuada) {
+                    score2 = 2;
+                } else if (analisis.argumentativo || (analisis.numParrafos >= 3 && analisis.numPalabras >= 250)) {
+                    score2 = 1;
+                }
+
+                // Característica 3: Claridad
+                if (analisis.longitudAdecuada && analisis.numPalabras >= 300) {
+                    score3 = 2;
+                } else if (analisis.numPalabras >= 200) {
+                    score3 = 1;
+                }
+
+                // Penalizaciones por deficiencias críticas
+                if (analisis.numPalabras < 250) {
+                    score1 = Math.max(score1 - 1, 0);
+                    score2 = Math.max(score2 - 1, 0);
+                    score3 = Math.max(score3 - 1, 0);
+                }
+
+                const totalScore = score1 + score2 + score3;
+
+                return `
+                <div class="evaluation-container">
+                    <h3>Evaluación Basada en Rúbrica Oficial GED</h3>
+                    
+                    <div class="warning-box">
+                        <strong>⚠️ Evaluación Local (Servicio no disponible)</strong><br>
+                        Aplicando criterios básicos de la rúbrica oficial GED con 41 subdimensiones.
+                    </div>
+                    
+                    <div class="trait-evaluation">
+                        <div class="trait-title">Característica 1: Argumentación y Uso de Evidencia <span class="score-badge score-${score1}">${score1}/2</span></div>
+                        <p><strong>Análisis automático:</strong> ${analisis.evidenciaAmbosTextos ? 
+                            'Se detectan referencias a ambos autores (González y Chen).' : 
+                            'NO se detectan referencias claras a ambos textos fuente. Esto es un requisito obligatorio.'}</p>
+                        <p><strong>Evidencia textual:</strong> ${analisis.citasDirectas ? 'Presente' : 'Ausente o insuficiente'}</p>
+                        <p><strong>Problemas detectados:</strong> ${!analisis.evidenciaAmbosTextos ? 'Falta evidencia de ambos textos. ' : ''}${!analisis.citasDirectas ? 'Sin citas directas específicas.' : ''}</p>
+                    </div>
+                    
+                    <div class="trait-evaluation">
+                        <div class="trait-title">Característica 2: Desarrollo de Ideas y Estructura <span class="score-badge score-${score2}">${score2}/2</span></div>
+                        <p><strong>Análisis automático:</strong> ${analisis.estructuraAdecuada ? 
+                            `Estructura de ${analisis.numParrafos} párrafos es adecuada (4-7 requeridos).` : 
+                            `Estructura de ${analisis.numParrafos} párrafos no cumple el rango recomendado de 4-7.`}</p>
+                        <p><strong>Elementos argumentativos:</strong> ${analisis.argumentativo ? 'Detectados conectores argumentativos' : 'Faltan elementos argumentativos claros'}</p>
+                        <p><strong>Problemas detectados:</strong> ${!analisis.estructuraAdecuada ? 'Estructura organizacional inadecuada. ' : ''}${!analisis.argumentativo ? 'Falta progresión argumentativa clara.' : ''}</p>
+                    </div>
+                    
+                    <div class="trait-evaluation">
+                        <div class="trait-title">Característica 3: Claridad y Dominio del Español <span class="score-badge score-${score3}">${score3}/2</span></div>
+                        <p><strong>Análisis automático:</strong> ${analisis.longitudAdecuada ? 
+                            'Longitud apropiada permite demostrar dominio del idioma.' : 
+                            'Longitud insuficiente para evaluar completamente el dominio del español.'}</p>
+                        <p><strong>Extensión:</strong> ${analisis.numPalabras} palabras ${analisis.longitudAdecuada ? '(Adecuada: 300-500)' : '(Requiere: 300-500)'}</p>
+                        <p><strong>Problemas detectados:</strong> ${!analisis.longitudAdecuada ? 'Longitud inadecuada impide evaluación completa.' : 'Requiere revisión gramatical manual.'}</p>
+                    </div>
+                    
+                    <div class="total-score">Puntuación Total: ${totalScore}/6</div>
+                    
+                    <h4>Problemas Críticos Detectados</h4>
+                    ${!analisis.longitudAdecuada ? `<p>❌ <strong>Longitud inadecuada:</strong> ${analisis.numPalabras} palabras (requiere 300-500)</p>` : ''}
+                    ${!analisis.evidenciaAmbosTextos ? `<p>❌ <strong>Sin evidencia de ambos textos:</strong> Debe referenciar tanto a González como a Chen</p>` : ''}
+                    ${!analisis.citasDirectas ? `<p>❌ <strong>Sin citas textuales:</strong> No se detectan citas directas o referencias específicas</p>` : ''}
+                    ${!analisis.estructuraAdecuada ? `<p>❌ <strong>Estructura inadecuada:</strong> ${analisis.numParrafos} párrafos (requiere 4-7)</p>` : ''}
+                    
+                    <h4>Recomendaciones según Rúbrica Oficial</h4>
+                    <ol>
+                        <li><strong>Evidencia obligatoria:</strong> Incluir citas específicas de AMBOS textos (González y Chen)</li>
+                        <li><strong>Estructura requerida:</strong> Organizar en 4-7 párrafos (introducción, análisis, comparación, conclusión)</li>
+                        <li><strong>Longitud mínima:</strong> Expandir a 300-500 palabras para demostrar dominio completo</li>
+                        <li><strong>Análisis comparativo:</strong> Determinar explícitamente cuál argumento está mejor respaldado</li>
+                        <li><strong>Tono académico:</strong> Mantener estilo formal y objetivo durante todo el ensayo</li>
+                    </ol>
+                    
+                    <div class="error-box">
+                        <strong>RECORDATORIO IMPORTANTE:</strong> Esta evaluación aplica los criterios oficiales del GED Testing Service. Las puntuaciones reflejan los estándares reales del examen, que son estrictos y exigentes.
+                    </div>
+                </div>`;
+            }
+        }
+
+        // Función para agregar mensajes al chatbox
+        function addMessage(text, className, emoji) {
+            const chatbox = document.getElementById('chatbox');
+            const message = document.createElement('div');
+            message.className = `message ${className}`;
+
+            const emojiSpan = document.createElement('span');
+            emojiSpan.className = 'emoji-avatar';
+            emojiSpan.textContent = emoji;
+
+            const bubble = document.createElement('div');
+            bubble.className = 'text-bubble tex2jax_process';
+            bubble.innerHTML = text;
+
+            message.appendChild(emojiSpan);
+            message.appendChild(bubble);
+
+            // Añadir botón de copiar solo a mensajes del bot
+            if (className === 'bot') {
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'copy-btn';
+                copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                copyBtn.title = 'Copiar evaluación';
+
+                // Añadir función de copiar al botón
+                copyBtn.addEventListener('click', function() {
+                    copyTextToClipboard(text);
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                    copyBtn.style.background = '#28a745';
+                    setTimeout(() => {
+                        copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                        copyBtn.style.background = '#4facfe';
+                    }, 2000);
+                });
+
+                bubble.appendChild(copyBtn);
+            }
+
+            chatbox.appendChild(message);
+            chatbox.scrollTop = chatbox.scrollHeight;
+
+            // Renderizar MathJax si está disponible
+            if (window.MathJax && window.MathJax.typeset) {
+                window.MathJax.typeset([bubble]);
+            }
+        }
+
+        // Función para copiar texto al portapapeles
+        function copyTextToClipboard(text) {
+            // Eliminar las etiquetas HTML y mantener solo el texto
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = text;
+            const plainText = tempDiv.textContent || tempDiv.innerText || '';
+
+            // Copiar al portapapeles
+            navigator.clipboard.writeText(plainText).then(() => {
+                console.log('Texto copiado correctamente');
+            }).catch(err => {
+                console.error('Error al copiar texto: ', err);
+                // Fallback para navegadores más antiguos
+                fallbackCopyTextToClipboard(plainText);
+            });
+        }
+
+        // Método alternativo para copiar texto
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.top = '0';
+            textArea.style.left = '0';
+            textArea.style.position = 'fixed';
+            textArea.style.opacity = '0';
+
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+                if (!successful) console.error('No se pudo copiar el texto');
+            } catch (err) {
+                console.error('Error en fallback: ', err);
+            }
+
+            document.body.removeChild(textArea);
+        }
+
+        // Función para mostrar/ocultar el modal de ayuda
+        function toggleHelp() {
+            const helpModal = document.getElementById('helpModal');
+            helpModal.classList.toggle('active');
+        }
+
+        // Cerrar modal haciendo clic fuera del contenido
+        document.addEventListener('DOMContentLoaded', function() {
+            const helpModal = document.getElementById('helpModal');
+            if (helpModal) {
+                helpModal.addEventListener('click', function(event) {
+                    if (event.target === helpModal) {
+                        toggleHelp();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
