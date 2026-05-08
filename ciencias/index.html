@@ -1,1 +1,1193 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Examen de Ciencias GED - Enfoque DOK 2/3</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #2c3e50;
+      }
+      ul { padding-left: 35px; }
+      .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+      .header {
+        background: white; border-radius: 15px; padding: 25px;
+        margin-bottom: 20px; box-shadow: 0 8px 32px rgba(0,0,0,.1);
+        border: 2px solid #3498db;
+      }
+      .timer { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+      .time-display {
+        background: #e74c3c; color: white; padding: 10px 20px;
+        border-radius: 25px; font-size: 18px; font-weight: bold;
+        border: 3px solid #c0392b;
+      }
+      .progress-container { background: #ecf0f1; border-radius: 10px; padding: 3px; border: 2px solid #95a5a6; }
+      .progress-bar {
+        background: linear-gradient(90deg, #27ae60, #2ecc71);
+        height: 20px; border-radius: 8px; transition: width .3s ease;
+        border: 1px solid #229954;
+      }
+      .question-card {
+        background: white; border-radius: 15px; padding: 30px;
+        margin-bottom: 20px; box-shadow: 0 8px 32px rgba(0,0,0,.1);
+        border: 2px solid #3498db;
+      }
+      .question-header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 20px; padding-bottom: 15px; border-bottom: 3px solid #3498db;
+      }
+      .question-number {
+        background: #3498db; color: white; padding: 8px 16px;
+        border-radius: 20px; font-weight: bold; font-size: 16px; border: 2px solid #2980b9;
+      }
+      .dok-badge { padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; border: 2px solid; }
+      .dok-2 { background: #fff3cd; color: #856404; border-color: #ffc107; }
+      .dok-3 { background: #d1ecf1; color: #0c5460; border-color: #17a2b8; }
+      .theme-badge { padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; border: 2px solid; margin-left: 10px; }
+      .human-health  { background: #d5f4e6; color: #27ae60; border-color: #27ae60; }
+      .energy-systems{ background: #fef9e7; color: #f39c12; border-color: #f39c12; }
+      .earth-space   { background: #ebf3fd; color: #3498db; border-color: #3498db; }
+      .question-context {
+        font-size: 16px; line-height: 1.6; margin-bottom: 20px;
+        background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #3498db;
+      }
+      .stimulus-panel { background: #f8f9fa; border: 2px solid #3498db; border-radius: 10px; padding: 20px; margin: 15px 0; }
+      .stimulus-title { font-weight: bold; color: #3498db; margin-bottom: 15px; font-size: 16px; }
+      .actual-question {
+        font-size: 18px; font-weight: bold; color: #2c3e50;
+        margin: 20px 0; padding: 15px; background: #e8f4f8;
+        border-left: 4px solid #3498db; border-radius: 5px;
+      }
+      .data-table { width: 100%; border-collapse: collapse; margin: 15px 0; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+      .data-table th, .data-table td { padding: 12px; text-align: center; border: 1px solid #ddd; }
+      .data-table th { background: #3498db; color: white; font-weight: bold; }
+      .data-table tr:nth-child(even) { background: #f8f9fa; }
+      .graph-container { background: white; border: 2px solid #3498db; border-radius: 8px; padding: 15px; margin: 15px 0; text-align: center; }
+      .options { display: flex; flex-direction: column; gap: 12px; }
+      .option {
+        background: #f8f9fa; border: 2px solid #bdc3c7; border-radius: 10px;
+        padding: 15px; cursor: pointer; transition: all .3s ease;
+        display: flex; align-items: flex-start; gap: 10px;
+      }
+      .option:hover { background: #e8f4f8; border-color: #3498db; transform: translateY(-2px); }
+      .option.correct  { background: #d5e8d4; border-color: #27ae60; color: #27ae60; font-weight: bold; }
+      .option.incorrect{ background: #f8d7da; border-color: #e74c3c; color: #e74c3c; font-weight: bold; }
+      .option-letter {
+        background: #3498db; color: white; width: 30px; height: 30px;
+        border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        font-weight: bold; border: 2px solid #2980b9; flex-shrink: 0;
+      }
+      .feedback-panel { background: #f8f9fa; border-radius: 10px; padding: 20px; margin: 20px 0; border-left: 4px solid #3498db; display: none; }
+      .feedback-panel.correct  { background: #d5f4e6; border-left-color: #27ae60; }
+      .feedback-panel.incorrect{ background: #f8d7da; border-left-color: #e74c3c; }
+      .feedback-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+      .feedback-explanation { font-size: 16px; line-height: 1.6; margin-bottom: 15px; }
+      .correct-answer { background: #e8f5e8; padding: 10px; border-radius: 5px; border: 2px solid #27ae60; font-weight: bold; }
+      .continue-btn { background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-size: 14px; margin-top: 15px; border: 2px solid #2980b9; }
+      .continue-btn:hover { background: #2980b9; }
+      .text-input { width: 100%; padding: 12px; border: 2px solid #bdc3c7; border-radius: 8px; font-size: 16px; font-family: inherit; min-height: 120px; }
+      .text-input:focus { outline: none; border-color: #3498db; box-shadow: 0 0 0 3px rgba(52,152,219,.2); }
+      .navigation {
+        display: flex; justify-content: space-between; align-items: center;
+        background: white; border-radius: 15px; padding: 20px;
+        box-shadow: 0 8px 32px rgba(0,0,0,.1); border: 2px solid #3498db;
+      }
+      .nav-button {
+        background: #3498db; color: white; border: none; padding: 12px 24px;
+        border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: bold;
+        transition: all .3s ease; border: 2px solid #2980b9;
+      }
+      .nav-button:hover:not(:disabled) { background: #2980b9; transform: translateY(-2px); }
+      .nav-button:disabled { background: #95a5a6; cursor: not-allowed; border-color: #7f8c8d; }
+      .similar-question-btn {
+        background: #f39c12; color: white; border: none; padding: 10px 20px;
+        border-radius: 20px; cursor: pointer; font-size: 14px; margin: 10px 0;
+        border: 2px solid #e67e22; transition: all .3s ease;
+      }
+      .similar-question-btn:hover { background: #e67e22; transform: translateY(-2px); }
+      .start-screen {
+        background: white; border-radius: 15px; padding: 40px; text-align: center;
+        box-shadow: 0 8px 32px rgba(0,0,0,.1); border: 2px solid #3498db;
+      }
+      .start-title { font-size: 32px; color: #2c3e50; margin-bottom: 20px; font-weight: bold; }
+      .start-description { font-size: 18px; color: #7f8c8d; margin-bottom: 30px; line-height: 1.6; text-align: left; }
+      .start-button {
+        background: linear-gradient(45deg, #3498db, #2980b9); color: white; border: none;
+        padding: 15px 40px; border-radius: 30px; font-size: 20px; font-weight: bold;
+        cursor: pointer; transition: all .3s ease; border: 3px solid #2980b9;
+      }
+      .start-button:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(52,152,219,.3); }
+      .highlight { background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107; margin: 15px 0; }
+      /* Drag-drop */
+      .drag-drop-container { display: flex; gap: 30px; margin: 20px 0; flex-wrap: wrap; }
+      .drag-items { flex: 1; min-width: 300px; }
+      .drop-zones { flex: 1; min-width: 300px; }
+      .drag-item {
+        background: #e8f4f8; border: 2px solid #3498db; border-radius: 8px;
+        padding: 12px; margin: 8px 0; cursor: grab; transition: all .3s ease;
+        user-select: none; font-weight: 500;
+      }
+      .drag-item:hover { background: #d5f4e6; border-color: #27ae60; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.1); }
+      .drag-item.dragging { opacity: .5; cursor: grabbing; }
+      .drop-zone {
+        background: #f8f9fa; border: 2px dashed #bdc3c7; border-radius: 8px;
+        padding: 15px; margin: 8px 0; min-height: 60px;
+        display: flex; align-items: center; transition: all .3s ease;
+      }
+      .drop-zone.drag-over { background: #e8f5e8; border-color: #27ae60; border-style: solid; }
+      .drop-zone.filled  { background: #d5f4e6; border-color: #27ae60; border-style: solid; }
+      .drop-zone.correct { background: #d5f4e6; border-color: #27ae60; }
+      .drop-zone.incorrect{ background: #f8d7da; border-color: #e74c3c; }
+      .zone-label { font-weight: bold; color: #7f8c8d; margin-right: 10px; min-width: 80px; }
+      .dropped-item { background: #3498db; color: white; padding: 8px 12px; border-radius: 5px; margin-left: 10px; }
+      .dropdown { padding: 10px; border: 2px solid #bdc3c7; border-radius: 5px; font-size: 16px; background: white; width: 100%; }
+      .dropdown:focus { outline: none; border-color: #3498db; }
 
+      /* ======= INFORME DE ERRORES ======= */
+      .results-container { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 8px 32px rgba(0,0,0,.1); border: 2px solid #3498db; }
+      .score-banner { text-align: center; padding: 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; color: white; margin-bottom: 25px; }
+      .score-big { font-size: 64px; font-weight: bold; }
+      .score-label { font-size: 20px; opacity: .9; }
+      .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 15px; margin-bottom: 25px; }
+      .summary-card { padding: 20px; border-radius: 12px; text-align: center; }
+      .summary-card .card-num { font-size: 36px; font-weight: bold; }
+      .summary-card .card-lbl { font-size: 13px; margin-top: 5px; }
+      .card-correct  { background: #d5f4e6; color: #27ae60; }
+      .card-incorrect{ background: #f8d7da; color: #e74c3c; }
+      .card-skipped  { background: #fff3cd; color: #f39c12; }
+      .card-essay    { background: #d1ecf1; color: #0c5460; }
+
+      .report-section { margin-bottom: 25px; }
+      .report-section h3 { font-size: 20px; color: #2c3e50; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 3px solid #3498db; }
+
+      .error-item { background: #fff8f8; border: 1px solid #f5c6cb; border-radius: 10px; padding: 15px; margin-bottom: 12px; }
+      .error-item-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; gap: 8px; }
+      .error-qnum { background: #e74c3c; color: white; padding: 3px 10px; border-radius: 12px; font-size: 13px; font-weight: bold; }
+      .error-topic { font-weight: bold; color: #2c3e50; font-size: 15px; flex: 1; margin: 0 10px; }
+      .error-pages { background: #ebf3fd; color: #3498db; padding: 3px 10px; border-radius: 12px; font-size: 13px; font-weight: bold; white-space: nowrap; }
+      .error-answers { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 8px; }
+      .user-answer   { background: #f8d7da; color: #721c24; padding: 5px 12px; border-radius: 8px; font-size: 14px; }
+      .right-answer  { background: #d5f4e6; color: #155724; padding: 5px 12px; border-radius: 8px; font-size: 14px; }
+
+      .perf-table { width: 100%; border-collapse: collapse; }
+      .perf-table th { background: #3498db; color: white; padding: 10px 12px; text-align: left; font-size: 14px; }
+      .perf-table td { padding: 10px 12px; border-bottom: 1px solid #ecf0f1; font-size: 14px; vertical-align: middle; }
+      .perf-table tr:hover { background: #f8f9fa; }
+      .perf-bar-bg { background: #ecf0f1; border-radius: 6px; height: 14px; min-width: 80px; }
+      .perf-bar    { height: 14px; border-radius: 6px; }
+      .bar-green { background: #27ae60; }
+      .bar-yellow{ background: #f39c12; }
+      .bar-red   { background: #e74c3c; }
+      .pages-tag { background: #ebf3fd; color: #2980b9; padding: 2px 8px; border-radius: 8px; font-size: 12px; font-weight: bold; }
+      .theme-tag { padding: 2px 8px; border-radius: 8px; font-size: 11px; font-weight: bold; }
+      .tag-hh { background: #d5f4e6; color: #27ae60; }
+      .tag-es { background: #fef9e7; color: #f39c12; }
+      .tag-earth { background: #ebf3fd; color: #3498db; }
+
+      .print-btn {
+        background: #27ae60; color: white; border: none; padding: 12px 28px;
+        border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: bold;
+        margin: 10px 5px; border: 2px solid #229954; transition: all .3s ease;
+      }
+      .print-btn:hover { background: #229954; transform: translateY(-2px); }
+      .restart-btn {
+        background: #3498db; color: white; border: none; padding: 12px 28px;
+        border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: bold;
+        margin: 10px 5px; border: 2px solid #2980b9; transition: all .3s ease;
+      }
+      .restart-btn:hover { background: #2980b9; transform: translateY(-2px); }
+
+      @media print {
+        body { background: white; }
+        .navigation, .nav-button, .print-btn, .restart-btn, .similar-question-btn { display: none !important; }
+        .results-container { box-shadow: none; border: none; }
+      }
+      @media (max-width: 768px) {
+        .container { padding: 10px; }
+        .timer { flex-direction: column; gap: 15px; }
+        .question-header { flex-direction: column; gap: 10px; }
+        .navigation { flex-direction: column; gap: 15px; }
+        .summary-cards { grid-template-columns: repeat(2,1fr); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+
+      <!-- PANTALLA DE INICIO -->
+      <div id="startScreen" class="start-screen">
+        <h1 class="start-title">Examen de Ciencias GED<br>
+          <span style="font-size:16px">Creado por el prof. José M. Fernández con Claude Sonnet 4</span>
+        </h1>
+        <div class="start-description">
+          <p><strong>Enfoque en Razonamiento Científico DOK 2-3 de acuerdo con las especificaciones GED:</strong></p>
+          <ul style="text-align:left;margin:20px 0">
+            <li>✅ <strong>Interpretación de datos</strong> de gráficos y tablas</li>
+            <li>✅ <strong>Análisis de experimentos</strong> científicos</li>
+            <li>✅ <strong>Evaluación de evidencia</strong> y conclusiones</li>
+            <li>✅ <strong>Aplicación de conceptos</strong> a situaciones nuevas</li>
+            <li>❌ Sin preguntas de memorización (DOK 1)</li>
+          </ul>
+          <p><strong>📊 Tres temas principales del GED:</strong></p>
+          <ul style="text-align:left;margin:20px 0">
+            <li>🫀 <strong>Salud Humana y Sistemas Vivos</strong> (40 %)</li>
+            <li>⚡ <strong>Energía y Sistemas Relacionados</strong> (40 %)</li>
+            <li>🌍 <strong>Ciencias de la Tierra y el Espacio</strong> (20 %)</li>
+          </ul>
+          <p><strong>⏱️ Duración:</strong> 90 minutos | <strong>📝 Preguntas:</strong> 19 preguntas (Incluye UNA de redacción)</p>
+          <p style="margin-top:12px;background:#d5f4e6;padding:12px;border-radius:8px;border-left:4px solid #27ae60;">
+            📖 <strong>Informe de Errores:</strong> Al finalizar, recibirás un informe detallado con las páginas del
+            <em>GED Senderos — Ciencias (Steck-Vaughn)</em> donde debes estudiar cada tema con dificultad.
+          </p>
+        </div>
+        <button class="start-button" onclick="startExam()">Comenzar Examen</button>
+      </div>
+
+      <!-- INTERFAZ DEL EXAMEN -->
+      <div id="examInterface" style="display:none">
+        <div class="header">
+          <div class="timer">
+            <div>
+              <h2>🧪 Examen de Ciencias GED (DOK 2-3)</h2>
+              <p>Duración: 90 minutos | 19 preguntas de razonamiento científico</p>
+            </div>
+            <div class="time-display" id="timer">90:00</div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar" id="progressBar" style="width:0%"></div>
+          </div>
+        </div>
+        <div class="question-card" id="questionCard"></div>
+        <div class="navigation">
+          <button class="nav-button" id="prevBtn" onclick="previousQuestion()" disabled>⬅️ Anterior</button>
+          <div style="text-align:center">
+            <span style="color:#7f8c8d;font-size:14px;display:block">Enfoque DOK 2-3: Análisis y Razonamiento</span>
+            <button class="similar-question-btn" id="similarBtn" onclick="generateSimilarQuestion()">🔄 Pregunta Similar</button>
+          </div>
+          <button class="nav-button" id="nextBtn" onclick="nextQuestion()">Siguiente ➡️</button>
+        </div>
+      </div>
+
+      <!-- PANTALLA DE RESULTADOS + INFORME -->
+      <div id="resultsScreen" style="display:none">
+        <div class="results-container">
+          <div class="score-banner">
+            <div class="score-big" id="finalScore">0%</div>
+            <div class="score-label">Examen de Ciencias GED completado</div>
+            <p id="resultMessage" style="margin-top:10px;font-size:16px;opacity:.9"></p>
+          </div>
+          <div class="summary-cards" id="summaryCards"></div>
+
+          <!-- Errores por pregunta -->
+          <div class="report-section" id="errorsSection">
+            <h3>❌ Análisis de Errores por Pregunta</h3>
+            <div id="errorsList"></div>
+          </div>
+
+          <!-- Tabla de rendimiento por tema -->
+          <div class="report-section">
+            <h3>📊 Rendimiento por Tema — Guía de Estudio</h3>
+            <table class="perf-table" id="perfTable">
+              <thead>
+                <tr>
+                  <th>Tema</th>
+                  <th>Área</th>
+                  <th>Resultado</th>
+                  <th>Rendimiento</th>
+                  <th>📖 Páginas Steck-Vaughn</th>
+                </tr>
+              </thead>
+              <tbody id="perfTableBody"></tbody>
+            </table>
+          </div>
+
+          <div style="text-align:center;margin-top:20px">
+            <button class="print-btn" onclick="abrirYImprimir()">🖨️ Imprimir Informe</button>
+            <button class="restart-btn" onclick="restartExam()">🔄 Reiniciar Examen</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /container -->
+
+    <script>
+      let currentQuestion = 0;
+      let timeLeft = 5400;
+      let timerInterval;
+      let answers = {};
+      let examStarted = false;
+
+      // ── PREGUNTAS ──────────────────────────────────────────────────────────
+      const questions = [
+        {
+          id:0, theme:"human-health", dok:2, type:"multiple-choice",
+          topic:"Respuesta cardiovascular al ejercicio",
+          bookPages:"4–5, 8",
+          context:"Un investigador estudia el efecto de diferentes niveles de ejercicio en la frecuencia cardíaca. Los datos se muestran en la tabla siguiente:",
+          stimulus:`<div class="stimulus-title">📊 Datos del Experimento</div>
+<table class="data-table"><thead><tr><th>Tipo de Ejercicio</th><th>Duración (min)</th><th>FC Inicial (bpm)</th><th>FC Final (bpm)</th><th>Participantes</th></tr></thead>
+<tbody>
+<tr><td>Reposo</td><td>0</td><td>72</td><td>72</td><td>20</td></tr>
+<tr><td>Caminata ligera</td><td>15</td><td>73</td><td>95</td><td>20</td></tr>
+<tr><td>Correr</td><td>15</td><td>74</td><td>140</td><td>20</td></tr>
+<tr><td>Ciclismo intenso</td><td>15</td><td>71</td><td>165</td><td>20</td></tr>
+</tbody></table>`,
+          question:"¿Qué puede inferirse de los resultados del experimento?",
+          options:["Los datos no son válidos porque las frecuencias iniciales son diferentes","El ejercicio más intenso causa el mayor aumento en la frecuencia cardíaca","La duración del ejercicio es más importante que la intensidad","Todos los tipos de ejercicio producen el mismo efecto cardiovascular"],
+          correct:1,
+          explanation:"Al analizar los datos, el ciclismo intenso produjo el mayor aumento (71→165 bpm = +94 bpm), seguido por correr (+66 bpm) y caminata ligera (+22 bpm). Esto demuestra una relación directa entre intensidad del ejercicio y respuesta cardiovascular.",
+          feedback:{0:"Las pequeñas diferencias iniciales (71-74 bpm) son normales y no invalidan los datos.",1:"¡Correcto! Mayor intensidad = mayor aumento en frecuencia cardíaca.",2:"Todas las actividades duraron 15 minutos, pero los efectos fueron muy diferentes.",3:"Los datos muestran diferencias significativas entre los tipos de ejercicio."}
+        },
+        {
+          id:1, theme:"human-health", dok:3, type:"multiple-choice",
+          topic:"Epidemiología e intoxicación alimentaria",
+          bookPages:"7–9, 10–11",
+          context:"Un epidemiólogo investiga un brote de intoxicación alimentaria en una comunidad:",
+          stimulus:`<div class="stimulus-title">🔬 Investigación Epidemiológica</div>
+<p><strong>Situación:</strong> 45 personas asistieron a una cena comunitaria. 18 desarrollaron náuseas, vómitos y diarrea.</p>
+<table class="data-table"><thead><tr><th>Alimento</th><th>Comieron</th><th>Enfermaron</th><th>No enfermaron</th><th>% enfermó</th></tr></thead>
+<tbody>
+<tr><td>Ensalada de pollo</td><td>20</td><td>16</td><td>4</td><td>80%</td></tr>
+<tr><td>Arroz</td><td>40</td><td>17</td><td>23</td><td>42.5%</td></tr>
+<tr><td>Verduras al vapor</td><td>35</td><td>12</td><td>23</td><td>34.3%</td></tr>
+<tr><td>Pan</td><td>42</td><td>18</td><td>24</td><td>42.9%</td></tr>
+</tbody></table>`,
+          question:"Basándose en el análisis epidemiológico, ¿cuál es la fuente más probable de contaminación?",
+          options:["El arroz es la causa más probable porque la mayoría lo comieron","La ensalada de pollo, por el alto porcentaje de enfermos entre quienes la consumieron","Las verduras, porque estaban poco cocidas","No se puede determinar la causa con esta información"],
+          correct:1,
+          explanation:"La ensalada de pollo tiene la tasa de ataque más alta (80%) y 16 de 18 enfermos la habían comido. Solo 2 enfermos NO habían comido ensalada de pollo.",
+          feedback:{0:"En epidemiología no importa cuántos comieron algo, sino qué porcentaje de quienes lo comieron se enfermó.",1:"¡Excelente análisis epidemiológico! Tasa de ataque del 80% vs 34-43% de los otros alimentos.",2:"Las verduras tienen una tasa relativamente baja (34.3%).",3:"Los datos proporcionan evidencia suficiente para una determinación razonable."}
+        },
+        {
+          id:2, theme:"energy-systems", dok:2, type:"multiple-choice",
+          topic:"Fuentes de energía renovable: costo-beneficio",
+          bookPages:"63, 96, 103",
+          context:"Un ingeniero compara la eficiencia de diferentes fuentes de energía para una comunidad rural:",
+          stimulus:`<div class="stimulus-title">⚡ Análisis Energético Comparativo</div>
+<table class="data-table"><thead><tr><th>Fuente</th><th>Costo inicial ($)</th><th>Energía (kWh/año)</th><th>Mantenimiento ($/año)</th><th>Vida útil (años)</th></tr></thead>
+<tbody>
+<tr><td>Paneles Solares</td><td>15,000</td><td>8,000</td><td>200</td><td>25</td></tr>
+<tr><td>Turbina Eólica</td><td>12,000</td><td>10,000</td><td>600</td><td>20</td></tr>
+<tr><td>Generador Diesel</td><td>3,000</td><td>9,000</td><td>2,500</td><td>10</td></tr>
+</tbody></table>
+<p><strong>Nota:</strong> La comunidad consume aprox. 7,500 kWh/año</p>`,
+          question:"¿Cuál es la mejor opción energética considerando costo total y eficiencia a largo plazo?",
+          options:["El generador diesel, porque tiene el menor costo inicial","Los paneles solares, porque duran más tiempo","La turbina eólica ofrece la mejor relación costo-beneficio a largo plazo","Todas las opciones son igualmente eficientes"],
+          correct:2,
+          explanation:"Costo por kWh: Paneles $0.10, Turbina $0.12, Diesel $0.31. La turbina produce energía suficiente (10,000 > 7,500 kWh requeridos) con costos competitivos.",
+          feedback:{0:"El costo inicial bajo puede ser engañoso si los costos operativos son altos.",1:"Parcialmente correcto sobre durabilidad, pero no considera todos los factores económicos.",2:"¡Correcto! Al considerar producción energética suficiente y costos totales, la turbina es la opción más equilibrada.",3:"Los datos muestran diferencias significativas en eficiencia económica."}
+        },
+        {
+          id:3, theme:"energy-systems", dok:3, type:"multiple-choice",
+          topic:"Diseño experimental y control de variables",
+          bookPages:"68–70",
+          context:"Un químico diseña un experimento para probar el efecto de la temperatura en la velocidad de reacción entre bicarbonato de sodio y ácido acético.",
+          stimulus:`<div class="stimulus-title">🧪 Diseño Experimental — Cinética Química</div>
+<p><strong>Reacción:</strong> NaHCO₃ + CH₃COOH → CH₃COONa + H₂O + CO₂</p>
+<div class="highlight"><strong>Consideraciones del diseño:</strong>
+<ul><li>Variable independiente: Temperatura</li><li>Variable dependiente: Velocidad de producción de CO₂</li><li>Variables de control necesarias</li></ul></div>`,
+          question:"¿Cuál es el diseño experimental más apropiado?",
+          options:["Usar diferentes concentraciones de reactivos a temperatura ambiente","Realizar la reacción a 5 temperaturas (10 °C, 20 °C, 30 °C, 40 °C, 50 °C) manteniendo constantes concentraciones, volúmenes y tiempos","Medir solo a temperatura ambiente y temperatura corporal","Usar diferentes volúmenes de reactivos a la misma temperatura"],
+          correct:1,
+          explanation:"Un experimento controlado requiere variar solo la variable independiente (temperatura) mientras se mantienen constantes las demás. 5 puntos de datos permiten establecer una relación válida.",
+          feedback:{0:"Esto cambiaría las concentraciones (otra variable), invalidando el control experimental.",1:"¡Excelente! Este diseño controla todas las variables excepto la temperatura.",2:"Solo dos puntos de temperatura no proporcionan suficientes datos para una relación confiable.",3:"Esto evaluaría el efecto del volumen, no de la temperatura."}
+        },
+        {
+          id:4, theme:"human-health", dok:2, type:"multiple-choice",
+          topic:"Análisis nutricional comparativo",
+          bookPages:"7, 34",
+          context:"Una nutricionista analiza el contenido nutricional de diferentes dietas para evaluar su impacto en la salud:",
+          stimulus:`<div class="stimulus-title">🥗 Análisis Nutricional Comparativo</div>
+<table class="data-table"><thead><tr><th>Dieta</th><th>Cal/día</th><th>Proteínas (g)</th><th>Carbohidratos (g)</th><th>Grasas (g)</th><th>Fibra (g)</th><th>Sodio (mg)</th></tr></thead>
+<tbody>
+<tr><td>Mediterránea</td><td>2000</td><td>85</td><td>250</td><td>75</td><td>35</td><td>1800</td></tr>
+<tr><td>Típica Americana</td><td>2400</td><td>90</td><td>320</td><td>100</td><td>15</td><td>3500</td></tr>
+<tr><td>Vegana</td><td>1900</td><td>70</td><td>280</td><td>60</td><td>45</td><td>1200</td></tr>
+</tbody></table>
+<p><strong>Recomendaciones:</strong> Fibra 25-35 g | Sodio &lt;2300 mg | Proteínas 60-80 g (adulto promedio)</p>`,
+          question:"¿Qué conclusión nutricional es más válida según las recomendaciones establecidas?",
+          options:["La dieta típica americana es la mejor porque tiene más proteínas","La dieta vegana es problemática porque no tiene suficientes proteínas","La dieta mediterránea ofrece el mejor equilibrio nutricional según las recomendaciones","Todas las dietas son nutricionalmente equivalentes"],
+          correct:2,
+          explanation:"La mediterránea cumple fibra (35 g), sodio bajo límite (1800 mg), y proteínas adecuadas (85 g). La americana excede sodio (3500 mg) y es baja en fibra. La vegana tiene 70 g de proteínas, aceptable.",
+          feedback:{0:"Más proteínas no siempre es mejor; esta dieta tiene exceso de sodio y poca fibra.",1:"70 g de proteínas está dentro del rango aceptable para la mayoría de adultos.",2:"¡Correcto! La dieta mediterránea cumple mejor todas las recomendaciones.",3:"Hay diferencias significativas en cumplimiento de recomendaciones."}
+        },
+        {
+          id:5, theme:"energy-systems", dok:3, type:"multiple-choice",
+          topic:"Pirámides de energía y eficiencia trófica",
+          bookPages:"12–13",
+          context:"Un ecólogo estudia el flujo de energía en un ecosistema y mide la biomasa en diferentes niveles tróficos:",
+          stimulus:`<div class="stimulus-title">🌱 Pirámide de Energía del Ecosistema</div>
+<table class="data-table"><thead><tr><th>Nivel Trófico</th><th>Organismo</th><th>Biomasa (kg/ha)</th><th>Energía (kJ/ha)</th><th>Eficiencia</th></tr></thead>
+<tbody>
+<tr><td>Productores</td><td>Plantas</td><td>4500</td><td>75,000</td><td>—</td></tr>
+<tr><td>Consumidor Primario</td><td>Herbívoros</td><td>450</td><td>7,500</td><td>10%</td></tr>
+<tr><td>Consumidor Secundario</td><td>Carnívoros pequeños</td><td>45</td><td>750</td><td>10%</td></tr>
+<tr><td>Consumidor Terciario</td><td>Depredadores apex</td><td>4.5</td><td>75</td><td>10%</td></tr>
+</tbody></table>
+<p><strong>Nota:</strong> Eficiencia fotosintética de las plantas = 2% de la energía solar.</p>`,
+          question:"¿Qué explica mejor la estructura de esta cadena alimentaria?",
+          options:["El ecosistema es insostenible porque pierde demasiada energía","Los depredadores apex podrían soportar una población 10 veces mayor","La baja eficiencia de transferencia energética explica por qué hay pocos depredadores apex","Las plantas deberían ser más eficientes en la fotosíntesis"],
+          correct:2,
+          explanation:"La regla del 10% explica que solo ~10% de la energía se transfiere entre niveles. De 75,000 kJ/ha en plantas a solo 75 kJ/ha para depredadores apex, esta limitación energética restringe naturalmente las poblaciones superiores.",
+          feedback:{0:"Esta eficiencia del 10% es normal y típica en ecosistemas naturales.",1:"La energía disponible limita estrictamente el tamaño de la población de depredadores.",2:"¡Excelente! Comprende la relación entre flujo energético y estructura de la cadena.",3:"2% de eficiencia fotosintética es normal para las plantas."}
+        },
+        {
+          id:6, theme:"human-health", dok:3, type:"dropdown",
+          topic:"Herencia genética y patrones de herencia",
+          bookPages:"22–25, 35",
+          context:"Un genetista analiza la herencia de una enfermedad en una familia:",
+          stimulus:`<div class="stimulus-title">🧬 Análisis de Herencia Genética</div>
+<div class="graph-container">
+<p><strong>Árbol Genealógico</strong></p>
+<p>🔵 = Hombre afectado | 🔴 = Mujer afectada | ⬜ = No afectado</p>
+<pre style="font-family:monospace;text-align:left;font-size:15px;line-height:1.8;">
+Gen. I:      ⬜ ——— 🔵
+                  |
+Gen. II:    ⬜  🔴  ⬜  ⬜
+Gen. III:   ⬜  🔵  🔴  ⬜  ⬜  ⬜
+</pre>
+<ul style="text-align:left;margin:10px 0">
+<li>La enfermedad aparece en cada generación</li>
+<li>Tanto hombres como mujeres pueden estar afectados</li>
+<li>Un padre afectado y una madre no afectada tuvieron una hija afectada</li>
+</ul></div>`,
+          question:"Basándose en el patrón de herencia observado, el tipo de herencia es:",
+          options:["dominante autosómica","recesiva autosómica","dominante ligada al X","recesiva ligada al X"],
+          correct:"dominante autosómica",
+          explanation:"Aparece en cada generación (dominante), afecta ambos sexos (autosómica), y un padre afectado transmite a hijos de cualquier sexo.",
+          feedback:{"dominante autosómica":"¡Correcto! Herencia vertical y afectación de ambos sexos = dominante autosómica.","recesiva autosómica":"En herencia recesiva la enfermedad 'saltaría' generaciones.","dominante ligada al X":"Un padre afectado transmitiría a TODAS sus hijas si fuera ligada al X dominante.","recesiva ligada al X":"En X recesiva, principalmente los hombres estarían afectados."}
+        },
+        {
+          id:7, theme:"earth-space", dok:2, type:"multiple-choice",
+          topic:"Cambio climático: análisis de datos regionales",
+          bookPages:"18, 30, 38, 104",
+          context:"Un climatólogo analiza datos de precipitaciones y temperaturas de los últimos 50 años:",
+          stimulus:`<div class="stimulus-title">🌡️ Datos Climáticos Regionales (50 años)</div>
+<table class="data-table"><thead><tr><th>Década</th><th>Temp. Media (°C)</th><th>Precipitación (mm/año)</th><th>Días c/heladas</th><th>Eventos extremos/año</th></tr></thead>
+<tbody>
+<tr><td>1970-1979</td><td>12.1</td><td>650</td><td>45</td><td>2</td></tr>
+<tr><td>1980-1989</td><td>12.3</td><td>630</td><td>42</td><td>3</td></tr>
+<tr><td>1990-1999</td><td>12.8</td><td>580</td><td>38</td><td>4</td></tr>
+<tr><td>2000-2009</td><td>13.2</td><td>520</td><td>32</td><td>6</td></tr>
+<tr><td>2010-2019</td><td>13.6</td><td>480</td><td>28</td><td>8</td></tr>
+</tbody></table>`,
+          question:"¿Qué conclusión es más válida según las tendencias observadas?",
+          options:["Los datos no muestran ningún patrón climático significativo","La región experimenta calentamiento con mayor variabilidad climática","La disminución de precipitaciones se debe solo a variabilidad natural","Los eventos extremos son independientes de los cambios de temperatura"],
+          correct:1,
+          explanation:"Temperatura +1.5 °C en 50 años, precipitación -170 mm, heladas -17 días, eventos extremos de 2 a 8/año. Todos los indicadores apuntan a calentamiento regional con mayor variabilidad.",
+          feedback:{0:"Los datos muestran tendencias muy claras y consistentes a lo largo de 50 años.",1:"¡Correcto! Todos los indicadores apuntan a calentamiento regional con mayor variabilidad.",2:"La tendencia consistente durante 50 años sugiere cambio sistemático, no solo variabilidad natural.",3:"El aumento de eventos extremos correlaciona fuertemente con el aumento de temperatura."}
+        },
+        {
+          id:8, theme:"energy-systems", dok:3, type:"multiple-choice",
+          topic:"Optimización de reacciones químicas industriales",
+          bookPages:"47–49, 73–74",
+          context:"Un químico industrial optimiza la producción de hidrógeno en una planta de reforma catalítica:",
+          stimulus:`<div class="stimulus-title">⚗️ Optimización de Producción de Hidrógeno</div>
+<p><strong>Reacción:</strong> CH₄ + H₂O → CO + 3H₂</p>
+<table class="data-table"><thead><tr><th>Exp.</th><th>Temp. (°C)</th><th>Presión (atm)</th><th>Catalizador</th><th>Rendimiento H₂ (%)</th><th>Energía (kJ/mol)</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>700</td><td>1</td><td>No</td><td>45</td><td>320</td></tr>
+<tr><td>2</td><td>800</td><td>1</td><td>No</td><td>65</td><td>380</td></tr>
+<tr><td>3</td><td>700</td><td>5</td><td>No</td><td>38</td><td>320</td></tr>
+<tr><td>4</td><td>700</td><td>1</td><td>Ni</td><td>75</td><td>280</td></tr>
+<tr><td>5</td><td>800</td><td>1</td><td>Ni</td><td>88</td><td>340</td></tr>
+</tbody></table>`,
+          question:"¿Cuál es la opción más eficiente para optimización industrial?",
+          options:["El experimento 5 es óptimo porque tiene el mayor rendimiento","El experimento 4 ofrece la mejor relación rendimiento-eficiencia energética","La presión alta siempre mejora el rendimiento según Le Chatelier","La temperatura no afecta significativamente la reacción"],
+          correct:1,
+          explanation:"Exp. 4: 75% rendimiento con 280 kJ/mol (ratio 0.268). Exp. 5: 88% rendimiento con 340 kJ/mol (ratio 0.259). El Exp. 4 tiene mejor relación costo-beneficio con menor temperatura operacional.",
+          feedback:{0:"Mayor rendimiento no siempre significa óptimo si los costos energéticos son desproporcionados.",1:"¡Excelente análisis! Considera rendimiento y eficiencia energética.",2:"Los datos muestran que alta presión REDUCE el rendimiento en esta reacción.",3:"Los datos muestran que la temperatura afecta significativamente rendimiento y consumo energético."}
+        },
+        {
+          id:9, theme:"human-health", dok:3, type:"short-answer",
+          topic:"Epidemiología del asma y contaminación ambiental",
+          bookPages:"10–11, 67, 69",
+          context:"Un epidemiólogo investiga la relación entre factores ambientales y la incidencia de asma en comunidades urbanas:",
+          stimulus:`<div class="stimulus-title">🏭 Estudio Epidemiológico de Asma Urbana</div>
+<table class="data-table"><thead><tr><th>Comunidad</th><th>Distancia autopistas (km)</th><th>PM2.5 (μg/m³)</th><th>Densidad tráfico</th><th>Incidencia asma (%)</th><th>Nivel socioeconómico</th></tr></thead>
+<tbody>
+<tr><td>Centro urbano</td><td>0.2</td><td>35</td><td>Alto</td><td>18.5</td><td>Bajo</td></tr>
+<tr><td>Barrio industrial</td><td>0.5</td><td>42</td><td>Muy alto</td><td>22.1</td><td>Bajo</td></tr>
+<tr><td>Zona residencial A</td><td>2.0</td><td>18</td><td>Moderado</td><td>8.3</td><td>Medio</td></tr>
+<tr><td>Zona residencial B</td><td>5.0</td><td>12</td><td>Bajo</td><td>4.7</td><td>Alto</td></tr>
+</tbody></table>
+<div class="highlight"><strong>Su análisis debe incluir:</strong>
+<ul><li>Identificación de patrones en los datos</li><li>Explicación de mecanismos biológicos</li><li>Consideración de factores socioeconómicos</li><li>Limitaciones del estudio</li><li>Recomendaciones de salud pública</li></ul></div>`,
+          question:"Proporcione un análisis científico completo (mínimo 300 palabras):",
+          placeholder:"Proporcione un análisis científico completo de los datos epidemiológicos, incluyendo patrones, mecanismos biológicos, y implicaciones para la salud pública...",
+          isEssay:true,
+          rubric:{excellent:"Identifica correlaciones claras entre contaminación y asma, explica mecanismos inflamatorios, considera factores socioeconómicos, reconoce limitaciones, propone recomendaciones específicas.",good:"Identifica patrones principales, explica algunos mecanismos biológicos, considera factores socioeconómicos.",needs_improvement:"Identifica algunos patrones básicos, explicación biológica limitada."}
+        },
+        {
+          id:10, theme:"human-health", dok:2, type:"multiple-choice",
+          topic:"Fisiología de la altitud y adaptación",
+          bookPages:"4–5, 8, 36",
+          context:"Un fisiólogo estudia la respuesta del cuerpo humano al ejercicio en diferentes altitudes:",
+          stimulus:`<div class="stimulus-title">🏔️ Estudio Fisiológico de Altitud</div>
+<table class="data-table"><thead><tr><th>Altitud (m)</th><th>Presión O₂ (mmHg)</th><th>Saturación O₂ (%)</th><th>FC (bpm)</th><th>Respiraciones/min</th><th>Rendimiento (%)</th></tr></thead>
+<tbody>
+<tr><td>0 (nivel del mar)</td><td>159</td><td>98</td><td>140</td><td>18</td><td>100</td></tr>
+<tr><td>1,500</td><td>135</td><td>96</td><td>155</td><td>22</td><td>92</td></tr>
+<tr><td>3,000</td><td>115</td><td>92</td><td>170</td><td>26</td><td>80</td></tr>
+<tr><td>4,500</td><td>95</td><td>85</td><td>185</td><td>32</td><td>65</td></tr>
+</tbody></table>`,
+          question:"¿Cómo responde el cuerpo a la menor disponibilidad de oxígeno en altitud?",
+          options:["La altitud no afecta significativamente el rendimiento físico","El cuerpo compensa la menor disponibilidad de oxígeno aumentando frecuencia cardíaca y respiratoria","La saturación de oxígeno es el único factor que determina el rendimiento","Los atletas deberían evitar entrenar a cualquier altitud"],
+          correct:1,
+          explanation:"Conforme disminuye la presión de O₂ con la altitud, el cuerpo aumenta FC (140→185 bpm) y frecuencia respiratoria (18→32 resp/min). Esta compensación es parcial: el rendimiento baja a 65%.",
+          feedback:{0:"Los datos muestran una disminución clara del rendimiento (100% a 65%).",1:"¡Correcto! El cuerpo muestra respuestas compensatorias claras ante la menor disponibilidad de O₂.",2:"Múltiples factores interactúan: presión O₂, saturación, y respuestas cardiovascular y respiratoria.",3:"Entrenar en altitud puede tener beneficios adaptativos."}
+        },
+        {
+          id:11, theme:"energy-systems", dok:2, type:"dropdown",
+          topic:"Eficiencia de conversión energética",
+          bookPages:"60–63, 78",
+          context:"Un ingeniero analiza la eficiencia de conversión energética en diferentes sistemas:",
+          stimulus:`<div class="stimulus-title">🔋 Análisis de Eficiencia Energética</div>
+<table class="data-table"><thead><tr><th>Sistema</th><th>Energía entrada (kJ)</th><th>Energía útil (kJ)</th><th>Energía perdida (kJ)</th><th>Pérdida principal</th></tr></thead>
+<tbody>
+<tr><td>Motor de combustión</td><td>1000</td><td>250</td><td>750</td><td>Calor</td></tr>
+<tr><td>Motor eléctrico</td><td>1000</td><td>900</td><td>100</td><td>Calor/fricción</td></tr>
+<tr><td>Celda de combustible</td><td>1000</td><td>600</td><td>400</td><td>Calor</td></tr>
+<tr><td>Panel solar</td><td>1000</td><td>200</td><td>800</td><td>Reflexión/calor</td></tr>
+</tbody></table>`,
+          question:"Basándose en los datos, el sistema con mayor eficiencia de conversión es:",
+          options:["motor de combustión","motor eléctrico","celda de combustible","panel solar"],
+          correct:"motor eléctrico",
+          explanation:"Eficiencia = Útil/Entrada×100. Motor eléctrico: 90%. Celda: 60%. Combustión: 25%. Solar: 20%.",
+          feedback:{"motor de combustión":"Incorrecto. Eficiencia = 25%.","motor eléctrico":"¡Correcto! Con 90% de eficiencia, es el sistema más eficiente.","celda de combustible":"Incorrecto. Eficiencia = 60%. Buena, pero no la mejor.","panel solar":"Incorrecto. Eficiencia = 20%."}
+        },
+        {
+          id:12, theme:"human-health", dok:2, type:"drag-drop",
+          topic:"Mitosis y división celular",
+          bookPages:"3, 25, 33",
+          context:"Un biólogo estudia el proceso de mitosis celular y necesita ordenar correctamente las etapas:",
+          stimulus:`<div class="stimulus-title">🔬 Observaciones Microscópicas — División Celular</div>
+<ul style="text-align:left;margin:10px 20px">
+<li><strong>Etapa A:</strong> Cromosomas se alinean en el centro de la célula</li>
+<li><strong>Etapa B:</strong> La envoltura nuclear se desintegra, cromosomas se condensan</li>
+<li><strong>Etapa C:</strong> Cromosomas se separan y migran a polos opuestos</li>
+<li><strong>Etapa D:</strong> Se forman dos núcleos separados, citoplasma se divide</li>
+<li><strong>Etapa E:</strong> Célula en estado normal, ADN replicado pero no condensado</li>
+</ul>`,
+          question:"Ordene las etapas de la mitosis en la secuencia correcta:",
+          dragItems:[{id:"profase",text:"Etapa B: Profase",correct:1},{id:"metafase",text:"Etapa A: Metafase",correct:2},{id:"anafase",text:"Etapa C: Anafase",correct:3},{id:"telofase",text:"Etapa D: Telofase",correct:4},{id:"interfase",text:"Etapa E: Interfase",correct:0}],
+          dropZones:[{id:"step0",label:"Preparación:",description:"Célula se prepara"},{id:"step1",label:"Paso 1:",description:"Primera etapa"},{id:"step2",label:"Paso 2:",description:"Alineación cromosómica"},{id:"step3",label:"Paso 3:",description:"Separación cromosómica"},{id:"step4",label:"Paso 4:",description:"Finalización"}],
+          explanation:"Interfase → Profase → Metafase → Anafase → Telofase. Esta secuencia asegura distribución equitativa del material genético.",
+          feedback:{correct:"¡Excelente! Has ordenado correctamente las etapas de la mitosis.",incorrect:"Recuerda: Interfase (preparación) → Profase (condensación) → Metafase (alineación) → Anafase (separación) → Telofase."}
+        },
+        {
+          id:13, theme:"energy-systems", dok:2, type:"drag-drop",
+          topic:"Cadena alimentaria: niveles tróficos",
+          bookPages:"12–13, 90",
+          context:"Un ecólogo clasifica organismos según su posición en la cadena alimentaria de un ecosistema acuático:",
+          stimulus:`<div class="stimulus-title">🌊 Cadena Alimentaria Acuática</div>
+<ul style="text-align:left;margin:10px 20px">
+<li><strong>Fitoplancton:</strong> Organismos microscópicos que realizan fotosíntesis</li>
+<li><strong>Zooplancton:</strong> Pequeños animales que se alimentan de fitoplancton</li>
+<li><strong>Peces pequeños:</strong> Se alimentan principalmente de zooplancton</li>
+<li><strong>Lucio:</strong> Predador que se alimenta de peces pequeños</li>
+<li><strong>Águila pescadora:</strong> Ave rapaz que captura peces grandes</li>
+</ul>`,
+          question:"Clasifique cada organismo en su nivel trófico correspondiente:",
+          dragItems:[{id:"fitoplancton",text:"Fitoplancton",correct:0},{id:"zooplancton",text:"Zooplancton",correct:1},{id:"peces-pequenos",text:"Peces pequeños",correct:2},{id:"lucio",text:"Lucio (pez grande)",correct:3},{id:"aguila",text:"Águila pescadora",correct:4}],
+          dropZones:[{id:"productores",label:"Productores:",description:"Autótrofos"},{id:"primarios",label:"Consumidor 1°:",description:"Herbívoros"},{id:"secundarios",label:"Consumidor 2°:",description:"Carnívoros pequeños"},{id:"terciarios",label:"Consumidor 3°:",description:"Carnívoros medianos"},{id:"cuaternarios",label:"Consumidor 4°:",description:"Depredadores apex"}],
+          explanation:"La energía fluye desde productores (fitoplancton) hacia niveles superiores. Cada nivel transfiere ~10% de su energía al siguiente.",
+          feedback:{correct:"¡Perfecto! Has construido correctamente la pirámide trófica.",incorrect:"Recuerda: productores en la base, luego herbívoros, luego carnívoros en orden de tamaño."}
+        },
+        {
+          id:14, theme:"earth-space", dok:3, type:"drag-drop",
+          topic:"Estratigrafía y formación de rocas sedimentarias",
+          bookPages:"75, 89, 98–100",
+          context:"Un geólogo analiza la secuencia de eventos en la formación de una capa sedimentaria con fósiles:",
+          stimulus:`<div class="stimulus-title">🗿 Formación de Rocas Sedimentarias con Fósiles</div>
+<ul style="text-align:left;margin:10px 20px">
+<li><strong>Capa inferior:</strong> Arenisca con estructuras de corrientes marinas</li>
+<li><strong>Capa media:</strong> Caliza con fósiles marinos (trilobites)</li>
+<li><strong>Capa superior:</strong> Lutita con fósiles de plantas terrestres</li>
+<li><strong>Intrusión ígnea:</strong> Corta todas las capas sedimentarias</li>
+<li><strong>Falla geológica:</strong> Desplaza todas las rocas anteriores</li>
+</ul>`,
+          question:"Ordene los eventos geológicos del más antiguo al más reciente:",
+          dragItems:[{id:"ambiente-marino",text:"Ambiente marino profundo (caliza+trilobites)",correct:1},{id:"playa-costera",text:"Ambiente costero/playa (arenisca)",correct:0},{id:"ambiente-terrestre",text:"Ambiente terrestre/pantanoso (lutita+plantas)",correct:2},{id:"intrusion",text:"Intrusión ígnea",correct:3},{id:"falla",text:"Falla geológica",correct:4}],
+          dropZones:[{id:"ev1",label:"Evento 1:",description:"Más antiguo"},{id:"ev2",label:"Evento 2:",description:""},{id:"ev3",label:"Evento 3:",description:""},{id:"ev4",label:"Evento 4:",description:""},{id:"ev5",label:"Evento 5:",description:"Más reciente"}],
+          explanation:"Por superposición: capas inferiores = más antiguas. Intrusiones cortan rocas preexistentes. Fallas afectan todas las estructuras anteriores.",
+          feedback:{correct:"¡Excelente aplicación de principios estratigráficos!",incorrect:"Capas inferiores = más antiguas. Intrusiones y fallas son posteriores a las rocas que afectan."}
+        },
+        {
+          id:15, theme:"human-health", dok:2, type:"multiple-choice",
+          topic:"Respuesta glucémica e índice glucémico",
+          bookPages:"7, 34",
+          context:"Un nutricionista analiza el efecto de diferentes alimentos en los niveles de glucosa sanguínea:",
+          stimulus:`<div class="stimulus-title">🍎 Respuesta Glucémica a Diferentes Alimentos</div>
+<table class="data-table"><thead><tr><th>Alimento</th><th>Índice glucémico</th><th>Glucosa inicial (mg/dL)</th><th>Pico glucosa (mg/dL)</th><th>Tiempo al pico (min)</th><th>Retorno (min)</th></tr></thead>
+<tbody>
+<tr><td>Pan blanco</td><td>100</td><td>90</td><td>140</td><td>30</td><td>120</td></tr>
+<tr><td>Avena integral</td><td>55</td><td>88</td><td>115</td><td>45</td><td>150</td></tr>
+<tr><td>Frijoles</td><td>25</td><td>92</td><td>105</td><td>60</td><td>180</td></tr>
+<tr><td>Glucosa pura</td><td>100</td><td>85</td><td>185</td><td>15</td><td>90</td></tr>
+</tbody></table>`,
+          question:"¿Qué patrón se observa en la respuesta glucémica de estos alimentos?",
+          options:["Todos los alimentos producen la misma respuesta glucémica","Los alimentos con menor índice glucémico producen picos más bajos y sostenidos","El índice glucémico no se correlaciona con la respuesta real","La glucosa pura es la opción más saludable"],
+          correct:1,
+          explanation:"Menor IG = menor pico y liberación más sostenida. Frijoles (IG 25): pico 105 mg/dL vs pan blanco (IG 100): pico 140 mg/dL.",
+          feedback:{0:"Los datos muestran diferencias significativas en la respuesta glucémica.",1:"¡Correcto! Los alimentos con menor IG producen respuestas más moderadas y sostenidas.",2:"Hay una clara correlación entre IG y respuesta glucémica observada.",3:"La glucosa pura produce el pico más alto y rápido; no es la opción más saludable."}
+        },
+        {
+          id:16, theme:"earth-space", dok:3, type:"multiple-choice",
+          topic:"Corrientes oceánicas y cambio climático",
+          bookPages:"90, 102, 104",
+          context:"Un oceanógrafo estudia el efecto del cambio climático en las corrientes oceánicas:",
+          stimulus:`<div class="stimulus-title">🌊 Cambios en Corrientes Oceánicas</div>
+<table class="data-table"><thead><tr><th>Ubicación</th><th>Temp. 1990 (°C)</th><th>Temp. 2020 (°C)</th><th>Salinidad 1990 (psu)</th><th>Salinidad 2020 (psu)</th><th>Velocidad corriente</th></tr></thead>
+<tbody>
+<tr><td>Atlántico Norte</td><td>12.5</td><td>14.2</td><td>35.1</td><td>34.6</td><td>-15% (más lenta)</td></tr>
+<tr><td>Golfo de México</td><td>26.8</td><td>28.1</td><td>36.2</td><td>35.9</td><td>-8% (más lenta)</td></tr>
+<tr><td>Corriente de Groenlandia</td><td>2.1</td><td>4.3</td><td>34.9</td><td>34.2</td><td>-25% (más lenta)</td></tr>
+</tbody></table>`,
+          question:"¿Cuál es la explicación más probable para estos cambios en las corrientes?",
+          options:["Los cambios son normales y no afectan las corrientes","El calentamiento y menor salinidad están debilitando las corrientes termohalinas","Solo la temperatura afecta las corrientes oceánicas","Las corrientes se están acelerando debido al calentamiento"],
+          correct:1,
+          explanation:"Las corrientes termohalinas dependen de diferencias de densidad. El calentamiento (+1.7°C) y menor salinidad (-0.4 psu) reducen la densidad del agua, debilitando la circulación (15-25% más lenta).",
+          feedback:{0:"Los datos muestran cambios sistemáticos que afectan las corrientes.",1:"¡Correcto! Calentamiento y menor salinidad reducen la densidad, debilitando las corrientes.",2:"Tanto temperatura como salinidad afectan la densidad y las corrientes.",3:"Los datos muestran desaceleración, no aceleración."}
+        },
+        {
+          id:17, theme:"energy-systems", dok:3, type:"multiple-choice",
+          topic:"Diseño de sistemas de energía renovable",
+          bookPages:"85, 96, 103",
+          context:"Un ingeniero diseña un sistema de energía renovable para una comunidad remota:",
+          stimulus:`<div class="stimulus-title">☀️ Datos Climáticos para Diseño Energético</div>
+<table class="data-table"><thead><tr><th>Período</th><th>Horas sol/día</th><th>Viento (m/s)</th><th>Precipitación (mm)</th><th>Demanda (kWh/día)</th></tr></thead>
+<tbody>
+<tr><td>Enero-Marzo</td><td>4</td><td>12</td><td>180</td><td>85</td></tr>
+<tr><td>Abril-Junio</td><td>8</td><td>8</td><td>60</td><td>65</td></tr>
+<tr><td>Julio-Septiembre</td><td>10</td><td>6</td><td>15</td><td>95</td></tr>
+<tr><td>Octubre-Diciembre</td><td>5</td><td>14</td><td>120</td><td>80</td></tr>
+</tbody></table>
+<p><strong>Notas:</strong> Viento &gt;7 m/s = efectivo para turbinas | Solar eficiente con &gt;6 h sol/día</p>`,
+          question:"¿Cuál sería la mejor estrategia energética para esta comunidad?",
+          options:["Sistema 100% solar porque es la tecnología más limpia","Sistema híbrido solar-eólico con almacenamiento en baterías para manejar la variabilidad estacional","Sistema 100% eólico porque el viento es más constante que el sol","Generador diesel como respaldo principal"],
+          correct:1,
+          explanation:"Complementariedad estacional: invierno tiene poco sol (4h) pero viento fuerte (12 m/s); verano tiene mucho sol (10h) pero poco viento (6 m/s). El sistema híbrido aprovecha ambos recursos según la estación.",
+          feedback:{0:"Solo solar no cubriría enero-marzo (4h sol) cuando la demanda es alta (85 kWh/día).",1:"¡Excelente análisis! El sistema híbrido aprovecha la complementariedad estacional.",2:"El viento es bajo en verano (6 m/s) cuando la demanda es máxima (95 kWh/día).",3:"Los datos muestran recursos renovables suficientes; el diesel debería ser mínimo."}
+        },
+        {
+          id:18, theme:"human-health", dok:2, type:"multiple-choice",
+          topic:"Actividad física y salud cardiovascular",
+          bookPages:"4–5, 8",
+          context:"Un cardiólogo analiza datos de pacientes con diferentes niveles de actividad física:",
+          stimulus:`<div class="stimulus-title">❤️ Actividad Física y Salud Cardiovascular</div>
+<table class="data-table"><thead><tr><th>Grupo</th><th>Ejercicio/semana (min)</th><th>Presión sistólica (mmHg)</th><th>Colesterol LDL (mg/dL)</th><th>FC reposo (bpm)</th><th>Riesgo CV</th></tr></thead>
+<tbody>
+<tr><td>Sedentario</td><td>0</td><td>145</td><td>165</td><td>82</td><td>Alto</td></tr>
+<tr><td>Ligero</td><td>90</td><td>135</td><td>145</td><td>75</td><td>Moderado</td></tr>
+<tr><td>Moderado</td><td>180</td><td>125</td><td>120</td><td>68</td><td>Bajo</td></tr>
+<tr><td>Intenso</td><td>300</td><td>118</td><td>105</td><td>58</td><td>Muy bajo</td></tr>
+</tbody></table>`,
+          question:"¿Qué relación existe entre actividad física y salud cardiovascular según estos datos?",
+          options:["La actividad física no afecta significativamente la salud cardiovascular","Existe una relación dosis-respuesta entre ejercicio y mejora cardiovascular","Solo el ejercicio intenso proporciona beneficios","Los beneficios se platean después de 90 minutos semanales"],
+          correct:1,
+          explanation:"Relación dosis-respuesta clara: presión sistólica baja de 145 a 118 mmHg, LDL de 165 a 105 mg/dL, y FC de 82 a 58 bpm conforme aumenta el ejercicio.",
+          feedback:{0:"Los datos muestran mejoras progresivas en todos los indicadores cardiovasculares.",1:"¡Correcto! Hay una relación dosis-respuesta clara entre ejercicio y beneficios cardiovasculares.",2:"Incluso el ejercicio ligero (90 min/semana) muestra beneficios significativos.",3:"Los beneficios comienzan desde 90 minutos y continúan mejorando."}
+        }
+      ];
+
+      // ── VARIACIONES SIMILARES ──────────────────────────────────────────────
+      const questionVariations = {
+        0:[{context:"Un fisiólogo estudia el efecto de diferentes intensidades de entrenamiento en atletas:",stimulus:`<div class="stimulus-title">📊 Datos del Entrenamiento</div><table class="data-table"><thead><tr><th>Intensidad</th><th>Duración (min)</th><th>VO₂ inicial</th><th>VO₂ final</th><th>Atletas</th></tr></thead><tbody><tr><td>Baja</td><td>30</td><td>45</td><td>47</td><td>15</td></tr><tr><td>Moderada</td><td>30</td><td>46</td><td>52</td><td>15</td></tr><tr><td>Alta</td><td>30</td><td>44</td><td>58</td><td>15</td></tr><tr><td>Muy alta</td><td>30</td><td>45</td><td>65</td><td>15</td></tr></tbody></table>`,question:"¿Qué puede concluirse sobre el efecto de la intensidad del entrenamiento en el VO₂?",options:["La intensidad no afecta el consumo de oxígeno","Mayor intensidad resulta en mayor mejora del VO₂","Solo el entrenamiento de muy alta intensidad es efectivo","Los valores iniciales invalidan los resultados"],correct:1,explanation:"Baja +2, Moderada +6, Alta +14, Muy alta +20 ml/kg/min. Mayor intensidad = mayor mejora en VO₂."}],
+        1:[{context:"Un epidemiólogo investiga un brote de gastroenteritis en una escuela:",stimulus:`<div class="stimulus-title">🔬 Investigación de Brote Escolar</div><p>120 estudiantes almorzaron; 32 desarrollaron síntomas en 6-12 horas.</p><table class="data-table"><thead><tr><th>Alimento</th><th>Comieron</th><th>Enfermaron</th><th>No enfermaron</th><th>Tasa (%)</th></tr></thead><tbody><tr><td>Sándwich de jamón</td><td>50</td><td>28</td><td>22</td><td>56%</td></tr><tr><td>Ensalada de frutas</td><td>80</td><td>25</td><td>55</td><td>31%</td></tr><tr><td>Jugo de naranja</td><td>90</td><td>30</td><td>60</td><td>33%</td></tr><tr><td>Galletas</td><td>70</td><td>20</td><td>50</td><td>29%</td></tr></tbody></table>`,question:"¿Cuál es la fuente más probable de contaminación?",options:["El jugo de naranja porque más lo consumieron","El sándwich de jamón por su tasa de ataque del 56%","La ensalada de frutas porque se contamina fácilmente","No se puede determinar"],correct:1,explanation:"Tasa de ataque: sándwich de jamón 56% vs 29-33% de otros alimentos."}],
+        7:[{context:"Un climatólogo analiza datos de temperatura y precipitación de los últimos 40 años:",stimulus:`<div class="stimulus-title">🌡️ Variabilidad Climática Regional (40 años)</div><table class="data-table"><thead><tr><th>Década</th><th>Temp. (°C)</th><th>Precipitación (mm)</th><th>Días extremos/año</th></tr></thead><tbody><tr><td>1980-1989</td><td>14.2</td><td>720</td><td>3</td></tr><tr><td>1990-1999</td><td>14.8</td><td>680</td><td>5</td></tr><tr><td>2000-2009</td><td>15.4</td><td>640</td><td>8</td></tr><tr><td>2010-2019</td><td>16.1</td><td>580</td><td>12</td></tr></tbody></table>`,question:"¿Qué tendencia climática es más evidente en estos datos?",options:["Las temperaturas se mantienen estables","Aumento de temperatura con mayor variabilidad climática","Solo cambia la precipitación","Los eventos extremos son independientes"],correct:1,explanation:"Calentamiento +1.9°C en 40 años, precipitación -140 mm, eventos extremos 3→12/año."}]
+      };
+
+      // ── FUNCIONES DEL EXAMEN ──────────────────────────────────────────────
+      function startExam(){
+        document.getElementById("startScreen").style.display="none";
+        document.getElementById("examInterface").style.display="block";
+        examStarted=true;
+        startTimer();
+        loadQuestion(0);
+      }
+
+      function startTimer(){
+        timerInterval=setInterval(()=>{
+          timeLeft--;
+          updateTimerDisplay();
+          if(timeLeft<=0) endExam();
+        },1000);
+      }
+
+      function updateTimerDisplay(){
+        const m=Math.floor(timeLeft/60), s=timeLeft%60;
+        document.getElementById("timer").textContent=`${m}:${s.toString().padStart(2,"0")}`;
+      }
+
+      function loadQuestion(index){
+        currentQuestion=index;
+        const q=questions[index];
+        const pct=((index+1)/questions.length)*100;
+        document.getElementById("progressBar").style.width=`${pct}%`;
+
+        const themeMap={
+          "human-health":  {cls:"human-health",  name:"Salud Humana y Sistemas Vivos"},
+          "energy-systems":{cls:"energy-systems", name:"Energía y Sistemas Relacionados"},
+          "earth-space":   {cls:"earth-space",    name:"Ciencias de la Tierra y el Espacio"}
+        };
+        const th=themeMap[q.theme];
+
+        let html=`<div class="question-header">
+<div class="question-number">Pregunta ${index+1} de ${questions.length}</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+  <div class="dok-badge dok-${q.dok}">DOK ${q.dok}</div>
+  <div class="theme-badge ${th.cls}">${th.name}</div>
+</div></div>`;
+        if(q.context)  html+=`<div class="question-context">${q.context}</div>`;
+        if(q.stimulus) html+=`<div class="stimulus-panel">${q.stimulus}</div>`;
+        if(q.question) html+=`<div class="actual-question">${q.question}</div>`;
+
+        switch(q.type){
+          case"multiple-choice": html+=renderMC(q,index);     break;
+          case"dropdown":        html+=renderDD(q,index);     break;
+          case"short-answer":    html+=renderSA(q,index);     break;
+          case"drag-drop":       html+=renderDragDrop(q,index);break;
+        }
+        document.getElementById("questionCard").innerHTML=html;
+        if(q.type==="drag-drop") setupDragAndDrop(index);
+
+        document.getElementById("prevBtn").disabled=(index===0);
+        document.getElementById("nextBtn").textContent=(index===questions.length-1)?"Finalizar Examen":"Siguiente ➡️";
+
+        const sb=document.getElementById("similarBtn");
+        sb.style.display=(questionVariations[index]&&questionVariations[index].length>0)?"inline-block":"none";
+
+        if(answers[index]!==undefined) restoreAnswer(q,index);
+      }
+
+      function renderMC(q,idx){
+        let h='<div class="options">';
+        q.options.forEach((o,i)=>{
+          h+=`<div class="option" onclick="selectOption(${idx},${i})"><div class="option-letter">${String.fromCharCode(65+i)}</div><span>${o}</span></div>`;
+        });
+        return h+"</div>";
+      }
+
+      function renderDD(q,idx){
+        let h=`<select class="dropdown" onchange="saveDropdownAnswer(${idx},this.value)"><option value="">Seleccione una opción...</option>`;
+        q.options.forEach(o=>{ h+=`<option value="${o}">${o}</option>`; });
+        return h+"</select>";
+      }
+
+      function renderSA(q,idx){
+        return `<textarea class="text-input" rows="8" placeholder="${q.placeholder}" onchange="saveTextAnswer(${idx},this.value)"></textarea>
+<p style="font-size:12px;color:#666;margin-top:5px">⏱️ Tiempo recomendado: 15-20 minutos | 📊 Pregunta de puntos múltiples</p>`;
+      }
+
+      function renderDragDrop(q,idx){
+        const shuffled=[...q.dragItems].sort(()=>Math.random()-.5);
+        let h=`<div class="drag-drop-container">
+<div class="drag-items"><h4 style="color:#3498db;margin-bottom:15px">📋 Elementos para ordenar:</h4>`;
+        shuffled.forEach(item=>{
+          h+=`<div class="drag-item" draggable="true" data-item-id="${item.id}" data-correct="${item.correct}" data-question="${idx}">${item.text}</div>`;
+        });
+        h+=`</div><div class="drop-zones"><h4 style="color:#3498db;margin-bottom:15px">🎯 Zonas de destino:</h4>`;
+        q.dropZones.forEach((z,i)=>{
+          h+=`<div class="drop-zone" data-zone-id="${z.id}" data-zone-index="${i}" data-question="${idx}"><span class="zone-label">${z.label}</span><span>${z.description}</span></div>`;
+        });
+        h+=`</div></div><div style="margin-top:20px"><button class="nav-button" onclick="checkDragDropAnswer(${idx})" style="background:#27ae60">✅ Verificar Respuesta</button></div>`;
+        return h;
+      }
+
+      function setupDragAndDrop(qi){
+        document.querySelectorAll(`[data-question="${qi}"].drag-item`).forEach(el=>{
+          el.addEventListener("dragstart",handleDragStart);
+          el.addEventListener("dragend",handleDragEnd);
+        });
+        document.querySelectorAll(`[data-question="${qi}"].drop-zone`).forEach(el=>{
+          el.addEventListener("dragover",e=>e.preventDefault());
+          el.addEventListener("dragenter",e=>{e.preventDefault();el.classList.add("drag-over");});
+          el.addEventListener("dragleave",e=>el.classList.remove("drag-over"));
+          el.addEventListener("drop",handleDrop);
+        });
+      }
+
+      function handleDragStart(e){
+        e.dataTransfer.setData("application/json",JSON.stringify({
+          itemId:e.target.dataset.itemId,
+          correct:parseInt(e.target.dataset.correct),
+          questionIndex:parseInt(e.target.dataset.question),
+          text:e.target.textContent.trim()
+        }));
+        e.target.classList.add("dragging");
+      }
+      function handleDragEnd(e){ e.target.classList.remove("dragging"); }
+      function handleDrop(e){
+        e.preventDefault();
+        e.target.classList.remove("drag-over");
+        const data=JSON.parse(e.dataTransfer.getData("application/json"));
+        const zi=parseInt(e.target.dataset.zoneIndex);
+        e.target.querySelector(".dropped-item")?.remove();
+        const di=document.createElement("div");
+        di.className="dropped-item"; di.textContent=data.text;
+        di.dataset.itemId=data.itemId; di.dataset.correct=data.correct;
+        e.target.appendChild(di);
+        e.target.classList.add("filled");
+        const orig=document.querySelector(`[data-item-id="${data.itemId}"]`);
+        if(orig) orig.style.display="none";
+        if(!answers[data.questionIndex]) answers[data.questionIndex]={dragDropAnswers:{}};
+        answers[data.questionIndex].dragDropAnswers[zi]=data.correct;
+      }
+
+      function checkDragDropAnswer(qi){
+        const q=questions[qi];
+        const zones=document.querySelectorAll(`[data-question="${qi}"].drop-zone`);
+        let ok=0;
+        zones.forEach((z,i)=>{
+          const di=z.querySelector(".dropped-item");
+          if(di){
+            if(parseInt(di.dataset.correct)===i){ z.classList.add("correct"); ok++; }
+            else z.classList.add("incorrect");
+          }
+        });
+        const isOk=(ok===q.dragItems.length);
+        document.querySelectorAll(`[data-question="${qi}"].drag-item`).forEach(el=>{
+          el.draggable=false; el.style.opacity=".5";
+        });
+        answers[qi]={type:"drag-drop",correct:isOk,feedbackShown:true};
+        document.getElementById("questionCard").insertAdjacentHTML("beforeend",
+          `<div class="feedback-panel ${isOk?"correct":"incorrect"}" style="display:block">
+<div class="feedback-title">${isOk?"✅ ¡Excelente!":"❌ No del todo correcto"}</div>
+<div class="feedback-explanation">${isOk?q.feedback.correct:q.feedback.incorrect}</div>
+<div class="feedback-explanation"><strong>Explicación:</strong> ${q.explanation}</div>
+<button class="continue-btn" onclick="hideFeedback()">Continuar</button></div>`);
+      }
+
+      function selectOption(qi,oi){
+        if(answers[qi]!==undefined&&answers[qi].feedbackShown) return;
+        const q=questions[qi];
+        const isOk=(oi===q.correct);
+        answers[qi]={value:oi,feedbackShown:true};
+        document.querySelectorAll(".option").forEach((el,i)=>{
+          el.style.pointerEvents="none";
+          if(i===q.correct) el.classList.add("correct");
+          else if(i===oi&&!isOk) el.classList.add("incorrect");
+        });
+        showFeedback(q,oi,isOk);
+      }
+
+      function showFeedback(q,ua,isOk){
+        document.getElementById("questionCard").insertAdjacentHTML("beforeend",
+          `<div class="feedback-panel ${isOk?"correct":"incorrect"}" style="display:block">
+<div class="feedback-title">${isOk?"✅ ¡Correcto!":"❌ Incorrecto"}</div>
+<div class="feedback-explanation">${q.feedback?q.feedback[ua]:""}</div>
+<div class="feedback-explanation"><strong>Explicación:</strong> ${q.explanation}</div>
+${!isOk?`<div class="correct-answer"><strong>Respuesta correcta:</strong> ${q.options[q.correct]}</div>`:""}
+<button class="continue-btn" onclick="hideFeedback()">Continuar</button></div>`);
+      }
+
+      function hideFeedback(){
+        document.querySelector(".feedback-panel")?.remove();
+      }
+
+      function saveDropdownAnswer(qi,val){
+        const q=questions[qi];
+        const isOk=(val===q.correct);
+        answers[qi]={value:val,isCorrect:isOk,feedbackShown:true};
+        document.querySelector(".dropdown").disabled=true;
+        setTimeout(()=>{
+          document.getElementById("questionCard").insertAdjacentHTML("beforeend",
+            `<div class="feedback-panel ${isOk?"correct":"incorrect"}" style="display:block">
+<div class="feedback-title">${isOk?"✅ ¡Correcto!":"❌ Incorrecto"}</div>
+<div class="feedback-explanation"><strong>Explicación:</strong> ${q.explanation}</div>
+${q.feedback&&q.feedback[val]?`<div class="feedback-explanation">${q.feedback[val]}</div>`:""}
+${!isOk?`<div class="correct-answer"><strong>Respuesta correcta:</strong> ${q.correct}</div>`:""}
+<button class="continue-btn" onclick="hideFeedback()">Continuar</button></div>`);
+        },300);
+      }
+
+      function saveTextAnswer(qi,val){
+        const q=questions[qi];
+        answers[qi]={value:val.trim(),isEssay:q.isEssay||false,feedbackShown:true};
+        if(q.isEssay&&q.rubric){
+          const wc=val.trim().split(/\s+/).length;
+          let lvl="needs_improvement";
+          if(wc>=250&&val.includes("patrón")&&val.includes("mecanismo")) lvl="good";
+          if(wc>=300&&val.includes("epidemiológic")&&val.includes("recomenda")) lvl="excellent";
+          setTimeout(()=>{
+            document.getElementById("questionCard").insertAdjacentHTML("beforeend",
+              `<div class="feedback-panel correct" style="display:block">
+<div class="feedback-title">📝 Respuesta Registrada (${wc} palabras)</div>
+<div class="feedback-explanation"><strong>Evaluación:</strong> ${q.rubric[lvl]}</div>
+<div class="feedback-explanation"><strong>Nota:</strong> Las respuestas de redacción se evalúan por contenido científico, razonamiento lógico y uso de evidencia.</div>
+<button class="continue-btn" onclick="hideFeedback()">Continuar</button></div>`);
+          },500);
+        }
+      }
+
+      function restoreAnswer(q,idx){
+        const a=answers[idx];
+        if(!a) return;
+        switch(q.type){
+          case"multiple-choice":
+            if(a.feedbackShown){
+              document.querySelectorAll(".option").forEach((el,i)=>{
+                el.style.pointerEvents="none";
+                if(i===q.correct) el.classList.add("correct");
+                else if(i===a.value&&a.value!==q.correct) el.classList.add("incorrect");
+              });
+            }
+            break;
+          case"dropdown":
+            const dd=document.querySelector(".dropdown");
+            if(dd&&a.value){ dd.value=a.value; dd.disabled=a.feedbackShown; }
+            break;
+          case"short-answer":
+            const ta=document.querySelector(".text-input");
+            if(ta&&a.value) ta.value=a.value;
+            break;
+        }
+      }
+
+      function generateSimilarQuestion(){
+        const vars=questionVariations[currentQuestion];
+        if(!vars||!vars.length){ alert("No hay variaciones disponibles para esta pregunta."); return; }
+        const v=vars[Math.floor(Math.random()*vars.length)];
+        const orig={...questions[currentQuestion]};
+        questions[currentQuestion]={...orig,...v,
+          explanation:v.explanation||orig.explanation,
+          feedback:v.feedback||{0:"Revisa los datos.",1:"¡Correcto!",2:"Considera todos los factores.",3:"Los datos dan información suficiente."}
+        };
+        delete answers[currentQuestion];
+        loadQuestion(currentQuestion);
+        const n=document.createElement("div");
+        n.style.cssText="position:fixed;top:20px;right:20px;z-index:1000;background:#f39c12;color:white;padding:15px 20px;border-radius:10px;font-weight:bold;box-shadow:0 4px 12px rgba(0,0,0,.3);max-width:300px;text-align:center;animation:slideIn .3s ease-out";
+        n.innerHTML="🔄 Pregunta similar generada<br><small style='font-weight:normal'>¡Practica los mismos conceptos!</small>";
+        document.body.appendChild(n);
+        setTimeout(()=>n.remove(),3000);
+      }
+
+      function previousQuestion(){
+        if(currentQuestion>0){ hideFeedback(); loadQuestion(currentQuestion-1); }
+      }
+      function nextQuestion(){
+        if(currentQuestion<questions.length-1){ hideFeedback(); loadQuestion(currentQuestion+1); }
+        else endExam();
+      }
+
+      // ── INFORME DE ERRORES ────────────────────────────────────────────────
+      function endExam(){
+        clearInterval(timerInterval);
+
+        let correct=0, incorrect=0, skipped=0, essayPoints=0;
+
+        questions.forEach((q,i)=>{
+          const a=answers[i];
+          if(!a){ skipped++; return; }
+          if(q.isEssay){
+            const wc=(a.value||"").split(/\s+/).filter(w=>w).length;
+            if(wc>=300) essayPoints=3;
+            else if(wc>=200) essayPoints=2;
+            else if(wc>0) essayPoints=1;
+            return;
+          }
+          let ok=false;
+          if(q.type==="multiple-choice"&&a.value===q.correct) ok=true;
+          if(q.type==="dropdown"&&a.value===q.correct) ok=true;
+          if(q.type==="drag-drop"&&a.correct) ok=true;
+          if(ok) correct++; else incorrect++;
+        });
+
+        const nonEssayTotal=questions.filter(q=>!q.isEssay).length;
+        const totalPossible=nonEssayTotal+3;
+        const totalEarned=correct+essayPoints;
+        const pct=Math.round((totalEarned/totalPossible)*100);
+
+        document.getElementById("examInterface").style.display="none";
+        document.getElementById("resultsScreen").style.display="block";
+        document.getElementById("finalScore").textContent=`${pct}%`;
+
+        let msg="";
+        if(pct>=75) msg="¡Excelente! Demuestras sólidas habilidades de razonamiento científico (DOK 2-3). Estás bien preparado para el GED.";
+        else if(pct>=60) msg="Buen progreso. Sigue practicando análisis de datos y diseño experimental.";
+        else msg="Necesitas más práctica con interpretación de datos y pensamiento científico. Consulta las páginas indicadas en el informe.";
+        document.getElementById("resultMessage").textContent=msg;
+
+        // Tarjetas resumen
+        document.getElementById("summaryCards").innerHTML=`
+<div class="summary-card card-correct"><div class="card-num">${correct}</div><div class="card-lbl">✅ Correctas</div></div>
+<div class="summary-card card-incorrect"><div class="card-num">${incorrect}</div><div class="card-lbl">❌ Incorrectas</div></div>
+<div class="summary-card card-skipped"><div class="card-num">${skipped}</div><div class="card-lbl">⏭️ Sin responder</div></div>
+<div class="summary-card card-essay"><div class="card-num">${essayPoints}/3</div><div class="card-lbl">📝 Redacción</div></div>`;
+
+        // Lista de errores
+        const errorsList=document.getElementById("errorsList");
+        let errorsHTML="";
+        let hasErrors=false;
+
+        questions.forEach((q,i)=>{
+          if(q.isEssay) return;
+          const a=answers[i];
+          let ok=false, userLabel="(sin respuesta)";
+
+          if(a){
+            if(q.type==="multiple-choice"){
+              ok=(a.value===q.correct);
+              userLabel=q.options[a.value]||"(sin respuesta)";
+            } else if(q.type==="dropdown"){
+              ok=(a.value===q.correct);
+              userLabel=a.value||"(sin respuesta)";
+            } else if(q.type==="drag-drop"){
+              ok=a.correct;
+              userLabel=ok?"Orden correcto":"Orden incorrecto";
+            }
+          }
+
+          if(!ok){
+            hasErrors=true;
+            const correctLabel=
+              q.type==="multiple-choice"?q.options[q.correct]:
+              q.type==="dropdown"?q.correct:
+              "Ver secuencia correcta en la explicación";
+
+            errorsHTML+=`<div class="error-item">
+<div class="error-item-header">
+  <span class="error-qnum">Pregunta ${i+1}</span>
+  <span class="error-topic">${q.topic}</span>
+  <span class="error-pages">📖 Págs. ${q.bookPages}</span>
+</div>
+<div class="error-answers">
+  <span class="user-answer">Tu respuesta: ${userLabel}</span>
+  <span class="right-answer">Respuesta correcta: ${correctLabel}</span>
+</div>
+<div style="font-size:13px;color:#666;margin-top:6px">${q.explanation}</div>
+</div>`;
+          }
+        });
+
+        if(!hasErrors) errorsHTML=`<p style="color:#27ae60;font-weight:bold;padding:15px;background:#d5f4e6;border-radius:8px">🎉 ¡No hay errores que reportar! Excelente desempeño.</p>`;
+        errorsList.innerHTML=errorsHTML;
+
+        // Tabla de rendimiento por tema
+        const topicMap={};
+        questions.forEach((q,i)=>{
+          const key=q.topic;
+          if(!topicMap[key]) topicMap[key]={topic:q.topic,pages:q.bookPages,theme:q.theme,total:0,correct:0,essay:q.isEssay};
+          if(q.isEssay){ topicMap[key].essayPoints=essayPoints; return; }
+          topicMap[key].total++;
+          const a=answers[i];
+          if(a){
+            let ok=false;
+            if(q.type==="multiple-choice"&&a.value===q.correct) ok=true;
+            if(q.type==="dropdown"&&a.value===q.correct) ok=true;
+            if(q.type==="drag-drop"&&a.correct) ok=true;
+            if(ok) topicMap[key].correct++;
+          }
+        });
+
+        const themeTagMap={
+          "human-health":  {cls:"tag-hh",    label:"🫀 Salud"},
+          "energy-systems":{cls:"tag-es",    label:"⚡ Energía"},
+          "earth-space":   {cls:"tag-earth", label:"🌍 Tierra"}
+        };
+
+        let tRows="";
+        Object.values(topicMap).forEach(t=>{
+          if(t.essay){
+            const ep=t.essayPoints||0;
+            const ep_pct=Math.round(ep/3*100);
+            const barCls=ep_pct>=75?"bar-green":ep_pct>=50?"bar-yellow":"bar-red";
+            const tt=themeTagMap[t.theme];
+            tRows+=`<tr>
+<td>${t.topic}</td>
+<td><span class="theme-tag ${tt.cls}">${tt.label}</span></td>
+<td>${ep}/3 pts</td>
+<td><div class="perf-bar-bg"><div class="perf-bar ${barCls}" style="width:${ep_pct}%"></div></div></td>
+<td><span class="pages-tag">Págs. ${t.pages}</span></td></tr>`;
+          } else {
+            const pct2=t.total>0?Math.round(t.correct/t.total*100):0;
+            const barCls=pct2>=75?"bar-green":pct2>=50?"bar-yellow":"bar-red";
+            const tt=themeTagMap[t.theme];
+            tRows+=`<tr>
+<td>${t.topic}</td>
+<td><span class="theme-tag ${tt.cls}">${tt.label}</span></td>
+<td>${t.correct}/${t.total} (${pct2}%)</td>
+<td><div class="perf-bar-bg"><div class="perf-bar ${barCls}" style="width:${pct2}%"></div></div></td>
+<td><span class="pages-tag">Págs. ${t.pages}</span></td></tr>`;
+          }
+        });
+        document.getElementById("perfTableBody").innerHTML=tRows;
+      }
+
+      function restartExam(){
+        currentQuestion=0; timeLeft=5400; answers={}; examStarted=false;
+        document.getElementById("resultsScreen").style.display="none";
+        document.getElementById("startScreen").style.display="block";
+      }
+
+      // ── INICIALIZACIÓN ────────────────────────────────────────────────────
+      document.addEventListener("DOMContentLoaded",()=>{
+        document.addEventListener("keydown",e=>{
+          if(!examStarted) return;
+          if(e.key==="ArrowLeft"&&currentQuestion>0) previousQuestion();
+          else if(e.key==="ArrowRight") nextQuestion();
+        });
+        const s=document.createElement("style");
+        s.textContent=`
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes slideOut{from{transform:translateX(0);opacity:1}to{transform:translateX(100%);opacity:0}}`;
+        document.head.appendChild(s);
+      });
+
+function abrirYImprimir() {
+ const contenido = document.querySelector(".results-container").innerHTML;
+
+  const ventana = window.open('', '', 'width=900,height=700');
+
+  ventana.document.write(`
+    <html>
+      <head>
+        <title>Informe GED Estudios Sociales</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+          }
+          th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+          }
+          th {
+            background: #e74c3c;
+            color: white;
+          }
+          .score-banner {
+            text-align: center;
+            margin-bottom: 20px;
+          }
+@page {
+  margin: 20mm;
+}
+        </style>
+      </head>
+      <body>
+        ${contenido}
+      </body>
+    </html>
+  `);
+
+  ventana.document.close();
+
+  ventana.onload = function() {
+    ventana.focus();
+    ventana.print();
+  };
+}
+    </script>
+  </body>
+</html>
