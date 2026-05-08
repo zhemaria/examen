@@ -1,1 +1,1516 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Examen de Matemáticas GED - Práctica Completa (45 Preguntas)</title>
+    <style>
+      :root {
+        --primary-color: #007bff;
+        --primary-dark: #0056b3;
+        --success-color: #28a745;
+        --success-dark: #218838;
+        --danger-color: #dc3545;
+        --warning-color: #ffc107;
+        --light-bg: #eef5f9;
+        --dark-text: #212529;
+        --light-text: #f8f9fa;
+        --white: #ffffff;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background: var(--light-bg); min-height: 100vh; color: var(--dark-text); }
+      ul { padding-left: 35px; }
+      .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+      .header { background: var(--white); border-radius: 15px; padding: 25px; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(0,95,115,0.1); border: 2px solid var(--primary-color); }
+      .timer { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; }
+      .time-display { background: var(--primary-color); color: var(--white); padding: 10px 20px; border-radius: 25px; font-size: 18px; font-weight: bold; border: 3px solid var(--primary-dark); }
+      .progress-container { background: #e9ecef; border-radius: 10px; padding: 3px; border: 2px solid #ced4da; }
+      .progress-bar { background: linear-gradient(90deg, var(--success-color), var(--success-dark)); height: 20px; border-radius: 8px; transition: width 0.3s ease; border: 1px solid #1e7e34; }
+      .question-card { background: var(--white); border-radius: 15px; padding: 30px; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(0,95,115,0.1); border: 2px solid var(--primary-color); }
+      .question-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 3px solid var(--primary-color); flex-wrap: wrap; gap: 10px; }
+      .question-number { background: var(--primary-color); color: var(--white); padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 16px; border: 2px solid var(--primary-dark); }
+      .badge-container { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+      .dok-badge, .theme-badge, .calculator-badge { padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; border: 2px solid; }
+      .header-tool-button { background: none; border: 1px solid var(--primary-dark); color: var(--primary-dark); padding: 5px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.2s ease; }
+      .header-tool-button:hover { background: var(--primary-dark); color: var(--white); }
+      .dok-1 { background: #e7f5ff; color: #007bff; border-color: #007bff; }
+      .dok-2 { background: #fff3cd; color: #856404; border-color: #ffc107; }
+      .dok-3 { background: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+      .algebra { background: #d1ecf1; color: #0c5460; border-color: #bee5eb; }
+      .quantitative { background: #d4edda; color: #155724; border-color: #c3e6cb; }
+      .calc-yes { background: #d4edda; color: #155724; border-color: #c3e6cb; }
+      .calc-no { background: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+      .question-context { font-size: 16px; line-height: 1.6; margin-bottom: 20px; background: var(--light-text); padding: 15px; border-radius: 8px; border-left: 4px solid var(--primary-color); }
+      .actual-question { font-size: 18px; font-weight: bold; color: var(--dark-text); margin: 20px 0; padding: 15px; background: #e7f5ff; border-left: 4px solid var(--primary-color); border-radius: 5px; }
+      .options { display: flex; flex-direction: column; gap: 12px; }
+      .option { background: var(--light-text); border: 2px solid #ced4da; border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: flex-start; gap: 10px; }
+      .option:hover { background: #e7f5ff; border-color: var(--primary-color); transform: translateY(-2px); }
+      .option.selected, .option.correct { background: #d4edda; border-color: var(--success-color); color: #155724; font-weight: bold; }
+      .option.incorrect { background: #f8d7da; border-color: var(--danger-color); color: #721c24; font-weight: bold; }
+      .option-letter { background: var(--primary-color); color: var(--white); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid var(--primary-dark); flex-shrink: 0; }
+      .feedback-panel { background: var(--light-text); border-radius: 10px; padding: 20px; margin-top: 20px; border-left: 4px solid var(--primary-color); display: none; }
+      .feedback-panel.correct { background: #d4edda; border-left-color: var(--success-color); }
+      .feedback-panel.incorrect { background: #f8d7da; border-left-color: var(--danger-color); }
+      .feedback-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+      .feedback-explanation { font-size: 16px; line-height: 1.6; margin-bottom: 15px; }
+      .correct-answer { background: #e2e3e5; padding: 10px; border-radius: 5px; border: 2px solid #6c757d; font-weight: bold; }
+      .navigation { display: flex; justify-content: space-between; align-items: center; background: var(--white); border-radius: 15px; padding: 20px; box-shadow: 0 8px 24px rgba(0,95,115,0.1); border: 2px solid var(--primary-color); }
+      .nav-button { background: var(--primary-color); color: var(--white); border: none; padding: 12px 24px; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: bold; transition: all 0.3s ease; border: 2px solid var(--primary-dark); }
+      .nav-button:hover:not(:disabled) { background: var(--primary-dark); transform: translateY(-2px); }
+      .nav-button:disabled { background: #6c757d; cursor: not-allowed; border-color: #5a6268; }
+      .start-screen, .results { background: var(--white); border-radius: 15px; padding: 40px; text-align: center; box-shadow: 0 8px 24px rgba(0,95,115,0.1); border: 2px solid var(--primary-color); }
+      .start-title { font-size: 32px; color: var(--dark-text); margin-bottom: 20px; font-weight: bold; }
+      .start-description { font-size: 18px; color: #495057; margin-bottom: 30px; line-height: 1.6; text-align: left; }
+      .start-button { background: linear-gradient(45deg, var(--success-color), var(--success-dark)); color: var(--white); border: none; padding: 15px 40px; border-radius: 30px; font-size: 20px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; border: 3px solid #1e7e34; }
+      .start-button:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(40,167,69,0.3); }
+      .score { font-size: 48px; font-weight: bold; color: var(--success-color); margin-bottom: 10px; }
+      .fill-in-blank, .dropdown { padding: 12px; border: 2px solid #ced4da; border-radius: 8px; font-size: 16px; font-family: inherit; width: 100%; max-width: 300px; margin-top: 10px; }
+      .fill-in-blank:focus, .dropdown:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(0,123,255,0.2); }
+      .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
+      .modal-content { background-color: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 800px; border-radius: 15px; position: relative; }
+      .close-button { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+      .formula-sheet { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; font-size: 14px; }
+      .formula-sheet h3 { color: var(--primary-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 5px; margin-bottom: 10px; }
+      .formula-sheet ul { list-style: none; padding: 0; }
+      .formula-sheet li { margin-bottom: 8px; }
+      .formula-sheet code { background: #e9ecef; padding: 2px 5px; border-radius: 4px; }
+      .calculator-modal { position: fixed; z-index: 1001; left: 50%; top: 50%; transform: translate(-50%, -50%); display: none; }
+      .calculator { background: #f0f0f0; border: 3px solid #333; border-radius: 12px; padding: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); width: 300px; max-width: 95vw; }
+      .calculator-header { padding: 10px; cursor: move; z-index: 10; background-color: #333; color: white; border-top-left-radius: 8px; border-top-right-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+      .calculator-header .close-calc-button { cursor: pointer; font-size: 20px; font-weight: bold; }
+      .calculator .header { text-align: center; margin-bottom: 10px; border: none; box-shadow: none; padding: 0; }
+      .calculator .brand { font-size: 12px; color: #333; font-weight: bold; }
+      .calculator .model { font-size: 16px; color: #333; font-weight: bold; margin-top: 3px; }
+      .calculator .display { background: #000; color: #07ee07; height: 60px; margin: 10px 0; padding: 8px; border: 2px inset #333; font-family: "Courier New", monospace; font-size: 16px; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; }
+      .calculator .display-line { margin: 2px 0; min-height: 18px; }
+      .calculator .keyboard { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; width: 100%; }
+      .calculator .row-3 { margin-top: 12px; }
+      .calculator .row-5 { margin-top: 12px; }
+      .calculator .row-6 { margin-top: 12px; }
+      .calculator .btn { position: relative; height: 35px; min-width: 50px; border: 1px solid #333; border-radius: 3px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.1s; display: flex; align-items: center; justify-content: center; }
+      .calculator .btn:active { transform: scale(0.95); }
+      .calculator .btn-2nd { background: #24db24; color: #000; }
+      .calculator .btn-function { background: #666; color: white; }
+      .calculator .btn-number { background: white; color: #000; border: 2px solid #999; font-size: 16px; }
+      .calculator .btn-operation { background: #000; color: white; }
+      .calculator .btn-inactive { background: #4169e1; color: white; cursor: not-allowed; opacity: 0.7; }
+      .calculator .btn-active { background: #ffd700 !important; color: #000 !important; }
+      .calculator .secondary-label { position: absolute; top: 1px; left: 2px; font-size: 10px; color: #00ff00; font-weight: bold; background: rgba(0,0,0,0.8); padding: 1px 2px; border-radius: 2px; z-index: 15; line-height: 1; pointer-events: none; text-shadow: 0 0 2px #00ff00; }
+      .prob-menu { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 2px solid #333; border-radius: 8px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 1002; display: none; }
+      .prob-menu h3 { margin-top: 0; text-align: center; }
+      .prob-menu .prob-option { display: block; width: 100%; margin: 10px 0; padding: 10px; background: #666; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+      .prob-menu .prob-option:hover { background: #888; }
+      .prob-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1001; display: none; }
 
+      /* INFORME DE ERRORES */
+      .report-section { background: var(--white); border-radius: 15px; padding: 30px; margin-top: 20px; box-shadow: 0 8px 24px rgba(0,95,115,0.1); border: 2px solid var(--primary-color); text-align: left; }
+      .report-section h2 { color: var(--primary-dark); margin-bottom: 5px; font-size: 24px; }
+      .report-subtitle { color: #6c757d; font-size: 14px; margin-bottom: 20px; font-style: italic; }
+      .report-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 25px; }
+      .summary-card { background: var(--light-bg); border-radius: 10px; padding: 15px; text-align: center; border: 2px solid #dee2e6; }
+      .summary-card .card-value { font-size: 28px; font-weight: bold; display: block; }
+      .summary-card .card-label { font-size: 12px; color: #6c757d; margin-top: 4px; }
+      .summary-correct .card-value { color: var(--success-color); }
+      .summary-incorrect .card-value { color: var(--danger-color); }
+      .summary-skipped .card-value { color: #6c757d; }
+      .summary-score .card-value { color: var(--primary-color); }
+      .error-topic-group { margin-bottom: 20px; border: 2px solid #dee2e6; border-radius: 10px; overflow: hidden; }
+      .error-topic-header { background: linear-gradient(135deg, #f8d7da, #f5c6cb); padding: 12px 18px; font-weight: bold; font-size: 16px; color: #721c24; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+      .error-topic-header .page-ref { background: #721c24; color: var(--white); padding: 4px 12px; border-radius: 15px; font-size: 13px; white-space: nowrap; }
+      .error-question-item { padding: 12px 18px; border-bottom: 1px solid #e9ecef; font-size: 14px; line-height: 1.6; display: flex; gap: 10px; align-items: flex-start; }
+      .error-question-item:last-child { border-bottom: none; }
+      .error-q-number { background: var(--danger-color); color: var(--white); min-width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; flex-shrink: 0; }
+      .error-q-detail { flex: 1; }
+      .error-q-detail .error-user-answer { color: var(--danger-color); font-weight: bold; }
+      .error-q-detail .error-correct-answer { color: var(--success-color); font-weight: bold; }
+      .area-summary { margin-top: 25px; }
+      .area-summary table { width: 100%; border-collapse: collapse; font-size: 14px; }
+      .area-summary th { background: var(--primary-color); color: var(--white); padding: 10px 14px; text-align: left; font-size: 13px; }
+      .area-summary td { padding: 10px 14px; border-bottom: 1px solid #dee2e6; }
+      .area-summary tr:nth-child(even) { background: #f8f9fa; }
+      .area-summary .perf-bar { background: #e9ecef; border-radius: 8px; height: 14px; overflow: hidden; min-width: 80px; }
+      .area-summary .perf-fill { height: 100%; border-radius: 8px; transition: width 0.5s ease; }
+      .perf-high { background: var(--success-color); }
+      .perf-mid { background: var(--warning-color); }
+      .perf-low { background: var(--danger-color); }
+      .all-correct-message { text-align: center; padding: 30px; font-size: 18px; color: var(--success-dark); }
+      .all-correct-message .trophy { font-size: 64px; display: block; margin-bottom: 15px; }
+      .print-button { background: #6c757d; color: var(--white); border: 2px solid #5a6268; padding: 10px 24px; border-radius: 25px; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.3s ease; margin-top: 15px; }
+      .print-button:hover { background: #5a6268; transform: translateY(-2px); }
+      @media print {
+        body { background: white; }
+        .navigation, .start-button, .nav-button, .print-button, .header-tool-button, .calculator-modal, .prob-menu, .prob-overlay, #formulaModal { display: none !important; }
+        .results, .report-section { box-shadow: none; border: 1px solid #ccc; }
+        .container { max-width: 100%; }
+      }
+      @media (max-width: 768px) {
+        .timer, .question-header, .navigation { flex-direction: column; gap: 15px; }
+        .navigation { flex-wrap: wrap; justify-content: center; }
+        .report-summary { grid-template-columns: repeat(2, 1fr); }
+      }
+@page {
+  margin: 20mm;
+}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="startScreen" class="start-screen">
+        <h1 class="start-title">Examen de Práctica de Razonamiento Matemático GED<br>
+          <span style="font-size: 16px;">Creado por José M. Fernández con Claude Opus 4.6 Extended.</span></h1>
+                <div class="start-description">
+          Estudiante, este examen simula las condiciones del examen oficial de Matemáticas del GED.Al final del mismo, te brindará un <b>Informe de Errores y Guía de Estudio</b>, indicándote las páginas del <i>Steck-Vaughn GED: Test Prep 2014 GED Mathematical Reasoning Spanish Student Edition 2014 (Spanish Edition)</i> que debes estudiar.</p>
+          <ul style="text-align: left; margin: 20px 0">
+            <li><strong>⏱️ Duración Total:</strong> 115 minutos</li>
+            <li><strong>📝 Preguntas Totales:</strong> 45</li>
+            <li><strong>✌️ Dos Partes:</strong>
+              <ul>
+                <li><strong>Parte 1:</strong> Sin calculadora (Primeras 8 preguntas)</li>
+                <li><strong>Parte 2:</strong> Con calculadora (Resto del examen)</li>
+              </ul>
+            </li>
+            <li><strong>📊 Contenido:</strong>
+              <ul>
+                <li>Resolución de Problemas Cuantitativos (45%)</li>
+                <li>Resolución de Problemas Algebraicos (55%)</li>
+              </ul>
+            </li>
+            <li><strong>🧠 Niveles DOK:</strong> Mezcla de DOK 1, 2 y 3</li>
+            <li><strong>🔀 Aleatorio:</strong> Las preguntas y los valores numéricos cambian en cada intento</li>
+          </ul>
+                 </div>
+        <button class="start-button" onclick="startExam()">Comenzar Examen</button>
+      </div>
+
+      <div id="examInterface" style="display: none">
+        <div class="header">
+          <div class="timer">
+            <div>
+              <h2>📐 Examen de Matemáticas GED</h2>
+              <p>Duración: 115 minutos</p>
+            </div>
+            <div class="time-display" id="timer">115:00</div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+          </div>
+        </div>
+        <div class="question-card" id="questionCard"></div>
+        <div class="navigation">
+          <button class="nav-button" id="prevBtn" onclick="previousQuestion()" disabled>⬅️ Anterior</button>
+          <button class="nav-button" id="nextBtn" onclick="nextQuestion()">Siguiente ➡️</button>
+        </div>
+      </div>
+
+      <div id="resultsScreen" style="display: none">
+        <div class="results">
+          <h2>🎉 ¡Examen Completado!</h2>
+          <div class="score" id="finalScore">0%</div>
+          <p id="resultMessage"></p>
+          <button class="nav-button" onclick="restartExam()" style="margin-top: 20px">🔄 Reiniciar Examen</button>
+        </div>
+        <div id="errorReport" class="report-section" style="display: none"></div>
+      </div>
+    </div>
+
+    <!-- Modal Fórmulas -->
+    <div id="formulaModal" class="modal">
+      <div class="modal-content">
+        <span class="close-button" onclick="toggleFormulaSheet()">&times;</span>
+        <h2>Hoja de Fórmulas de Matemáticas del GED</h2>
+        <div class="formula-sheet">
+          <div><h3>Área</h3><ul><li>Cuadrado: <code>A = s²</code></li><li>Rectángulo: <code>A = l × w</code></li><li>Paralelogramo: <code>A = b × h</code></li><li>Triángulo: <code>A = ½ × b × h</code></li><li>Trapecio: <code>A = ½ × h(b₁ + b₂)</code></li><li>Círculo: <code>A = πr²</code></li></ul></div>
+          <div><h3>Perímetro y Circunferencia</h3><ul><li>Cuadrado: <code>P = 4s</code></li><li>Rectángulo: <code>P = 2l + 2w</code></li><li>Triángulo: <code>P = s₁ + s₂ + s₃</code></li><li>Circunferencia: <code>C = 2πr</code> o <code>C = πd</code></li></ul></div>
+          <div><h3>Superficie y Volumen</h3><ul><li>Prisma: <code>SA = 2lw + 2lh + 2wh</code>, <code>V = lwh</code></li><li>Cilindro: <code>SA = 2πrh + 2πr²</code>, <code>V = πr²h</code></li><li>Pirámide: <code>V = ⅓Bh</code></li><li>Cono: <code>V = ⅓πr²h</code></li><li>Esfera: <code>SA = 4πr²</code>, <code>V = (4/3)πr³</code></li></ul></div>
+          <div><h3>Álgebra</h3><ul><li>Pendiente: <code>m = (y₂ - y₁) / (x₂ - x₁)</code></li><li>Pendiente-intercepto: <code>y = mx + b</code></li><li>Fórmula cuadrática: <code>x = [-b ± √(b²-4ac)] / 2a</code></li><li>Pitágoras: <code>a² + b² = c²</code></li><li>Interés Simple: <code>I = prt</code></li></ul></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calculadora -->
+    <div id="calculatorModal" class="calculator-modal">
+      <div class="calculator">
+        <div class="calculator-header" id="calculatorModalHeader">
+          <span>Calculadora TI-30XS</span>
+          <span class="close-calc-button" onclick="toggleCalculator()">&times;</span>
+        </div>
+        <div class="header">
+          <div class="brand">🎯 Simulador Parcial</div>
+          <div class="model">TI-30XS MultiView</div>
+          <div style="font-size: 10px; color: #666">Versión de Práctica</div>
+        </div>
+        <div class="display" id="calcDisplay">
+          <div class="display-line" id="calcInputLine"></div>
+          <div class="display-line" id="calcResultLine"></div>
+        </div>
+        <div class="keyboard">
+          <button class="btn btn-2nd" onclick="calcToggle2nd()">2nd</button>
+          <button class="btn btn-inactive">mode</button><button class="btn btn-inactive">delete</button><button class="btn btn-inactive">◄</button><button class="btn btn-inactive">►</button>
+          <button class="btn btn-inactive">log</button><button class="btn btn-function" onclick="calcOpenProbMenu()">prb</button><button class="btn btn-inactive">data</button><button class="btn btn-inactive">▲</button><button class="btn btn-inactive">▼</button>
+          <button class="btn btn-inactive row-3">ln</button><button class="btn btn-function row-3" onclick="calcHandleFraction()"><div class="secondary-label">U n/d</div>n/d</button><button class="btn btn-function row-3" onclick="calcScientificNotation()">×10^n</button><button class="btn btn-inactive row-3">table</button><button class="btn btn-function row-3" onclick="calcClearDisplay()">clear</button>
+          <button class="btn btn-inactive">π</button><button class="btn btn-inactive">sin</button><button class="btn btn-inactive">cos</button><button class="btn btn-inactive">tan</button><button class="btn btn-operation" onclick="calcAppendOperator('/')">÷</button>
+          <button class="btn btn-function row-5" onclick="calcHandleSquareRoot()"><div class="secondary-label">x√</div>^</button><button class="btn btn-function row-5" onclick="calcReciprocal()">x⁻¹</button><button class="btn btn-function row-5" onclick="calcAppendOperator('(')">(</button><button class="btn btn-function row-5" onclick="calcAppendOperator(')')">)</button><button class="btn btn-operation row-5" onclick="calcAppendOperator('*')">×</button>
+          <button class="btn btn-function row-6" onclick="calcHandleSquare()"><div class="secondary-label">√</div>x²</button><button class="btn btn-number row-6" onclick="calcAppendNumber('7')">7</button><button class="btn btn-number row-6" onclick="calcAppendNumber('8')">8</button><button class="btn btn-number row-6" onclick="calcAppendNumber('9')">9</button><button class="btn btn-operation row-6" onclick="calcAppendOperator('-')">−</button>
+          <button class="btn btn-inactive">x√abc</button><button class="btn btn-number" onclick="calcAppendNumber('4')">4</button><button class="btn btn-number" onclick="calcAppendNumber('5')">5</button><button class="btn btn-number" onclick="calcAppendNumber('6')">6</button><button class="btn btn-operation" onclick="calcAppendOperator('+')">+</button>
+          <button class="btn btn-inactive">sto→</button><button class="btn btn-number" onclick="calcAppendNumber('1')">1</button><button class="btn btn-number" onclick="calcAppendNumber('2')">2</button><button class="btn btn-number" onclick="calcAppendNumber('3')">3</button><button class="btn btn-inactive">⟷</button>
+          <button class="btn btn-inactive">on</button><button class="btn btn-number" onclick="calcAppendNumber('0')">0</button><button class="btn btn-number" onclick="calcAppendNumber('.')">.</button><button class="btn btn-number" onclick="calcNegative()">(−)</button><button class="btn btn-number" onclick="calcCalculate()">enter</button>
+        </div>
+      </div>
+    </div>
+    <div class="prob-overlay" onclick="calcCloseProbMenu()"></div>
+    <div class="prob-menu" id="probMenu">
+      <h3>Probabilidad</h3>
+      <button class="prob-option" onclick="calcSelectProb('nPr')">1: nPr (Permutación)</button>
+      <button class="prob-option" onclick="calcSelectProb('nCr')">2: nCr (Combinación)</button>
+      <button class="prob-option" onclick="calcSelectProb('!')">3: ! (Factorial)</button>
+    </div>
+
+    <script>
+    // ===================================================
+    // UTILIDADES
+    // ===================================================
+    function randInt(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
+    function randChoice(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+    function shuffleArray(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
+    function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b]; } return a; }
+    function rd(n, d) { return Math.round(n * Math.pow(10, d)) / Math.pow(10, d); }
+
+    // Para MC: options[0] siempre es la correcta; esta función baraja y retorna nuevo índice correcto
+    // Incluye deduplicación automática para evitar opciones repetidas
+    function shuffleMC(options) {
+      let correct = String(options[0]);
+      let seen = new Set([correct]);
+      let unique = [correct];
+      for (let i = 1; i < options.length; i++) {
+        let val = String(options[i]);
+        if (!seen.has(val)) { seen.add(val); unique.push(val); }
+      }
+      // Si faltan opciones por duplicación, generar variantes
+      if (unique.length < 4) {
+        // Intentar variantes numéricas si el correcto parece numérico
+        let numMatch = correct.match(/-?\d+\.?\d*/);
+        if (numMatch) {
+          let base = parseFloat(numMatch[0]);
+          let tries = [base+1, base-1, base*2, base+5, base-5, base+3, Math.round(base/2)];
+          for (let t of tries) {
+            if (unique.length >= 4) break;
+            let variant = correct.replace(numMatch[0], String(t));
+            if (!seen.has(variant)) { seen.add(variant); unique.push(variant); }
+          }
+        }
+        // Si aún faltan (opciones tipo texto), agregar variantes con ajustes
+        let fallbacks = ["Ninguna de las anteriores", "No se puede determinar", "Otra respuesta"];
+        for (let fb of fallbacks) {
+          if (unique.length >= 4) break;
+          if (!seen.has(fb)) { seen.add(fb); unique.push(fb); }
+        }
+      }
+      unique = unique.slice(0, 4);
+      let indexed = unique.map((o, i) => ({ val: o, orig: i }));
+      shuffleArray(indexed);
+      return { options: indexed.map(x => x.val), correct: indexed.findIndex(x => x.orig === 0) };
+    }
+
+    // Asegurar distractores únicos para MC (numéricos)
+    function uniqueOptions(correct, distractors) {
+      let opts = [correct];
+      distractors.forEach(d => { 
+        let val = typeof d === 'number' ? rd(d, 2) : d;
+        if (!opts.includes(val) && val !== correct) opts.push(val); 
+      });
+      // Rellenar si faltan con valores cercanos al correcto
+      let offset = 1;
+      while (opts.length < 4) { 
+        let candidate = correct + offset * (opts.length % 2 === 0 ? 1 : -1);
+        candidate = typeof correct === 'number' ? rd(candidate, 2) : candidate;
+        if (!opts.includes(candidate)) opts.push(candidate); 
+        offset++;
+        if (offset > 20) break; // Seguro anti-loop infinito
+      }
+      return opts.slice(0, 4);
+    }
+
+    // ===================================================
+    // 45 GENERADORES DE PREGUNTAS
+    // ===================================================
+    const generators = [
+
+    // ========== PARTE 1: SIN CALCULADORA (8) ==========
+
+    // Q1: Orden de números en la recta numérica
+    { part:1, theme:"quantitative", dok:1, calculator:false, type:"multiple-choice",
+      topic:"Recta numérica y orden de números", bookPages:"págs. 6–7, 50",
+      generate() {
+        const sets = [
+          { nums: [{s:"-3/4",v:-0.75},{s:"-0.5",v:-0.5},{s:"0",v:0},{s:"1/2",v:0.5}] },
+          { nums: [{s:"-2/3",v:-0.667},{s:"-0.25",v:-0.25},{s:"0",v:0},{s:"3/4",v:0.75}] },
+          { nums: [{s:"-1/4",v:-0.25},{s:"-0.8",v:-0.8},{s:"0",v:0},{s:"2/5",v:0.4}] },
+          { nums: [{s:"-0.6",v:-0.6},{s:"-1/5",v:-0.2},{s:"0",v:0},{s:"3/5",v:0.6}] },
+          { nums: [{s:"-4/5",v:-0.8},{s:"-0.3",v:-0.3},{s:"0",v:0},{s:"1/4",v:0.25}] },
+        ];
+        const set = randChoice(sets);
+        const sorted = [...set.nums].sort((a,b) => a.v - b.v);
+        const correctStr = sorted.map(n=>n.s).join(", ");
+        // Distractores: ordenar mal
+        let d1 = [...set.nums].sort((a,b) => b.v - a.v).map(n=>n.s).join(", ");
+        let shuffled1 = shuffleArray([...set.nums]); let d2 = shuffled1.map(n=>n.s).join(", ");
+        let shuffled2 = shuffleArray([...set.nums]); let d3 = shuffled2.map(n=>n.s).join(", ");
+        while (d2 === correctStr || d2 === d1) { shuffleArray(shuffled1); d2 = shuffled1.map(n=>n.s).join(", "); }
+        while (d3 === correctStr || d3 === d1 || d3 === d2) { shuffleArray(shuffled2); d3 = shuffled2.map(n=>n.s).join(", "); }
+        const mc = shuffleMC([correctStr, d1, d2, d3]);
+        return { context:"Compara los siguientes números para determinar su orden en la recta numérica.",
+          question:"¿Cuál de las siguientes listas ordena los números de menor a mayor?",
+          options: mc.options, correct: mc.correct,
+          explanation:`Convierte todos los números a decimales y ordénalos. El orden correcto es: ${correctStr}.`
+        };
+      }
+    },
+
+    // Q2: Suma de fracciones
+    { part:1, theme:"quantitative", dok:1, calculator:false, type:"fill-in-blank",
+      topic:"Suma de fracciones y denominador común", bookPages:"págs. 8–9, 66–67",
+      generate() {
+        const pairs = [[3,5,-1,2],[1,4,-1,5],[2,5,-1,4],[3,4,-1,2],[1,2,-1,5],[3,10,-1,5],[7,10,-2,5]];
+        const [n1,d1,n2,d2] = randChoice(pairs);
+        const result = rd(n1/d1 + n2/d2, 2);
+        const lcd = (d1*d2)/gcd(d1,d2);
+        const adj1 = n1*(lcd/d1), adj2 = n2*(lcd/d2);
+        return { context:"Realiza operaciones aritméticas básicas con números racionales.",
+          question:`Calcula el valor de la siguiente expresión: ${n1}/${d1} + (${n2}/${d2})`,
+          correct: String(result),
+          explanation:`Denominador común = ${lcd}. ${n1}/${d1} = ${adj1}/${lcd}. ${n2}/${d2} = ${adj2}/${lcd}. Suma: ${adj1}/${lcd} + ${adj2}/${lcd} = ${adj1+adj2}/${lcd} = ${result}.`
+        };
+      }
+    },
+
+    // Q3: Exponentes y raíces
+    { part:1, theme:"quantitative", dok:2, calculator:false, type:"multiple-choice",
+      topic:"Exponentes y raíces cuadradas", bookPages:"págs. 54–57",
+      generate() {
+        const base = randInt(2,7);
+        const perfects = [{sq:4,rt:2},{sq:9,rt:3},{sq:16,rt:4},{sq:25,rt:5},{sq:36,rt:6},{sq:49,rt:7},{sq:64,rt:8},{sq:81,rt:9}];
+        const p = randChoice(perfects);
+        const answer = base*base + p.rt;
+        const opts = uniqueOptions(answer, [base*2+p.rt, base*base+p.sq, base*base*p.rt]);
+        const mc = shuffleMC(opts);
+        return { context:"Evalúa una expresión que involucra exponentes y raíces.",
+          question:`¿Cuál es el valor de ${base}² + √${p.sq}?`,
+          options: mc.options.map(String), correct: mc.correct,
+          explanation:`${base}² = ${base*base}. √${p.sq} = ${p.rt}. Suma: ${base*base} + ${p.rt} = ${answer}.`
+        };
+      }
+    },
+
+    // Q4: Propiedad distributiva
+    { part:1, theme:"algebra", dok:2, calculator:false, type:"multiple-choice",
+      topic:"Propiedad distributiva y expresiones algebraicas", bookPages:"págs. 50–53",
+      generate() {
+        const a = randInt(2,6), b = randInt(2,8), c = randInt(1,5);
+        const coefX = a + c, constTerm = a * b;
+        const answer = `${coefX}x - ${constTerm}`;
+        // Generar distractores garantizando que sean únicos
+        let pool = new Set();
+        pool.add(`${coefX}x - ${b}`);
+        pool.add(`${a*c}x - ${constTerm}`);
+        pool.add(`${a}x - ${constTerm}`);
+        pool.add(`${coefX}x + ${constTerm}`);
+        pool.add(`${coefX + 1}x - ${constTerm}`);
+        pool.add(`${coefX - 1}x - ${constTerm}`);
+        pool.add(`${coefX}x - ${constTerm + b}`);
+        pool.delete(answer); // quitar si alguno coincide con la correcta
+        let distractors = [...pool].slice(0, 3);
+        const mc = shuffleMC([answer, ...distractors]);
+        return { context:"Simplifica una expresión algebraica usando la propiedad distributiva.",
+          question:`¿Cuál es la forma simplificada de la expresión ${a}(x - ${b}) + ${c}x?`,
+          options: mc.options, correct: mc.correct,
+          explanation:`${a}(x - ${b}) = ${a}x - ${a*b}. Luego ${a}x - ${a*b} + ${c}x = ${coefX}x - ${a*b} = ${answer}.`
+        };
+      }
+    },
+
+    // Q5: Distancia en recta numérica
+    { part:1, theme:"quantitative", dok:1, calculator:false, type:"fill-in-blank",
+      topic:"Distancia y valor absoluto", bookPages:"págs. 6–7, 54, 72",
+      generate() {
+        const a = -randInt(3,12), b = randInt(2,10);
+        const dist = Math.abs(b - a);
+        return { context:"Calcula la distancia entre dos puntos en una recta numérica.",
+          question:`En una recta numérica, un punto está en ${a} y otro en ${b}. ¿Cuál es la distancia entre los dos puntos?`,
+          correct: String(dist),
+          explanation:`Distancia = |${b} - (${a})| = |${b} + ${Math.abs(a)}| = |${dist}| = ${dist}.`
+        };
+      }
+    },
+
+    // Q6: MCD
+    { part:1, theme:"quantitative", dok:1, calculator:false, type:"fill-in-blank",
+      topic:"Factores y máximo común divisor", bookPages:"págs. 4–5, 64–67",
+      generate() {
+        const pairs = [[12,18,6],[24,36,12],[16,24,8],[20,30,10],[15,25,5],[18,27,9],[14,21,7],[30,45,15],[28,42,14],[36,48,12]];
+        const [a,b,ans] = randChoice(pairs);
+        return { context:"Encuentra el Máximo Común Divisor (MCD) de dos números.",
+          question:`¿Cuál es el máximo común divisor de ${a} y ${b}?`,
+          correct: String(ans),
+          explanation:`Los factores comunes de ${a} y ${b} incluyen 1, ... y el mayor es ${ans}. MCD(${a}, ${b}) = ${ans}.`
+        };
+      }
+    },
+
+    // Q7: Punto en una línea y = mx + b
+    { part:1, theme:"algebra", dok:2, calculator:false, type:"multiple-choice",
+      topic:"Ecuaciones lineales y pares ordenados", bookPages:"págs. 60–61, 70–73",
+      generate() {
+        const m = randInt(2,4), b = randChoice([-3,-2,-1,1,2,3]);
+        // Punto correcto
+        const x1 = randInt(1,3), y1 = m*x1+b;
+        // Distractores (puntos que NO están en la línea)
+        const d1 = `(${x1}, ${y1+2})`, d2 = `(${x1+1}, ${m*x1+b})`, d3 = `(0, ${b+1})`;
+        const correctPt = `(${x1}, ${y1})`;
+        const mc = shuffleMC([correctPt, d1, d2, d3]);
+        return { context:`Verifica si un punto pertenece a la línea dada por la ecuación y = ${m}x ${b>=0?'+ '+b:'- '+Math.abs(b)}.`,
+          question:`¿Cuál de los siguientes puntos se encuentra en la línea y = ${m}x ${b>=0?'+ '+b:'- '+Math.abs(b)}?`,
+          options: mc.options, correct: mc.correct,
+          explanation:`Para ${correctPt}: ${y1} = ${m}(${x1}) ${b>=0?'+ '+b:'- '+Math.abs(b)} = ${m*x1} ${b>=0?'+ '+b:'- '+Math.abs(b)} = ${y1}. ✓ Correcto.`
+        };
+      }
+    },
+
+    // Q8: Valor absoluto
+    { part:1, theme:"quantitative", dok:2, calculator:false, type:"multiple-choice",
+      topic:"Valor absoluto", bookPages:"págs. 6–7, 54",
+      generate() {
+        const a = -randInt(2,9), b = randInt(1,5), c = randInt(6,12);
+        const absA = Math.abs(a), inner = b - c, absInner = Math.abs(inner);
+        const answer = absA + absInner;
+        const opts = uniqueOptions(answer, [Math.abs(a + b - c), absA - absInner, a + b - c + 20]);
+        const mc = shuffleMC(opts);
+        return { context:"Calcula una expresión con valor absoluto.",
+          question:`¿Cuál es el valor de |${a}| + |${b} - ${c}|?`,
+          options: mc.options.map(String), correct: mc.correct,
+          explanation:`|${a}| = ${absA}. ${b} - ${c} = ${inner}. |${inner}| = ${absInner}. Suma: ${absA} + ${absInner} = ${answer}.`
+        };
+      }
+    },
+
+    // ========== PARTE 2: CON CALCULADORA (37) ==========
+
+    // Q9: Porcentaje y descuento
+    { part:2, theme:"quantitative", dok:2, calculator:true, type:"multiple-choice",
+      topic:"Porcentajes y descuentos", bookPages:"págs. 14–15",
+      generate() {
+        const prices = [80,100,120,150,200,250]; const pcts = [10,15,20,25,30];
+        const price = randChoice(prices), pct = randChoice(pcts);
+        const disc = price * pct / 100, answer = price - disc;
+        const opts = uniqueOptions(answer, [disc, price + disc, price - disc/2]);
+        const mc = shuffleMC(opts.map(v => "$" + v));
+        return { context:`Un artículo que originalmente costaba $${price} tiene un descuento del ${pct}%.`,
+          question:"¿Cuál es el precio del artículo después del descuento?",
+          options: mc.options, correct: mc.correct,
+          explanation:`${pct}% de $${price} = ${pct/100} × ${price} = $${disc}. Precio final: $${price} - $${disc} = $${answer}.`
+        };
+      }
+    },
+
+    // Q10: Evaluar expresión algebraica
+    { part:2, theme:"algebra", dok:1, calculator:true, type:"fill-in-blank",
+      topic:"Evaluación de expresiones algebraicas (sustitución)", bookPages:"págs. 50–53, 60–65",
+      generate() {
+        const x = randInt(3,8), y = randChoice([-4,-3,-2,2,3,4]);
+        const a = randInt(2,4), b = randInt(2,4);
+        const answer = a*x - b*y;
+        return { context:"Evalúa una expresión algebraica para valores dados de las variables.",
+          question:`Si x = ${x} y y = ${y}, ¿cuál es el valor de la expresión ${a}x - ${b}y?`,
+          correct: String(answer),
+          explanation:`${a}(${x}) - ${b}(${y}) = ${a*x} - (${b*y}) = ${a*x} ${-b*y>=0?'+ '+(-b*y):'- '+Math.abs(b*y)} = ${answer}.`
+        };
+      }
+    },
+
+    // Q11: Área compuesta (rectángulo + semicírculo)
+    { part:2, theme:"quantitative", dok:2, calculator:true, type:"fill-in-blank",
+      topic:"Área de figuras planas compuestas", bookPages:"págs. 100–103",
+      generate() {
+        const w = randChoice([4,6,8,10]), h = randInt(5,10);
+        const r = w/2;
+        const rectArea = w*h, semiArea = rd(3.14*r*r/2, 2);
+        const total = Math.round(rectArea + semiArea);
+        return { context:"Calcula el área de una figura compuesta. Usa 3.14 para &pi;.",
+          question:`Una ventana tiene forma de un rectángulo de ${w} pies de ancho y ${h} pies de alto, con un semicírculo en la parte superior. ¿Cuál es el área total en pies cuadrados? (Redondea al entero más cercano)`,
+          correct: String(total),
+          explanation:`Rectángulo: ${w} × ${h} = ${rectArea}. Radio del semicírculo: ${w}/2 = ${r}. Semicírculo: (3.14 × ${r}²)/2 = ${semiArea}. Total: ${rectArea} + ${semiArea} = ${rd(rectArea+semiArea,2)} ≈ ${total}.`
+        };
+      }
+    },
+
+    // Q12: Gráfico lineal — mayor aumento
+    { part:2, theme:"algebra", dok:2, calculator:true, type:"multiple-choice",
+      topic:"Interpretación de gráficas lineales y tasa de cambio", bookPages:"págs. 34–35, 82–83",
+      generate() {
+        const t1 = randInt(8,15), t2 = t1+randInt(3,7), t3 = t2-randInt(1,4), t4 = t3+randInt(5,12);
+        const changes = [t2-t1, t3-t2, t4-t3];
+        const maxIdx = changes.indexOf(Math.max(...changes));
+        const labels = ["T1 y T2","T2 y T3","T3 y T4"];
+        const correctLabel = labels[maxIdx];
+        const mc = shuffleMC([correctLabel, ...labels.filter(l=>l!==correctLabel), "No hubo aumento"]);
+        return { context:`Un gráfico muestra las ventas trimestrales: T1=$${t1}k, T2=$${t2}k, T3=$${t3}k, T4=$${t4}k.`,
+          question:"¿Entre qué dos trimestres ocurrió el mayor aumento en las ventas?",
+          options: mc.options, correct: mc.correct,
+          explanation:`T1→T2: $${t2-t1}k. T2→T3: $${t3-t2}k. T3→T4: $${t4-t3}k. El mayor aumento ($${Math.max(...changes)}k) fue entre ${correctLabel}.`
+        };
+      }
+    },
+
+    // Q13: Ecuación lineal — problema verbal
+    { part:2, theme:"algebra", dok:2, calculator:true, type:"multiple-choice",
+      topic:"Ecuaciones lineales con una variable", bookPages:"págs. 60–61",
+      generate() {
+        const n = randInt(2,5), extra = randInt(1,4), price = randInt(2,6);
+        const total = n*price + extra;
+        const opts = uniqueOptions(price, [price+1, price-1, total/n]);
+        const mc = shuffleMC(opts.map(v => "$"+rd(v,2)));
+        return { context:`María compró ${n} cuadernos y una pluma de $${extra}. Gastó un total de $${total}.`,
+          question:"Si cada cuaderno cuesta lo mismo, ¿cuál es el costo de un cuaderno?",
+          options: mc.options, correct: mc.correct,
+          explanation:`${n}c + ${extra} = ${total}. ${n}c = ${total-extra}. c = ${(total-extra)/n}. Cada cuaderno cuesta $${price}.`
+        };
+      }
+    },
+
+    // Q14: Teorema de Pitágoras
+    { part:2, theme:"quantitative", dok:3, calculator:true, type:"multiple-choice",
+      topic:"Teorema de Pitágoras", bookPages:"págs. 96–97",
+      generate() {
+        const triples = [[3,4,5],[5,12,13],[8,15,17],[6,8,10],[9,12,15],[7,24,25]];
+        const [a,b,c] = randChoice(triples);
+        const shown = a, hidden = b, hyp = c;
+        const opts = uniqueOptions(hidden, [hidden-2, hidden+1, hyp-shown]);
+        const mc = shuffleMC(opts.map(v => v + " pies"));
+        return { context:"Un problema que requiere el uso del Teorema de Pitágoras.",
+          question:`Una escalera de ${hyp} pies de largo está apoyada contra una pared. La base está a ${shown} pies de la pared. ¿A qué altura de la pared llega la escalera?`,
+          options: mc.options, correct: mc.correct,
+          explanation:`a² + b² = c². ${shown}² + b² = ${hyp}². ${shown*shown} + b² = ${hyp*hyp}. b² = ${hyp*hyp - shown*shown}. b = √${hyp*hyp - shown*shown} = ${hidden} pies.`
+        };
+      }
+    },
+
+    // Q15: Desigualdad lineal (dropdown)
+    { part:2, theme:"algebra", dok:2, calculator:true, type:"dropdown",
+      topic:"Desigualdades lineales", bookPages:"págs. 68–69",
+      generate() {
+        const a = randInt(2,5), b = randInt(3,9);
+        const rhs = a * randInt(3,8);
+        const sol = (rhs - b) / a;
+        const solStr = Number.isInteger(sol) ? String(sol) : rd(sol,1).toString();
+        return { context:"Resuelve una desigualdad lineal.",
+          question:`Selecciona la solución correcta para la desigualdad ${a}x + ${b} > ${rhs}.`,
+          options: shuffleArray([`x > ${solStr}`, `x < ${solStr}`, `x > ${rhs}`, `x < ${b}`]),
+          correct: `x > ${solStr}`,
+          explanation:`${a}x + ${b} > ${rhs}. Resta ${b}: ${a}x > ${rhs-b}. Divide por ${a}: x > ${solStr}.`
+        };
+      }
+    },
+
+    // Q16: Volumen de cilindro
+    { part:2, theme:"quantitative", dok:2, calculator:true, type:"multiple-choice",
+      topic:"Volumen de un cilindro", bookPages:"págs. 106–107",
+      generate() {
+        const r = randInt(2,6), h = randInt(5,15);
+        const vol = rd(3.14 * r * r * h, 1);
+        const opts = uniqueOptions(vol, [rd(3.14*r*h,1), rd(3.14*2*r*h,1), r*r*h]);
+        const mc = shuffleMC(opts.map(v => v + " cm³"));
+        return { context:"Calcula el volumen de un cilindro. Usa 3.14 para &pi;.",
+          question:`Un cilindro tiene un radio de ${r} cm y una altura de ${h} cm. ¿Cuál es su volumen?`,
+          options: mc.options, correct: mc.correct,
+          explanation:`V = πr²h = 3.14 × ${r}² × ${h} = 3.14 × ${r*r} × ${h} = ${vol} cm³.`
+        };
+      }
+    },
+
+    // Q17: Función cuadrática — evaluación
+    { part:2, theme:"algebra", dok:3, calculator:true, type:"multiple-choice",
+      topic:"Funciones cuadráticas (evaluación)", bookPages:"págs. 64–65, 78–81",
+      generate() {
+        const coef = randChoice([16,8,4]);
+        const b = coef * randInt(3,6);
+        const t = rd(randChoice([1, 1.5, 2, 2.5, 3]), 1);
+        const answer = -coef*t*t + b*t;
+        const opts = uniqueOptions(answer, [coef*t*t + b*t, -coef*t + b*t, b*t]);
+        const mc = shuffleMC(opts.map(v => rd(v,1) + " pies"));
+        return { context:"Analiza una función en un contexto del mundo real.",
+          question:`La altura h(t) = -${coef}t² + ${b}t da la altura en pies después de t segundos. ¿Cuál es la altura después de ${t} segundos?`,
+          options: mc.options, correct: mc.correct,
+          explanation:`h(${t}) = -${coef}(${t})² + ${b}(${t}) = -${coef}(${t*t}) + ${b*t} = ${-coef*t*t} + ${b*t} = ${answer} pies.`
+        };
+      }
+    },
+
+    // Q18: Probabilidad simple
+    { part:2, theme:"quantitative", dok:1, calculator:true, type:"multiple-choice",
+      topic:"Probabilidad simple", bookPages:"págs. 32–33",
+      generate() {
+        const r = randInt(3,7), az = randInt(2,5), v = randInt(1,4);
+        const total = r+az+v;
+        const target = randChoice([{name:"roja",count:r},{name:"azul",count:az},{name:"verde",count:v}]);
+        const g = gcd(target.count, total);
+        const answer = `${target.count/g}/${total/g}`;
+        const d1 = `${target.count}/${total-target.count}`, d2 = `1/${total}`, d3 = `${target.count+1}/${total}`;
+        const mc = shuffleMC([answer, d1, d2, d3]);
+        return { context:`Una bolsa contiene ${r} canicas rojas, ${az} azules y ${v} verdes.`,
+          question:`Si sacas una canica al azar, ¿cuál es la probabilidad de que sea ${target.name}?`,
+          options: mc.options, correct: mc.correct,
+          explanation:`Total = ${r}+${az}+${v} = ${total}. Canicas ${target.name}s = ${target.count}. P = ${target.count}/${total} = ${answer}.`
+        };
+      }
+    },
+
+    // Q19: Mediana
+    { part:2, theme:"quantitative", dok:2, calculator:true, type:"multiple-choice",
+      topic:"Mediana de un conjunto de datos", bookPages:"págs. 30–31, 38–39",
+      generate() {
+        let scores = [];
+        for (let i = 0; i < 5; i++) scores.push(randInt(70,98));
+        const sorted = [...scores].sort((a,b)=>a-b);
+        const median = sorted[2];
+        const mean = rd(scores.reduce((a,b)=>a+b,0)/5, 1);
+        const opts = uniqueOptions(median, [sorted[0], mean, sorted[4]]);
+        const mc = shuffleMC(opts.map(String));
+        return { context:"Encuentra la mediana de un conjunto de datos.",
+          question:`Las puntuaciones de un estudiante fueron ${scores.join(", ")}. ¿Cuál es la mediana?`,
+          options: mc.options, correct: mc.correct,
+          explanation:`Ordenados: ${sorted.join(", ")}. La mediana (valor del medio) es ${median}.`
+        };
+      }
+    },
+
+    // Q20: Proporción y escala
+    { part:2, theme:"quantitative", dok:2, calculator:true, type:"fill-in-blank",
+      topic:"Proporciones y escala", bookPages:"págs. 10–11, 104–105",
+      generate() {
+        const scale = randChoice([25,30,40,50,60,75]);
+        const inches = randChoice([2, 2.5, 3, 3.5, 4, 4.5, 5]);
+        const answer = scale * inches;
+        return { context:"Resuelve un problema de escala.",
+          question:`Un mapa tiene una escala de 1 pulgada = ${scale} millas. La distancia en el mapa es ${inches} pulgadas. ¿Cuál es la distancia real en millas?`,
+          correct: String(answer),
+          explanation:`${scale} × ${inches} = ${answer} millas.`
+        };
+      }
+    },
+
+    // Q21: Ecuación lineal con variables en ambos lados
+    { part:2, theme:"algebra", dok:2, calculator:true, type:"multiple-choice",
+      topic:"Ecuaciones lineales con una variable", bookPages:"págs. 60–61",
+      generate() {
+        const x = randInt(2,8);
+        const a = randInt(3,6), c = randInt(1,a-1);
+        const bLeft = randInt(2,9);
+        const bRight = (a-c)*x - bLeft;
+        const opts = uniqueOptions(x, [x+2, x-1, (bLeft+bRight)/(a+c)]);
+        const mc = shuffleMC(opts.map(v => "x = " + rd(v,1)));
+        return { context:"Resuelve una ecuación lineal con variables en ambos lados.",
+          question:`Resuelve para x: ${a}x - ${Math.abs(bLeft)} = ${c}x + ${bRight}`,
+          options: mc.options, correct: mc.correct,
+          explanation:`${a}x - ${c}x = ${bRight} + ${bLeft}. ${a-c}x = ${bRight+bLeft}. x = ${(bRight+bLeft)/(a-c)} = ${x}.`
+        };
+      }
+    },
+
+    // Q22: Pendiente entre dos puntos (dropdown)
+    { part:2, theme:"algebra", dok:2, calculator:true, type:"dropdown",
+      topic:"Pendiente de una línea", bookPages:"págs. 74–77, 82–83",
+      generate() {
+        const x1 = randInt(1,4), x2 = x1+randInt(1,4);
+        const m = randChoice([-3,-2,-1,1,2,3,4]);
+        const y1 = randInt(-3,5), y2 = y1 + m*(x2-x1);
+        const opts = shuffleArray([String(m), String(-m), String(m+1), String(1/m === Infinity ? 0 : rd(1/m,1))]);
+        return { context:`Encuentra la pendiente de la línea que pasa por los puntos (${x1}, ${y1}) y (${x2}, ${y2}).`,
+          question:`¿Cuál es la pendiente de la línea?`,
+          options: opts, correct: String(m),
+          explanation:`m = (${y2} - ${y1}) / (${x2} - ${x1}) = ${y2-y1} / ${x2-x1} = ${m}.`
+        };
+      }
+    },
+
+    // Q23: Área del trapecio
+    { part:2, theme:"quantitative", dok:2, calculator:true, type:"multiple-choice",
+      topic:"Área del trapecio", bookPages:"págs. 94–95, 99",
+      generate() {
+        const b1 = randInt(6,14), b2 = b1 + randInt(2,8), h = randInt(4,10);
+        const answer = 0.5 * h * (b1+b2);
+        const opts = uniqueOptions(answer, [h*(b1+b2), 0.5*h*b1, b1*b2*h]);
+        const mc = shuffleMC(opts.map(v => v + " cm²"));
+        return { context:"Calcula el área de un trapecio.",
+          question:`Un trapecio tiene bases de ${b1} cm y ${b2} cm, y una altura de ${h} cm. ¿Cuál es su área?`,
+          options: mc.options, correct: mc.correct,
+          explanation:`A = ½ × h × (b₁ + b₂) = ½ × ${h} × (${b1} + ${b2}) = ½ × ${h} × ${b1+b2} = ${answer} cm².`
+        };
+      }
+    },
+
+    // Q24: Vértice de parábola — altura máxima
+    { part:2, theme:"algebra", dok:3, calculator:true, type:"multiple-choice",
+      topic:"Ecuación cuadrática y vértice de una parábola", bookPages:"págs. 64–65, 78–79, 108",
+      generate() {
+        const a = 16, bCoef = randChoice([64,80,96,112,128,160]);
+        const tMax = bCoef / (2*a);
+        const hMax = -a*tMax*tMax + bCoef*tMax;
+        const opts = uniqueOptions(hMax, [bCoef, hMax/2, hMax+a]);
+        const mc = shuffleMC(opts.map(v => v + " pies"));
+        return { context:"Encuentra el vértice de una parábola a partir de una función cuadrática.",
+          question:`La altura de un cohete es h(t) = -16t² + ${bCoef}t. ¿Cuál es la altura máxima?`,
+          options: mc.options, correct: mc.correct,
+          explanation:`t del vértice = -b/(2a) = -${bCoef}/(2×-16) = ${tMax} s. h(${tMax}) = -16(${tMax})² + ${bCoef}(${tMax}) = ${hMax} pies.`
+        };
+      }
+    },
+
+    // Q25: Interés simple
+    { part:2, theme:"quantitative", dok:1, calculator:true, type:"fill-in-blank",
+      topic:"Interés simple", bookPages:"págs. 14–15",
+      generate() {
+        const p = randChoice([1000,1500,2000,2500,3000,5000]);
+        const r = randChoice([3,4,5,6,8]);
+        const t = randInt(2,5);
+        const answer = p * r/100 * t;
+        return { context:"Calcula el interés simple usando la fórmula I = prt.",
+          question:`Si inviertes $${p.toLocaleString()} a una tasa del ${r}% anual, ¿cuánto interés ganarás en ${t} años?`,
+          correct: String(answer),
+          explanation:`I = prt = ${p} × ${r/100} × ${t} = $${answer}.`
+        };
+      }
+    },
+
+    // Q26: Frase verbal → expresión algebraica
+    { part:2, theme:"algebra", dok:2, calculator:true, type:"multiple-choice",
+      topic:"Traducir frases verbales a expresiones algebraicas", bookPages:"págs. 50–51",
+      generate() {
+        const sets = [
+          { phrase:"5 menos que el doble de un número n", correct:"2n - 5", d1:"5 - 2n", d2:"2(n - 5)", d3:"n/2 - 5", k:5, m:2 },
+          { phrase:"3 más que el triple de un número n", correct:"3n + 3", d1:"3 + n", d2:"3(n + 3)", d3:"n/3 + 3", k:3, m:3 },
+          { phrase:"7 menos que cuatro veces un número n", correct:"4n - 7", d1:"7 - 4n", d2:"4(n - 7)", d3:"n/4 - 7", k:7, m:4 },
+          { phrase:"4 más que el quíntuple de un número n", correct:"5n + 4", d1:"4 + n", d2:"5(n + 4)", d3:"n/5 + 4", k:4, m:5 },
+          { phrase:"6 menos que el doble de un número n", correct:"2n - 6", d1:"6 - 2n", d2:"2(n - 6)", d3:"n/2 - 6", k:6, m:2 },
+        ];
+        const s = randChoice(sets);
+        const mc = shuffleMC([s.correct, s.d1, s.d2, s.d3]);
+        return { context:"Traduce una frase verbal a una expresión algebraica.",
+          question:`¿Cuál expresión representa '${s.phrase}'?`,
+          options: mc.options, correct: mc.correct,
+          explanation:`'${s.m} veces n' = ${s.m}n. '${s.k} menos/más' = ${s.correct}.`
+        };
+      }
+    },
+
+    // Q27: Área de superficie de un cubo
+    { part:2, theme:"quantitative", dok:2, calculator:true, type:"multiple-choice",
+      topic:"Área de superficie de un cubo", bookPages:"págs. 28–29, 54–55, 106",
+      generate() {
+        const s = randInt(2,8);
+        const answer = 6*s*s;
+        const opts = uniqueOptions(answer, [s*s, 4*s*s, s*s*s]);
+        const mc = shuffleMC(opts.map(v => v + " cm²"));
+        return { context:"Calcula el área de superficie de un cubo.",
+          question:`Un cubo tiene lado de ${s} cm. ¿Cuál es su área de superficie total?`,
+          options: mc.options, correct: mc.correct,
+          explanation:`Una cara = ${s}² = ${s*s} cm². Total = 6 × ${s*s} = ${answer} cm².`
+        };
+      }
+    },
+
+    // Q28: Sistema de ecuaciones
+    { part:2, theme:"algebra", dok:2, calculator:true, type:"fill-in-blank",
+      topic:"Sistema de ecuaciones lineales con dos variables", bookPages:"págs. 62–63, 72–73",
+      generate() {
+        const x = randInt(2,6), m = randInt(2,4);
+        const y = m * x;
+        const sum = x + y;
+        return { context:"Resuelve un sistema simple de ecuaciones lineales.",
+          question:`Dado el sistema y = ${m}x  y  x + y = ${sum}, ¿cuál es el valor de x?`,
+          correct: String(x),
+          explanation:`Sustituye: x + ${m}x = ${sum}. ${m+1}x = ${sum}. x = ${sum}/${m+1} = ${x}.`
+        };
+      }
+    },
+
+    // Q29: Área — jardín con sendero
+    { part:2, theme:"quantitative", dok:3, calculator:true, type:"multiple-choice",
+      topic:"Área de figuras planas compuestas", bookPages:"págs. 94–95, 102–103",
+      generate() {
+        const l = randInt(8,16), w = randInt(6,12), path = randInt(1,3);
+        const inner = l*w;
+        const outerL = l+2*path, outerW = w+2*path;
+        const outer = outerL*outerW;
+        const answer = outer - inner;
+        const opts = uniqueOptions(answer, [inner, outer, 2*(l+w)*path]);
+        const mc = shuffleMC(opts.map(v => v + " pies²"));
+        return { context:`Un jardín rectangular de ${l}×${w} pies está rodeado por un sendero de ${path} pies de ancho.`,
+          question:"¿Cuál es el área del sendero?",
+          options: mc.options, correct: mc.correct,
+          explanation:`Interior: ${l}×${w} = ${inner}. Exterior: ${outerL}×${outerW} = ${outer}. Sendero: ${outer} - ${inner} = ${answer} pies².`
+        };
+      }
+    },
+
+    // Q30: Ordenada al origen (y-intercept)
+    { part:2, theme:"algebra", dok:1, calculator:true, type:"multiple-choice",
+      topic:"Forma pendiente-intersección (y = mx + b)", bookPages:"págs. 74–75",
+      generate() {
+        const m = randInt(2,7), b = randChoice([-6,-5,-4,-3,-2,2,3,4,5,6]);
+        const bStr = b > 0 ? `+ ${b}` : `- ${Math.abs(b)}`;
+        // Generar pool de distractores únicos
+        let pool = new Set([String(b)]);
+        [String(m), String(Math.abs(b)), String(-b), String(m+b), String(m-b), "0", String(b+1), String(b-1)].forEach(v => pool.add(v));
+        pool = [...pool];
+        let opts = [String(b)]; // correcta primero
+        for (let v of pool) { if (opts.length >= 4) break; if (v !== String(b)) opts.push(v); }
+        const mc = shuffleMC(opts);
+        return { context:"Identifica la ordenada al origen de una ecuación lineal.",
+          question:`En la ecuación y = ${m}x ${bStr}, ¿cuál es la ordenada al origen?`,
+          options: mc.options, correct: mc.correct,
+          explanation:`En y = mx + b, b es la ordenada al origen. Aquí b = ${b}.`
+        };
+      }
+    },
+
+    // Q31: Probabilidad con baraja (dropdown)
+    { part:2, theme:"quantitative", dok:2, calculator:true, type:"dropdown",
+      topic:"Probabilidad simple", bookPages:"págs. 32–33",
+      generate() {
+        const cards = [
+          {name:"un Rey",count:4,ans:"1/13"},{name:"una Reina",count:4,ans:"1/13"},
+          {name:"un As",count:4,ans:"1/13"},{name:"un corazón",count:13,ans:"1/4"},
+          {name:"una carta roja",count:26,ans:"1/2"},{name:"un diamante",count:13,ans:"1/4"},
+          {name:"un 7",count:4,ans:"1/13"},{name:"una carta negra",count:26,ans:"1/2"}
+        ];
+        const c = randChoice(cards);
+        const wrongOpts = ["1/52","1/26","1/13","1/4","1/2","2/13","4/13"].filter(x => x !== c.ans);
+        const opts = shuffleArray([c.ans, ...shuffleArray(wrongOpts).slice(0,3)]);
+        return { context:"Calcula la probabilidad con una baraja estándar de 52 cartas.",
+          question:`¿Cuál es la probabilidad de sacar ${c.name}?`,
+          options: opts, correct: c.ans,
+          explanation:`Hay ${c.count} cartas que cumplen de 52. P = ${c.count}/52 = ${c.ans}.`
+        };
+      }
+    },
+
+    // Q32: Solución de desigualdad con par ordenado
+    { part:2, theme:"algebra", dok:2, calculator:true, type:"multiple-choice",
+      topic:"Desigualdades lineales", bookPages:"págs. 68–69",
+      generate() {
+        const m = randInt(2,4), b = randInt(1,3);
+        // Punto correcto: y < mx + b
+        const cx = randInt(0,3), cy = m*cx + b - randInt(1,3);
+        const correct = `(${cx}, ${cy})`;
+        // Distractores: puntos que NO cumplen
+        const d1 = `(${cx}, ${m*cx+b+1})`;
+        const d2 = `(${cx+1}, ${m*(cx+1)+b+2})`;
+        const d3 = `(${cx-1}, ${m*(cx-1)+b})`;
+        const mc = shuffleMC([correct, d1, d2, d3]);
+        return { context:`Identifica una solución a la desigualdad y < ${m}x + ${b}.`,
+          question:`¿Cuál par ordenado es una solución para y < ${m}x + ${b}?`,
+          options: mc.options, correct: mc.correct,
+          explanation:`Para ${correct}: ${cy} < ${m}(${cx}) + ${b} = ${m*cx+b}. ${cy} < ${m*cx+b} ✓`
+        };
+      }
+    },
+
+    // Q33: Volumen de esfera
+    { part:2, theme:"quantitative", dok:2, calculator:true, type:"fill-in-blank",
+      topic:"Volumen de una esfera", bookPages:"págs. 108–109",
+      generate() {
+        const r = randInt(2,6);
+        const vol = rd((4/3)*3.14*r*r*r, 2);
+        const answer = Math.round(vol);
+        return { context:"Calcula el volumen de una esfera. Usa 3.14 para &pi;.",
+          question:`Una esfera tiene radio de ${r} pulgadas. ¿Cuál es su volumen? (Redondea al entero)`,
+          correct: String(answer),
+          explanation:`V = (4/3)πr³ = (4/3)(3.14)(${r}³) = (4/3)(3.14)(${r*r*r}) = ${vol} ≈ ${answer} pulg³.`
+        };
+      }
+    },
+
+    // Q34: Problema verbal multi-paso (alquiler de auto)
+    { part:2, theme:"algebra", dok:3, calculator:true, type:"multiple-choice",
+      topic:"Ecuaciones lineales con una variable", bookPages:"págs. 60–61",
+      generate() {
+        const daily = randChoice([25,30,35,40,45]);
+        const perMile = randChoice([0.10,0.15,0.20,0.25]);
+        const days = randInt(2,4);
+        const miles = randChoice([100,150,200,250,300]);
+        const total = daily*days + perMile*miles;
+        const opts = uniqueOptions(miles, [miles+50, miles-50, total/days]);
+        const mc = shuffleMC(opts.map(v => Math.round(v) + " millas"));
+        return { context:`Una compañía cobra $${daily}/día más $${perMile} por milla. Alquiló por ${days} días y pagó $${total}.`,
+          question:"¿Cuántas millas condujo?",
+          options: mc.options, correct: mc.correct,
+          explanation:`Costo fijo: ${days} × $${daily} = $${daily*days}. Variable: $${total} - $${daily*days} = $${total-daily*days}. Millas: $${total-daily*days} / $${perMile} = ${miles}.`
+        };
+      }
+    },
+
+    // Q35: Razones y proporciones
+    { part:2, theme:"quantitative", dok:2, calculator:true, type:"multiple-choice",
+      topic:"Razones y proporciones", bookPages:"págs. 10–11",
+      generate() {
+        const a = randInt(2,5), b = randInt(2,6);
+        const factor = randInt(2,5);
+        const total = (a+b)*factor;
+        const girls = b*factor;
+        const opts = uniqueOptions(girls, [a*factor, total/2, girls+factor]);
+        const mc = shuffleMC(opts.map(String));
+        return { context:`La proporción de niños a niñas es ${a}:${b}. Hay ${total} estudiantes.`,
+          question:"¿Cuántas son niñas?",
+          options: mc.options, correct: mc.correct,
+          explanation:`Total partes: ${a}+${b} = ${a+b}. Cada parte: ${total}/${a+b} = ${factor}. Niñas: ${b} × ${factor} = ${girls}.`
+        };
+      }
+    },
+
+    // Q36: Ecuación con fracción
+    { part:2, theme:"algebra", dok:2, calculator:true, type:"fill-in-blank",
+      topic:"Ecuaciones lineales con una variable", bookPages:"págs. 60–61, 66–67",
+      generate() {
+        const d = randChoice([2,3,4,5]);
+        const addend = randInt(2,8);
+        const result = addend + randInt(2,6);
+        const x = (result - addend) * d;
+        return { context:"Resuelve una ecuación lineal con una fracción.",
+          question:`Resuelve para x: (x/${d}) + ${addend} = ${result}`,
+          correct: String(x),
+          explanation:`x/${d} = ${result} - ${addend} = ${result-addend}. x = ${result-addend} × ${d} = ${x}.`
+        };
+      }
+    },
+
+    // Q37: Porcentaje de un número
+    { part:2, theme:"quantitative", dok:1, calculator:true, type:"multiple-choice",
+      topic:"Porcentajes y descuentos", bookPages:"págs. 14–15",
+      generate() {
+        const pct = randChoice([10,15,20,25,30,40,50,60,75]);
+        const num = randChoice([80,100,120,150,200,250,300,400,500]);
+        const answer = num * pct / 100;
+        const opts = uniqueOptions(answer, [num/pct, pct, answer+num*0.1]);
+        const mc = shuffleMC(opts.map(String));
+        return { context:"Calcula un porcentaje de un número.",
+          question:`¿Cuánto es el ${pct}% de ${num}?`,
+          options: mc.options, correct: mc.correct,
+          explanation:`${num} × ${pct/100} = ${answer}.`
+        };
+      }
+    },
+
+    // Q38: Reglas de exponentes
+    { part:2, theme:"algebra", dok:2, calculator:true, type:"multiple-choice",
+      topic:"Reglas de los exponentes", bookPages:"págs. 56–57",
+      generate() {
+        let a = randInt(2,5), b = randInt(2,5);
+        // Evitar a==b para que los distractores sean distintos
+        while (b === a) b = randInt(2,5);
+        const answer = a*b;
+        let pool = new Set();
+        pool.add(`x${toSup(a+b)}`);
+        pool.add(`${b}x${toSup(a)}`);
+        pool.add(`${a}x${toSup(b)}`);
+        pool.add(`x${toSup(a*b+1)}`);
+        pool.add(`x${toSup(Math.abs(a-b))}`);
+        pool.delete(`x${toSup(answer)}`); // quitar si coincide
+        let distractors = [...pool].slice(0,3);
+        const mc = shuffleMC([`x${toSup(answer)}`, ...distractors]);
+        return { context:"Simplifica una expresión usando las reglas de los exponentes.",
+          question:`¿Cuál expresión es equivalente a (x${toSup(a)})${toSup(b)}?`,
+          options: mc.options, correct: mc.correct,
+          explanation:`Cuando se eleva una potencia a otra potencia, se multiplican los exponentes: ${a} × ${b} = ${answer}. Respuesta: x${toSup(answer)}.`
+        };
+      }
+    },
+
+    // Q39: Circunferencia de un círculo
+    { part:2, theme:"quantitative", dok:2, calculator:true, type:"multiple-choice",
+      topic:"Circunferencia de un círculo", bookPages:"págs. 100–101",
+      generate() {
+        const d = randChoice([6,8,10,12,14,16,20]);
+        const answer = rd(3.14 * d, 2);
+        const opts = uniqueOptions(answer, [rd(3.14*d/2,2), rd(3.14*d*d/4,2), rd(2*3.14*d,2)]);
+        const mc = shuffleMC(opts.map(v => v + " m"));
+        return { context:"Calcula la circunferencia de un círculo. Usa 3.14 para &pi;.",
+          question:`Un círculo tiene un diámetro de ${d} metros. ¿Cuál es su circunferencia?`,
+          options: mc.options, correct: mc.correct,
+          explanation:`C = πd = 3.14 × ${d} = ${answer} m.`
+        };
+      }
+    },
+
+    // Q40: Ecuación de una línea (dropdown)
+    { part:2, theme:"algebra", dok:2, calculator:true, type:"dropdown",
+      topic:"Forma pendiente-intersección (y = mx + b)", bookPages:"págs. 74–75",
+      generate() {
+        const m = randInt(2,7), b = randChoice([-5,-4,-3,-2,2,3,4,5]);
+        const bStr = b > 0 ? `+ ${b}` : `- ${Math.abs(b)}`;
+        const correct = `y = ${m}x ${bStr}`;
+        const opts = shuffleArray([
+          correct,
+          `y = ${b}x ${m>0?'+ '+m:'- '+Math.abs(m)}`,
+          `y = ${-m}x ${bStr}`,
+          `y = ${m}x ${b>0?'- '+b:'+ '+Math.abs(b)}`
+        ]);
+        return { context:`Escribe la ecuación de una línea con pendiente ${m} y ordenada al origen ${b}.`,
+          question:"¿Cuál es la ecuación de la línea?",
+          options: opts, correct: correct,
+          explanation:`y = mx + b → y = ${m}x ${bStr}.`
+        };
+      }
+    },
+
+    // Q41: Media, mediana, moda — diferencia
+    { part:2, theme:"quantitative", dok:3, calculator:true, type:"fill-in-blank",
+      topic:"Media, mediana y moda", bookPages:"págs. 30–31, 38–39",
+      generate() {
+        // Crear conjunto con una moda clara
+        const mode = randChoice([80,85,90,95]);
+        const others = [mode-15, mode-10, mode-5, mode+10];
+        const data = [...others, mode, mode, mode, mode+randInt(5,15)];
+        shuffleArray(data);
+        const sorted = [...data].sort((a,b)=>a-b);
+        const mean = rd(data.reduce((a,b)=>a+b,0)/data.length, 2);
+        const diff = rd(Math.abs(mode - mean), 2);
+        return { context:"Analiza un conjunto de datos para encontrar la media y la moda.",
+          question:`Las puntuaciones son ${data.join(", ")}. ¿Cuál es la diferencia positiva entre la moda y la media? (Redondea a dos decimales)`,
+          correct: String(diff),
+          explanation:`Moda (más frecuente): ${mode}. Media: ${data.join("+")} = ${data.reduce((a,b)=>a+b,0)} / ${data.length} = ${mean}. Diferencia: |${mode} - ${mean}| = ${diff}.`
+        };
+      }
+    },
+
+    // Q42: Factorizar cuadrática
+    { part:2, theme:"algebra", dok:2, calculator:true, type:"multiple-choice",
+      topic:"Factorización de expresiones cuadráticas (método FOIL)", bookPages:"págs. 64–67",
+      generate() {
+        const p = randInt(1,6), q = randInt(1,6);
+        const b = p+q, c = p*q;
+        const correct = `(x + ${p})(x + ${q})`;
+        const d1 = `(x + ${p-1})(x + ${q+1})`;
+        const d2 = `(x - ${p})(x - ${q})`;
+        const d3 = `(x + 1)(x + ${c})`;
+        const mc = shuffleMC([correct, d1, d2, d3]);
+        return { context:"Factoriza una expresión cuadrática simple.",
+          question:`¿Cuál es la forma factorizada de x² + ${b}x + ${c}?`,
+          options: mc.options, correct: mc.correct,
+          explanation:`Busca dos números que se multipliquen para ${c} y sumen ${b}: ${p} y ${q}. Respuesta: (x + ${p})(x + ${q}).`
+        };
+      }
+    },
+
+    // Q43: Porcentaje de aumento
+    { part:2, theme:"quantitative", dok:2, calculator:true, type:"multiple-choice",
+      topic:"Porcentaje de aumento", bookPages:"págs. 14–15, 82–83",
+      generate() {
+        const original = randChoice([200,250,300,400,500,600,800]);
+        const pctInc = randChoice([10,15,20,25,30,40,50]);
+        const newVal = original + original*pctInc/100;
+        const increase = newVal - original;
+        const opts = uniqueOptions(pctInc, [rd(increase/newVal*100,1), pctInc+10, pctInc-5]);
+        const mc = shuffleMC(opts.map(v => rd(v,1) + "%"));
+        return { context:`La población creció de ${original} a ${newVal} en un año.`,
+          question:"¿Cuál fue el porcentaje de aumento?",
+          options: mc.options, correct: mc.correct,
+          explanation:`Aumento: ${newVal} - ${original} = ${increase}. Porcentaje: (${increase}/${original}) × 100 = ${pctInc}%.`
+        };
+      }
+    },
+
+    // Q44: Composición de funciones
+    { part:2, theme:"algebra", dok:3, calculator:true, type:"multiple-choice",
+      topic:"Composición de funciones", bookPages:"págs. 58–59, 80–81",
+      generate() {
+        const a = randInt(2,4), b = randInt(1,5), c = randInt(2,5);
+        const x0 = randInt(1,5);
+        const gVal = x0 + c;
+        const answer = a * gVal - b;
+        const opts = uniqueOptions(answer, [a*x0 - b + c, a*(x0-b)+c, a*x0+c]);
+        const mc = shuffleMC(opts.map(String));
+        return { context:`Evalúa una composición de funciones.`,
+          question:`Si f(x) = ${a}x - ${b} y g(x) = x + ${c}, ¿cuál es el valor de f(g(${x0}))?`,
+          options: mc.options, correct: mc.correct,
+          explanation:`g(${x0}) = ${x0} + ${c} = ${gVal}. f(${gVal}) = ${a}(${gVal}) - ${b} = ${a*gVal} - ${b} = ${answer}.`
+        };
+      }
+    },
+
+    // Q45: Área de superficie de prisma rectangular
+    { part:2, theme:"quantitative", dok:2, calculator:true, type:"fill-in-blank",
+      topic:"Área de superficie de un prisma rectangular", bookPages:"págs. 28–29, 106–107",
+      generate() {
+        const l = randInt(3,8), w = randInt(2,6), h = randInt(2,7);
+        const sa = 2*(l*w + l*h + w*h);
+        return { context:"Calcula el área de superficie de un prisma rectangular.",
+          question:`Un prisma tiene longitud ${l} m, ancho ${w} m y altura ${h} m. ¿Cuál es su área de superficie?`,
+          correct: String(sa),
+          explanation:`SA = 2lw + 2lh + 2wh = 2(${l}×${w}) + 2(${l}×${h}) + 2(${w}×${h}) = ${2*l*w} + ${2*l*h} + ${2*w*h} = ${sa} m².`
+        };
+      }
+    }
+    ];
+
+    // Superíndices Unicode para exponentes
+    function toSup(n) {
+      const sups = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+      return String(n).split('').map(c => sups[c] || c).join('');
+    }
+
+    // ===================================================
+    // GENERACIÓN DEL EXAMEN
+    // ===================================================
+    let questions = [];
+    let currentQuestion = 0;
+    let timeLeft = 115 * 60;
+    let timer;
+    let answers = {};
+    const totalQuestionsInSim = 45;
+
+    function generateExam() {
+      let part1 = [], part2 = [];
+      generators.forEach(gen => {
+        const qData = gen.generate();
+        const q = {
+          part: gen.part, theme: gen.theme, dok: gen.dok, calculator: gen.calculator,
+          type: gen.type, topic: gen.topic, bookPages: gen.bookPages,
+          ...qData
+        };
+        if (gen.part === 1) part1.push(q);
+        else part2.push(q);
+      });
+      shuffleArray(part1);
+      shuffleArray(part2);
+      return [...part1, ...part2];
+    }
+
+    // ===================================================
+    // FUNCIONES DEL EXAMEN
+    // ===================================================
+    function startExam() {
+      questions = generateExam();
+      document.getElementById("startScreen").style.display = "none";
+      document.getElementById("examInterface").style.display = "block";
+      startTimer();
+      loadQuestion(0);
+    }
+
+    function startTimer() {
+      timer = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        if (timeLeft <= 0) endExam();
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const m = Math.floor(timeLeft / 60), s = timeLeft % 60;
+      document.getElementById("timer").textContent = `${m}:${s.toString().padStart(2, "0")}`;
+    }
+
+    function loadQuestion(index) {
+      currentQuestion = index;
+      const q = questions[index];
+      const pct = ((index + 1) / totalQuestionsInSim) * 100;
+      document.getElementById("progressBar").style.width = `${pct}%`;
+
+      let themeClass = q.theme === "algebra" ? "algebra" : "quantitative";
+      let themeName = q.theme === "algebra" ? "Álgebra" : "Cuantitativo";
+
+      let html = `<div class="question-header">
+        <div class="question-number">Pregunta ${index+1} de ${totalQuestionsInSim}</div>
+        <div class="badge-container">
+          <div class="dok-badge dok-${q.dok}">DOK ${q.dok}</div>
+          <div class="theme-badge ${themeClass}">${themeName}</div>
+          <div class="calculator-badge ${q.calculator?'calc-yes':'calc-no'}">${q.calculator?'':'Sin Calculadora'}</div>
+          <button class="header-tool-button" onclick="toggleFormulaSheet()">Fórmulas</button>
+          <button class="header-tool-button" id="calcBtn" onclick="toggleCalculator()">Calculadora</button>
+        </div></div>`;
+
+      if (q.context) html += `<div class="question-context">${q.context}</div>`;
+      if (q.question) html += `<div class="actual-question">${q.question}</div>`;
+
+      if (q.type === "multiple-choice") {
+        html += '<div class="options">';
+        q.options.forEach((opt, i) => {
+          html += `<div class="option" onclick="selectAnswer(${index}, ${i})">
+            <div class="option-letter">${String.fromCharCode(65+i)}</div><span>${opt}</span></div>`;
+        });
+        html += '</div>';
+      } else if (q.type === "fill-in-blank") {
+        html += `<input type="text" class="fill-in-blank" onchange="selectAnswer(${index}, this.value)" placeholder="Escribe tu respuesta aquí">`;
+      } else if (q.type === "dropdown") {
+        html += `<select class="dropdown" onchange="selectAnswer(${index}, this.value)"><option value="">Selecciona una opción...</option>`;
+        q.options.forEach(opt => { html += `<option value="${opt}">${opt}</option>`; });
+        html += '</select>';
+      }
+
+      document.getElementById("questionCard").innerHTML = html;
+      const calcBtn = document.getElementById("calcBtn");
+      if (calcBtn) calcBtn.style.display = q.calculator ? "inline-block" : "none";
+      document.getElementById("prevBtn").disabled = index === 0;
+      document.getElementById("nextBtn").textContent = index === totalQuestionsInSim - 1 ? "Finalizar Examen" : "Siguiente ➡️";
+      if (answers[index] !== undefined) restoreAnswer(q, index);
+    }
+
+    function selectAnswer(qi, val) {
+      if (answers[qi] !== undefined && answers[qi].feedbackShown) return;
+      answers[qi] = { value: val, feedbackShown: true };
+      checkAnswer(qi);
+    }
+
+    function checkAnswer(index) {
+      const q = questions[index];
+      const uAns = answers[index].value;
+      const isCorrect = (q.type === "dropdown" || q.type === "fill-in-blank") ? String(uAns).trim() == String(q.correct).trim() : uAns == q.correct;
+
+      document.querySelectorAll(".option, .fill-in-blank, .dropdown").forEach(el => {
+        el.style.pointerEvents = "none";
+        if (el.tagName === "SELECT" || el.tagName === "INPUT") el.disabled = true;
+      });
+
+      if (q.type === "multiple-choice") {
+        document.querySelectorAll(".option").forEach((opt, i) => {
+          if (i == q.correct) opt.classList.add("correct");
+          else if (i == uAns && !isCorrect) opt.classList.add("incorrect");
+        });
+      } else {
+        const inp = document.querySelector(".fill-in-blank, .dropdown");
+        if (inp) inp.classList.add(isCorrect ? "correct" : "incorrect");
+      }
+
+      const fb = `<div class="feedback-panel ${isCorrect ? "correct" : "incorrect"}" style="display:block;">
+        <div class="feedback-title">${isCorrect ? "✅ ¡Correcto!" : "❌ Incorrecto"}</div>
+        <div class="feedback-explanation"><strong>Explicación:</strong> ${q.explanation}</div>
+        ${!isCorrect && q.type !== "multiple-choice" ? `<div class="correct-answer"><strong>Respuesta correcta:</strong> ${q.correct}</div>` : ""}
+      </div>`;
+      document.getElementById("questionCard").insertAdjacentHTML("beforeend", fb);
+    }
+
+    function restoreAnswer(q, index) {
+      if (!answers[index]) return;
+      if (answers[index].feedbackShown) {
+        const inp = document.querySelector(".fill-in-blank, .dropdown");
+        if (inp) inp.value = answers[index].value;
+        checkAnswer(index);
+      }
+    }
+
+    function previousQuestion() { if (currentQuestion > 0) loadQuestion(currentQuestion - 1); }
+    function nextQuestion() { if (currentQuestion < totalQuestionsInSim - 1) loadQuestion(currentQuestion + 1); else endExam(); }
+
+    // ===================================================
+    // FIN DEL EXAMEN E INFORME
+    // ===================================================
+    function endExam() {
+      clearInterval(timer);
+      let correctCount = 0, incorrectQuestions = [], skippedCount = 0, areaStats = {};
+
+      questions.forEach((q, i) => {
+        if (!areaStats[q.topic]) areaStats[q.topic] = { total:0, correct:0, incorrect:0, pages:q.bookPages, theme:q.theme };
+        areaStats[q.topic].total++;
+
+        if (answers[i] && answers[i].value !== undefined && answers[i].value !== "") {
+          const isCorrect = (q.type === "dropdown" || q.type === "fill-in-blank")
+            ? String(answers[i].value).trim() == String(q.correct).trim()
+            : answers[i].value == q.correct;
+
+          if (isCorrect) { correctCount++; areaStats[q.topic].correct++; }
+          else {
+            areaStats[q.topic].incorrect++;
+            let uText = q.type === "multiple-choice" ? (q.options[answers[i].value] || "N/A") : answers[i].value;
+            let cText = q.type === "multiple-choice" ? q.options[q.correct] : q.correct;
+            incorrectQuestions.push({ number:i+1, question:q.question, topic:q.topic, bookPages:q.bookPages, theme:q.theme, userAnswer:uText, correctAnswer:cText, explanation:q.explanation });
+          }
+        } else {
+          skippedCount++; areaStats[q.topic].incorrect++;
+          let cText = q.type === "multiple-choice" ? q.options[q.correct] : q.correct;
+          incorrectQuestions.push({ number:i+1, question:q.question, topic:q.topic, bookPages:q.bookPages, theme:q.theme, userAnswer:"(sin respuesta)", correctAnswer:cText, explanation:q.explanation });
+        }
+      });
+
+      const percentage = Math.round((correctCount / totalQuestionsInSim) * 100);
+      document.getElementById("examInterface").style.display = "none";
+      document.getElementById("resultsScreen").style.display = "block";
+      document.getElementById("finalScore").textContent = `${percentage}%`;
+
+      let msg;
+      if (percentage >= 75) msg = "¡Excelente trabajo! Demuestras un fuerte dominio de los conceptos.";
+      else if (percentage >= 50) msg = "Buen esfuerzo. Sigue practicando las áreas donde tuviste dificultades.";
+      else msg = "No te desanimes. Revisa las explicaciones y enfócate en los temas a reforzar. ¡La práctica es la clave!";
+      document.getElementById("resultMessage").textContent = msg;
+
+      generateErrorReport(correctCount, totalQuestionsInSim - correctCount, skippedCount, percentage, incorrectQuestions, areaStats);
+    }
+
+    function generateErrorReport(correctCount, incorrectCount, skippedCount, percentage, incorrectQuestions, areaStats) {
+      const div = document.getElementById("errorReport");
+      if (incorrectQuestions.length === 0) {
+        div.style.display = "block";
+        div.innerHTML = `<div class="all-correct-message"><span class="trophy">🏆</span><h2>¡Felicitaciones! ¡Todas correctas!</h2><p>Has demostrado dominio completo.</p></div>`;
+        return;
+      }
+
+      let errorsByTopic = {};
+      incorrectQuestions.forEach(iq => {
+        if (!errorsByTopic[iq.topic]) errorsByTopic[iq.topic] = { pages:iq.bookPages, theme:iq.theme, questions:[] };
+        errorsByTopic[iq.topic].questions.push(iq);
+      });
+
+      let html = `<h2>📋 Informe de Errores y Guía de Estudio</h2>
+        <p class="report-subtitle">Libro: <strong>Razonamiento Matemático GED — Steck-Vaughn</strong></p>
+        <div class="report-summary">
+          <div class="summary-card summary-correct"><span class="card-value">${correctCount}</span><span class="card-label">✅ Correctas</span></div>
+          <div class="summary-card summary-incorrect"><span class="card-value">${incorrectCount}</span><span class="card-label">❌ Incorrectas</span></div>
+          <div class="summary-card summary-skipped"><span class="card-value">${skippedCount}</span><span class="card-label">⏭️ Sin responder</span></div>
+          <div class="summary-card summary-score"><span class="card-value">${percentage}%</span><span class="card-label">📊 Puntuación</span></div>
+        </div>
+        <h3 style="margin-bottom:15px;color:#721c24;">📕 Temas a Reforzar</h3>`;
+
+      Object.entries(errorsByTopic).sort((a,b) => b[1].questions.length - a[1].questions.length).forEach(([topic, data]) => {
+        const icon = data.theme === "algebra" ? "🔵 Álgebra" : "🟢 Cuantitativo";
+        html += `<div class="error-topic-group"><div class="error-topic-header">
+          <span>${icon} — ${topic} (${data.questions.length} error${data.questions.length>1?'es':''})</span>
+          <span class="page-ref">📖 ${data.pages}</span></div>`;
+        data.questions.forEach(q => {
+          html += `<div class="error-question-item"><div class="error-q-number">${q.number}</div>
+            <div class="error-q-detail"><strong>${q.question}</strong><br>
+            Tu respuesta: <span class="error-user-answer">${q.userAnswer}</span> | Correcta: <span class="error-correct-answer">${q.correctAnswer}</span></div></div>`;
+        });
+        html += `</div>`;
+      });
+
+      html += `<div class="area-summary"><h3 style="margin-bottom:15px;color:var(--primary-dark);">📊 Rendimiento por Tema</h3>
+        <table><thead><tr><th>Tema</th><th>Área</th><th style="text-align:center">✅</th><th style="text-align:center">Total</th><th>Rendimiento</th><th>Estudiar</th></tr></thead><tbody>`;
+
+      Object.entries(areaStats).sort((a,b) => (a[1].correct/a[1].total) - (b[1].correct/b[1].total)).forEach(([topic, s]) => {
+        const p = s.total > 0 ? Math.round((s.correct/s.total)*100) : 0;
+        const cls = p >= 75 ? "perf-high" : p >= 50 ? "perf-mid" : "perf-low";
+        html += `<tr><td>${topic}</td><td>${s.theme==="algebra"?"Álgebra":"Cuantitativo"}</td>
+          <td style="text-align:center">${s.correct}</td><td style="text-align:center">${s.total}</td>
+          <td><div class="perf-bar"><div class="perf-fill ${cls}" style="width:${p}%"></div></div><span style="font-size:12px;color:#6c757d">${p}%</span></td>
+          <td style="font-size:12px">${p<100?s.pages:'✅'}</td></tr>`;
+      });
+
+      html += `</tbody></table></div><div style="text-align:center;margin-top:20px">
+<button class="print-button" onclick="abrirYImprimir()">🖨️ Imprimir Informe</button></div>`;
+      div.style.display = "block";
+      div.innerHTML = html;
+    }
+
+    function restartExam() {
+      currentQuestion = 0; timeLeft = 115 * 60; answers = {};
+      document.getElementById("resultsScreen").style.display = "none";
+      document.getElementById("errorReport").style.display = "none";
+      document.getElementById("startScreen").style.display = "block";
+    }
+
+    function toggleFormulaSheet() {
+      const m = document.getElementById("formulaModal");
+      m.style.display = m.style.display === "block" ? "none" : "block";
+    }
+    window.onclick = function(e) { if (e.target == document.getElementById("formulaModal")) document.getElementById("formulaModal").style.display = "none"; };
+
+    // ===================================================
+    // CALCULADORA
+    // ===================================================
+    let calcDisplayStr = "", calcResult = "", calcSecondMode = false, calcWaitingForOperand = false;
+    const calcInputLine = document.getElementById("calcInputLine");
+    const calcResultLine = document.getElementById("calcResultLine");
+    function calcUpdateDisplay() { calcInputLine.textContent = calcDisplayStr || "0"; calcResultLine.textContent = calcResult; }
+    function calcToggle2nd() { calcSecondMode = !calcSecondMode; const b = document.querySelector(".calculator .btn-2nd"); calcSecondMode ? b.classList.add("btn-active") : b.classList.remove("btn-active"); }
+    function calcAppendNumber(n) { if (calcWaitingForOperand) { calcDisplayStr = n; calcWaitingForOperand = false; } else { calcDisplayStr = calcDisplayStr === "0" ? n : calcDisplayStr + n; } calcUpdateDisplay(); }
+    function calcAppendOperator(o) { calcDisplayStr += o; calcUpdateDisplay(); }
+    function calcNegative() { calcDisplayStr += "−"; calcUpdateDisplay(); }
+    function calcScientificNotation() { calcDisplayStr += "E"; calcUpdateDisplay(); }
+    function calcHandleFraction() { if (calcSecondMode) { calcDisplayStr += " U "; calcToggle2nd(); } else { calcDisplayStr += " / "; } calcUpdateDisplay(); }
+    function calcHandleSquare() { if (calcSecondMode) { calcDisplayStr = "√(" + (calcDisplayStr||"") + ")"; calcToggle2nd(); } else { calcDisplayStr += "²"; } calcUpdateDisplay(); }
+    function calcHandleSquareRoot() { if (calcSecondMode) { calcDisplayStr += "√("; calcToggle2nd(); } else { calcDisplayStr += "^"; } calcUpdateDisplay(); }
+    function calcReciprocal() { if (calcDisplayStr) { try { let v = eval(calcDisplayStr.replace(/×/g,"*").replace(/÷/g,"/").replace(/−/g,"-").replace(/E/g,"*10^")); calcResult = (1/v).toString(); calcDisplayStr = calcResult; calcUpdateDisplay(); } catch(e) { calcResult = "Error"; calcUpdateDisplay(); } } }
+    function calcOpenProbMenu() { document.querySelector(".prob-overlay").style.display = "block"; document.getElementById("probMenu").style.display = "block"; }
+    function calcCloseProbMenu() { document.querySelector(".prob-overlay").style.display = "none"; document.getElementById("probMenu").style.display = "none"; }
+    function calcSelectProb(t) { calcDisplayStr += (t==="!"?"!":t); calcCloseProbMenu(); calcUpdateDisplay(); }
+    function calcClearDisplay() { calcDisplayStr = ""; calcResult = ""; calcUpdateDisplay(); }
+    function factorial(n) { if(n<0) return NaN; if(n<=1) return 1; return n*factorial(n-1); }
+    function combination(n,r) { return factorial(n)/(factorial(r)*factorial(n-r)); }
+    function permutation(n,r) { return factorial(n)/factorial(n-r); }
+    function calcCalculate() {
+      try {
+        let e = calcDisplayStr;
+        e = e.replace(/(\d+)nCr(\d+)/g,(_,n,r)=>combination(+n,+r));
+        e = e.replace(/(\d+)nPr(\d+)/g,(_,n,r)=>permutation(+n,+r));
+        e = e.replace(/(\d+)!/g,(_,n)=>factorial(+n));
+        e = e.replace(/(\d+\.?\d*)²/g,(_,b)=>Math.pow(+b,2));
+        e = e.replace(/(\d+\.?\d*)\^(\d+\.?\d*)/g,(_,b,x)=>Math.pow(+b,+x));
+        e = e.replace(/√\(([^)]+)\)/g,(_,c)=>Math.sqrt(eval(c.replace(/×/g,"*").replace(/÷/g,"/").replace(/−/g,"-"))));
+        e = e.replace(/×/g,"*").replace(/÷/g,"/").replace(/−/g,"-");
+        if(e.includes("E")){e=e.replace(/E/g,"*Math.pow(10,");e+=")";}
+        calcResult = eval(e).toString();
+        let nr = parseFloat(calcResult);
+        if(Math.abs(nr)>=1e10||(Math.abs(nr)<1e-4&&nr!==0)) calcResult = nr.toExponential(6);
+        calcWaitingForOperand = true; calcUpdateDisplay();
+      } catch(ex) { calcResult = "Error"; calcUpdateDisplay(); setTimeout(()=>{calcDisplayStr="";calcResult="";calcUpdateDisplay();},2000); }
+    }
+    function toggleCalculator() { const m = document.getElementById("calculatorModal"); m.style.display = m.style.display === "block" ? "none" : "block"; }
+
+    // Arrastrar calculadora
+    (function() {
+      const el = document.getElementById("calculatorModal");
+      const hd = document.getElementById("calculatorModalHeader");
+      let p1=0,p2=0,p3=0,p4=0;
+      hd.onmousedown = function(e) { e.preventDefault(); p3=e.clientX; p4=e.clientY;
+        document.onmouseup = function(){document.onmouseup=null;document.onmousemove=null;};
+        document.onmousemove = function(e2) { e2.preventDefault(); p1=p3-e2.clientX;p2=p4-e2.clientY;p3=e2.clientX;p4=e2.clientY;
+          el.style.top=(el.offsetTop-p2)+"px"; el.style.left=(el.offsetLeft-p1)+"px"; };
+      };
+    })();
+    calcUpdateDisplay();
+function abrirYImprimir() {
+  const contenido = document.querySelector(".results-container").innerHTML;
+
+  const ventana = window.open('', '', 'width=900,height=700');
+
+  ventana.document.write(`
+    <html>
+      <head>
+        <title>Informe GED Estudios Sociales</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+          }
+          th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+          }
+          th {
+            background: #e74c3c;
+            color: white;
+          }
+          .score-banner {
+            text-align: center;
+            margin-bottom: 20px;
+          }
+        </style>
+      </head>
+      <body>
+        ${contenido}
+      </body>
+    </html>
+  `);
+
+  ventana.document.close();
+
+  ventana.onload = function() {
+    ventana.focus();
+    ventana.print();
+  };
+}
+    </script>
+  </body>
+</html>
