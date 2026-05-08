@@ -1,1 +1,1289 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Examen de Estudios Sociales GED - Enfoque DOK 2/3</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #c0392b 0%, #8e44ad 100%);
+        min-height: 100vh; color: #2c3e50;
+      }
+      ul { padding-left: 35px; }
+      .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
 
+      .header { background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px; box-shadow: 0 8px 32px rgba(0,0,0,.1); border: 2px solid #e74c3c; }
+      .timer { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+      .time-display { background: #e74c3c; color: white; padding: 10px 20px; border-radius: 25px; font-size: 18px; font-weight: bold; border: 3px solid #c0392b; }
+      .progress-container { background: #ecf0f1; border-radius: 10px; padding: 3px; border: 2px solid #95a5a6; }
+      .progress-bar { background: linear-gradient(90deg, #e74c3c, #c0392b); height: 20px; border-radius: 8px; transition: width .3s ease; border: 1px solid #922b21; }
+
+      .question-card { background: white; border-radius: 15px; padding: 30px; margin-bottom: 20px; box-shadow: 0 8px 32px rgba(0,0,0,.1); border: 2px solid #e74c3c; }
+      .question-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 3px solid #e74c3c; }
+      .question-number { background: #e74c3c; color: white; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 16px; border: 2px solid #c0392b; }
+      .dok-badge { padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; border: 2px solid; }
+      .dok-1 { background: #fef9e7; color: #f39c12; border-color: #f39c12; }
+      .dok-2 { background: #fff3cd; color: #856404; border-color: #ffc107; }
+      .dok-3 { background: #d1ecf1; color: #0c5460; border-color: #17a2b8; }
+      .theme-badge { padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; border: 2px solid; margin-left: 10px; }
+      .civics-government { background: #e8f5e8; color: #27ae60; border-color: #27ae60; }
+      .us-history       { background: #fef9e7; color: #f39c12; border-color: #f39c12; }
+      .economics        { background: #ebf3fd; color: #3498db; border-color: #3498db; }
+      .geography-world  { background: #f8e7ff; color: #9b59b6; border-color: #9b59b6; }
+
+      .question-context { font-size: 16px; line-height: 1.6; margin-bottom: 20px; background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #e74c3c; }
+      .stimulus-panel { background: #f8f9fa; border: 2px solid #e74c3c; border-radius: 10px; padding: 20px; margin: 15px 0; }
+      .stimulus-title { font-weight: bold; color: #e74c3c; margin-bottom: 15px; font-size: 16px; }
+      .actual-question { font-size: 18px; font-weight: bold; color: #2c3e50; margin: 20px 0; padding: 15px; background: #fdf2f2; border-left: 4px solid #e74c3c; border-radius: 5px; }
+      .data-table { width: 100%; border-collapse: collapse; margin: 15px 0; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+      .data-table th, .data-table td { padding: 12px; text-align: left; border: 1px solid #ddd; }
+      .data-table th { background: #e74c3c; color: white; font-weight: bold; }
+      .data-table tr:nth-child(even) { background: #f8f9fa; }
+      .graph-container { background: white; border: 2px solid #e74c3c; border-radius: 8px; padding: 15px; margin: 15px 0; }
+      .document-excerpt { background: #f8f9fa; border-left: 4px solid #6c757d; padding: 20px; margin: 15px 0; font-style: italic; border-radius: 0 8px 8px 0; }
+      .quote-source { text-align: right; font-size: 14px; color: #6c757d; margin-top: 10px; font-style: normal; }
+      .highlight { background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107; margin: 15px 0; }
+
+      .options { display: flex; flex-direction: column; gap: 12px; }
+      .option { background: #f8f9fa; border: 2px solid #bdc3c7; border-radius: 10px; padding: 15px; cursor: pointer; transition: all .3s ease; display: flex; align-items: flex-start; gap: 10px; }
+      .option:hover { background: #fdf2f2; border-color: #e74c3c; transform: translateY(-2px); }
+      .option.correct   { background: #d5e8d4; border-color: #27ae60; color: #27ae60; font-weight: bold; }
+      .option.incorrect { background: #f8d7da; border-color: #e74c3c; color: #e74c3c; font-weight: bold; }
+      .option-letter { background: #e74c3c; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #c0392b; flex-shrink: 0; }
+
+      .feedback-panel { background: #f8f9fa; border-radius: 10px; padding: 20px; margin: 20px 0; border-left: 4px solid #e74c3c; display: none; }
+      .feedback-panel.correct   { background: #d5f4e6; border-left-color: #27ae60; }
+      .feedback-panel.incorrect { background: #f8d7da; border-left-color: #e74c3c; }
+      .feedback-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+      .feedback-explanation { font-size: 16px; line-height: 1.6; margin-bottom: 15px; }
+      .correct-answer { background: #e8f5e8; padding: 10px; border-radius: 5px; border: 2px solid #27ae60; font-weight: bold; }
+      .continue-btn { background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-size: 14px; margin-top: 15px; border: 2px solid #c0392b; }
+      .continue-btn:hover { background: #c0392b; }
+      .dropdown { padding: 10px; border: 2px solid #bdc3c7; border-radius: 5px; font-size: 16px; background: white; width: 100%; }
+      .dropdown:focus { outline: none; border-color: #e74c3c; }
+
+      .navigation { display: flex; justify-content: space-between; align-items: center; background: white; border-radius: 15px; padding: 20px; box-shadow: 0 8px 32px rgba(0,0,0,.1); border: 2px solid #e74c3c; }
+      .nav-button { background: #e74c3c; color: white; border: none; padding: 12px 24px; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: bold; transition: all .3s ease; border: 2px solid #c0392b; }
+      .nav-button:hover:not(:disabled) { background: #c0392b; transform: translateY(-2px); }
+      .nav-button:disabled { background: #95a5a6; cursor: not-allowed; border-color: #7f8c8d; }
+      .similar-question-btn { background: #f39c12; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-size: 14px; margin: 10px 0; border: 2px solid #e67e22; transition: all .3s ease; }
+      .similar-question-btn:hover { background: #e67e22; transform: translateY(-2px); }
+
+      .start-screen { background: white; border-radius: 15px; padding: 40px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,.1); border: 2px solid #e74c3c; }
+      .start-title { font-size: 32px; color: #2c3e50; margin-bottom: 20px; font-weight: bold; }
+      .start-description { font-size: 18px; color: #7f8c8d; margin-bottom: 30px; line-height: 1.6; text-align: left; }
+      .start-button { background: linear-gradient(45deg, #e74c3c, #c0392b); color: white; border: none; padding: 15px 40px; border-radius: 30px; font-size: 20px; font-weight: bold; cursor: pointer; transition: all .3s ease; border: 3px solid #c0392b; }
+      .start-button:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(231,76,60,.3); }
+
+      /* Drag-drop */
+      .drag-drop-container { display: flex; gap: 30px; margin: 20px 0; flex-wrap: wrap; }
+      .drag-items { flex: 1; min-width: 300px; }
+      .drop-zones { flex: 1; min-width: 300px; }
+      .drag-item { background: #fdf2f2; border: 2px solid #e74c3c; border-radius: 8px; padding: 12px; margin: 8px 0; cursor: grab; transition: all .3s ease; user-select: none; font-weight: 500; }
+      .drag-item:hover { background: #d5f4e6; border-color: #27ae60; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.1); }
+      .drag-item.dragging { opacity: .5; cursor: grabbing; }
+      .drop-zone { background: #f8f9fa; border: 2px dashed #bdc3c7; border-radius: 8px; padding: 15px; margin: 8px 0; min-height: 60px; display: flex; align-items: center; transition: all .3s ease; }
+      .drop-zone.drag-over { background: #e8f5e8; border-color: #27ae60; border-style: solid; }
+      .drop-zone.filled   { background: #d5f4e6; border-color: #27ae60; border-style: solid; }
+      .drop-zone.correct  { background: #d5f4e6; border-color: #27ae60; }
+      .drop-zone.incorrect{ background: #f8d7da; border-color: #e74c3c; }
+      .zone-label { font-weight: bold; color: #7f8c8d; margin-right: 10px; min-width: 80px; }
+      .dropped-item { background: #e74c3c; color: white; padding: 8px 12px; border-radius: 5px; margin-left: 10px; }
+
+      /* ======= INFORME DE ERRORES ======= */
+      .results-container { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 8px 32px rgba(0,0,0,.1); border: 2px solid #e74c3c; }
+      .score-banner { text-align: center; padding: 30px; background: linear-gradient(135deg, #c0392b 0%, #8e44ad 100%); border-radius: 12px; color: white; margin-bottom: 25px; }
+      .score-big { font-size: 64px; font-weight: bold; }
+      .score-label { font-size: 20px; opacity: .9; }
+      .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 15px; margin-bottom: 25px; }
+      .summary-card { padding: 20px; border-radius: 12px; text-align: center; }
+      .summary-card .card-num { font-size: 36px; font-weight: bold; }
+      .summary-card .card-lbl { font-size: 13px; margin-top: 5px; }
+      .card-correct   { background: #d5f4e6; color: #27ae60; }
+      .card-incorrect { background: #f8d7da; color: #e74c3c; }
+      .card-skipped   { background: #fff3cd; color: #f39c12; }
+
+      .report-section { margin-bottom: 25px; }
+      .report-section h3 { font-size: 20px; color: #2c3e50; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 3px solid #e74c3c; }
+
+      .error-item { background: #fff8f8; border: 1px solid #f5c6cb; border-radius: 10px; padding: 15px; margin-bottom: 12px; }
+      .error-item-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; gap: 8px; }
+      .error-qnum  { background: #e74c3c; color: white; padding: 3px 10px; border-radius: 12px; font-size: 13px; font-weight: bold; }
+      .error-topic { font-weight: bold; color: #2c3e50; font-size: 15px; flex: 1; margin: 0 10px; }
+      .error-pages { background: #f8e7ff; color: #8e44ad; padding: 3px 10px; border-radius: 12px; font-size: 13px; font-weight: bold; white-space: nowrap; }
+      .error-answers { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 8px; }
+      .user-answer  { background: #f8d7da; color: #721c24; padding: 5px 12px; border-radius: 8px; font-size: 14px; }
+      .right-answer { background: #d5f4e6; color: #155724; padding: 5px 12px; border-radius: 8px; font-size: 14px; }
+
+      .perf-table { width: 100%; border-collapse: collapse; }
+      .perf-table th { background: #e74c3c; color: white; padding: 10px 12px; text-align: left; font-size: 14px; }
+      .perf-table td { padding: 10px 12px; border-bottom: 1px solid #ecf0f1; font-size: 14px; vertical-align: middle; }
+      .perf-table tr:hover { background: #f8f9fa; }
+      .perf-bar-bg { background: #ecf0f1; border-radius: 6px; height: 14px; min-width: 80px; }
+      .perf-bar    { height: 14px; border-radius: 6px; }
+      .bar-green  { background: #27ae60; }
+      .bar-yellow { background: #f39c12; }
+      .bar-red    { background: #e74c3c; }
+      .pages-tag  { background: #f8e7ff; color: #8e44ad; padding: 2px 8px; border-radius: 8px; font-size: 12px; font-weight: bold; }
+      .theme-tag  { padding: 2px 8px; border-radius: 8px; font-size: 11px; font-weight: bold; }
+      .tag-cg   { background: #e8f5e8; color: #27ae60; }
+      .tag-ush  { background: #fef9e7; color: #f39c12; }
+      .tag-eco  { background: #ebf3fd; color: #3498db; }
+      .tag-geo  { background: #f8e7ff; color: #9b59b6; }
+
+      .print-btn   { background: #27ae60; color: white; border: none; padding: 12px 28px; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: bold; margin: 10px 5px; border: 2px solid #229954; transition: all .3s ease; }
+      .print-btn:hover { background: #229954; transform: translateY(-2px); }
+      .restart-btn { background: #e74c3c; color: white; border: none; padding: 12px 28px; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: bold; margin: 10px 5px; border: 2px solid #c0392b; transition: all .3s ease; }
+      .restart-btn:hover { background: #c0392b; transform: translateY(-2px); }
+
+      @media print {
+        body { background: white; }
+        .navigation, .print-btn, .restart-btn, .similar-question-btn { display: none !important; }
+        .results-container { box-shadow: none; border: none; }
+      }
+      @media (max-width: 768px) {
+        .container { padding: 10px; }
+        .timer, .question-header, .navigation { flex-direction: column; gap: 15px; }
+        .summary-cards { grid-template-columns: repeat(2,1fr); }
+      }
+@page {
+  margin: 20mm;
+}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+
+      <!-- PANTALLA DE INICIO -->
+      <div id="startScreen" class="start-screen">
+        <h1 class="start-title">Examen de Estudios Sociales GED<br>
+          <span style="font-size:16px">Creado por el prof. José M. Fernández con Claude Sonnet 4</span>
+        </h1>
+        <div class="start-description">
+          <p><strong>Según las especificaciones oficiales GED, este examen presenta:</strong></p>
+          <ul style="text-align:left;margin:20px 0">
+            <li>✅ <strong>Análisis de documentos históricos</strong> y fuentes primarias</li>
+            <li>✅ <strong>Interpretación de gráficos</strong> y datos estadísticos</li>
+            <li>✅ <strong>Evaluación de argumentos</strong> y evidencia histórica</li>
+            <li>✅ <strong>Aplicación de conceptos</strong> cívicos y económicos</li>
+            <li>✅ <strong>Razonamiento crítico</strong> sobre eventos contemporáneos</li>
+          </ul>
+          <p><strong>📊 Distribución por materias (especificaciones GED):</strong></p>
+          <ul style="text-align:left;margin:20px 0">
+            <li>🏛️ <strong>Cívica y Gobierno</strong> (50 % — 18 preguntas)</li>
+            <li>🇺🇸 <strong>Historia de EE.UU.</strong> (20 % — 7 preguntas)</li>
+            <li>💰 <strong>Economía</strong> (15 % — 5 preguntas)</li>
+            <li>🌍 <strong>Geografía y el Mundo</strong> (15 % — 5 preguntas)</li>
+          </ul>
+          <p><strong>⏱️ Duración:</strong> 70 minutos | <strong>📝 Preguntas:</strong> 35</p>
+          <p style="margin-top:12px;background:#f8e7ff;padding:12px;border-radius:8px;border-left:4px solid #8e44ad">
+            📖 <strong>Informe de Errores:</strong> Al finalizar, recibirás un informe detallado con las páginas del
+            <em>GED Estudios Sociales Libro del Estudiante (Steck-Vaughn)</em> donde debes estudiar cada tema con dificultad.
+          </p>
+        </div>
+        <button class="start-button" onclick="startExam()">Comenzar Examen</button>
+      </div>
+
+      <!-- INTERFAZ DEL EXAMEN -->
+      <div id="examInterface" style="display:none">
+        <div class="header">
+          <div class="timer">
+            <div>
+              <h2>🏛️ Examen de Estudios Sociales GED</h2>
+              <p>Duración: 70 minutos | 35 preguntas | Análisis y razonamiento</p>
+            </div>
+            <div class="time-display" id="timer">70:00</div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar" id="progressBar" style="width:0%"></div>
+          </div>
+        </div>
+        <div class="question-card" id="questionCard"></div>
+        <div class="navigation">
+          <button class="nav-button" id="prevBtn" onclick="previousQuestion()" disabled>⬅️ Anterior</button>
+          <div style="text-align:center">
+            <span style="color:#7f8c8d;font-size:14px;display:block">Examen oficial GED — Especificaciones completas</span>
+            <button class="similar-question-btn" id="similarBtn" onclick="generateSimilarQuestion()">🔄 Pregunta Similar</button>
+          </div>
+          <button class="nav-button" id="nextBtn" onclick="nextQuestion()">Siguiente ➡️</button>
+        </div>
+      </div>
+
+      <!-- PANTALLA DE RESULTADOS + INFORME -->
+      <div id="resultsScreen" style="display:none">
+        <div class="results-container">
+          <div class="score-banner">
+            <div class="score-big" id="finalScore">0%</div>
+            <div class="score-label">Examen de Estudios Sociales GED completado</div>
+            <p id="resultMessage" style="margin-top:10px;font-size:16px;opacity:.9"></p>
+          </div>
+          <div class="summary-cards" id="summaryCards"></div>
+
+          <div class="report-section" id="errorsSection">
+            <h3>❌ Análisis de Errores por Pregunta</h3>
+            <div id="errorsList"></div>
+          </div>
+
+          <div class="report-section">
+            <h3>📊 Rendimiento por Tema — Guía de Estudio</h3>
+            <table class="perf-table" id="perfTable">
+              <thead>
+                <tr>
+                  <th>Tema</th><th>Área</th><th>Resultado</th><th>Rendimiento</th><th>📖 Páginas Steck-Vaughn</th>
+                </tr>
+              </thead>
+              <tbody id="perfTableBody"></tbody>
+            </table>
+          </div>
+
+          <div style="text-align:center;margin-top:20px">
+            <button class="print-btn" onclick="abrirYImprimir()">🖨️ Imprimir Informe</button>
+            <button class="restart-btn" onclick="restartExam()">🔄 Reiniciar Examen</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /container -->
+
+    <script>
+
+function abrirYImprimir() {
+  const contenido = document.querySelector(".results-container").innerHTML;
+
+  const ventana = window.open('', '', 'width=900,height=700');
+
+  ventana.document.write(`
+    <html>
+      <head>
+        <title>Informe GED Estudios Sociales</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+          }
+          th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+          }
+          th {
+            background: #e74c3c;
+            color: white;
+          }
+          .score-banner {
+            text-align: center;
+            margin-bottom: 20px;
+          }
+        </style>
+      </head>
+      <body>
+        ${contenido}
+      </body>
+    </html>
+  `);
+
+  ventana.document.close();
+
+  ventana.onload = function() {
+    ventana.focus();
+    ventana.print();
+  };
+}
+
+      let currentQuestion = 0;
+      let timeLeft = 4200; // 70 min
+      let timerInterval;
+      let answers = {};
+      let examStarted = false;
+
+      // ── PREGUNTAS ──────────────────────────────────────────────────────────
+      const questions = [
+
+        // ══ CÍVICA Y GOBIERNO (18 preguntas) ══════════════════════════════
+
+        {
+          id:0, theme:"civics-government", dok:2,
+          topic:"Controles y equilibrios entre las tres ramas",
+          bookPages:"32, 33, 52, 85, 88",
+          context:"La Constitución de los EE.UU. establece un sistema de controles y equilibrios para prevenir el abuso de poder.",
+          stimulus:`<div class="stimulus-title">🏛️ Sistema de Controles y Equilibrios</div>
+<div class="document-excerpt">"El poder legislativo no puede usurpar las funciones del ejecutivo o judicial, ni el ejecutivo o judicial pueden usurpar las funciones del legislativo."
+<div class="quote-source">— James Madison, El Federalista No. 51</div></div>
+<table class="data-table"><thead><tr><th>Rama</th><th>Poder Principal</th><th>Control sobre otras ramas</th></tr></thead>
+<tbody>
+<tr><td>Legislativa</td><td>Crear leyes</td><td>Impeachment, confirmación de nominaciones</td></tr>
+<tr><td>Ejecutiva</td><td>Ejecutar leyes</td><td>Veto, nominación de jueces</td></tr>
+<tr><td>Judicial</td><td>Interpretar leyes</td><td>Revisión judicial</td></tr>
+</tbody></table>`,
+          question:"¿Cuál es la principal razón por la que los Fundadores establecieron el sistema de controles y equilibrios?",
+          options:["Para hacer el gobierno más eficiente en la toma de decisiones","Para asegurar que el gobierno federal sea más poderoso que los estados","Para prevenir que cualquier rama concentre demasiado poder","Para permitir que el pueblo vote directamente sobre todas las leyes"],
+          correct:2,
+          explanation:"El sistema fue diseñado para prevenir la concentración excesiva de poder en cualquier rama, asegurando que cada rama pueda limitar las acciones de las otras dos.",
+          feedback:{0:"El sistema puede hacer que las decisiones tomen más tiempo, no menos.",1:"El federalismo es un concepto separado que trata la relación entre gobierno federal y estatal.",2:"¡Correcto! Los Fundadores temían la tiranía y diseñaron este sistema para distribuir el poder.",3:"La democracia directa no era el objetivo de los controles y equilibrios."}
+        },
+
+        {
+          id:1, theme:"civics-government", dok:3,
+          topic:"Análisis del punto de vista en discursos políticos",
+          bookPages:"82–85, 102",
+          context:"Un senador está debatiendo un proyecto de ley sobre el cambio climático. Analice el extracto de su discurso.",
+          stimulus:`<div class="stimulus-title">💬 Discurso del Senador sobre Cambio Climático</div>
+<div class="document-excerpt">"Mientras reconocemos que el clima está cambiando, debemos ser cautelosos con regulaciones que podrían dañar nuestra economía. Las soluciones de mercado libre, donde las empresas compiten para crear tecnologías más limpias, han demostrado ser más efectivas que los mandatos gubernamentales. No podemos sacrificar la prosperidad americana en el altar del activismo ambiental."</div>
+<div class="highlight"><strong>Contexto:</strong> Debate sobre un proyecto de ley que establecería nuevas regulaciones ambientales y subsidios para energía renovable.</div>`,
+          question:"¿Cuál es el punto de vista político principal que expresa el senador?",
+          options:["Negación completa del cambio climático","Preferencia por soluciones de mercado libre sobre regulaciones gubernamentales","Apoyo a un rol gubernamental más amplio en la economía","Apoyo total a todas las regulaciones ambientales propuestas"],
+          correct:1,
+          explanation:"El senador favorece 'soluciones de mercado libre' y expresa preocupación por las 'regulaciones' y 'mandatos gubernamentales', una perspectiva conservadora que prefiere intervención mínima del gobierno.",
+          feedback:{0:"El senador reconoce que 'el clima está cambiando'.",1:"¡Correcto! El senador favorece las soluciones de mercado sobre la regulación gubernamental.",2:"El senador se opone a un mayor rol gubernamental, no lo apoya.",3:"El senador expresa cautela sobre las regulaciones, no apoyo total."}
+        },
+
+        {
+          id:2, theme:"civics-government", dok:1,
+          topic:"Democracia representativa: definición y concepto",
+          bookPages:"60, 81",
+          context:"Ciertos términos tienen significados específicos fundamentales para entender el sistema político estadounidense.",
+          stimulus:`<div class="stimulus-title">📚 Términos Gubernamentales Clave</div>
+<p><strong>Definición necesaria:</strong> El proceso por el cual los ciudadanos eligen directamente a sus representantes en el gobierno.</p>`,
+          question:"Complete: La democracia _______ permite que los ciudadanos voten directamente por los candidatos que los representarán en el gobierno.",
+          options:["representativa","directa","parlamentaria","federal"],
+          correct:"representativa",
+          explanation:"La democracia representativa es el sistema donde los ciudadanos eligen representantes que toman decisiones políticas en su nombre.",
+          feedback:{"representativa":"¡Correcto! En una democracia representativa, los ciudadanos eligen representantes.","directa":"En democracia directa, los ciudadanos votan directamente sobre los asuntos.","parlamentaria":"Parlamentaria se refiere a un tipo de sistema gubernamental.","federal":"Federal se refiere a la división de poder entre niveles de gobierno."}
+        },
+
+        {
+          id:3, theme:"civics-government", dok:2,
+          topic:"Participación electoral: tendencias demográficas",
+          bookPages:"44, 45, 63, 65",
+          context:"Analice los datos sobre participación electoral para identificar tendencias en el comportamiento político.",
+          stimulus:`<div class="stimulus-title">📊 Participación Electoral por Grupo Demográfico (2020)</div>
+<table class="data-table"><thead><tr><th>Grupo</th><th>% Presidencial</th><th>% Intermedia (2018)</th><th>Cambio desde 2016</th></tr></thead>
+<tbody>
+<tr><td>18-29 años</td><td>66%</td><td>36%</td><td>+11%</td></tr>
+<tr><td>30-44 años</td><td>71%</td><td>49%</td><td>+8%</td></tr>
+<tr><td>45-64 años</td><td>76%</td><td>59%</td><td>+4%</td></tr>
+<tr><td>65+ años</td><td>78%</td><td>66%</td><td>+2%</td></tr>
+</tbody></table>`,
+          question:"¿Qué patrón es más evidente en los datos de participación electoral?",
+          options:["Los adultos mayores votan menos que los jóvenes","La participación aumenta con la edad, pero los jóvenes mostraron el mayor incremento en 2020","No hay diferencias significativas entre grupos","Las elecciones intermedias tienen mayor participación que las presidenciales"],
+          correct:1,
+          explanation:"La participación aumenta con la edad (66% para 18-29 vs 78% para 65+), pero los votantes más jóvenes tuvieron el mayor aumento desde 2016 (+11% vs +2%).",
+          feedback:{0:"Los datos muestran que los adultos mayores votan más, no menos.",1:"¡Correcto! Mayor participación con la edad, pero los jóvenes aumentaron más.",2:"Hay diferencias claras: rangos del 66% al 78%.",3:"Las elecciones presidenciales muestran mayor participación."}
+        },
+
+        {
+          id:4, theme:"civics-government", dok:3,
+          topic:"Hechos y opiniones: editorial sobre inmigración",
+          bookPages:"102–105",
+          context:"Un editorial discute la política inmigratoria. Evalúe las afirmaciones para distinguir entre hechos y opiniones.",
+          stimulus:`<div class="stimulus-title">📰 Editorial sobre Política Inmigratoria</div>
+<div class="document-excerpt">"Estados Unidos procesó 1.8 millones de solicitudes de asilo en 2022, un aumento del 40% respecto al año anterior. Esta política claramente fallida está sobrecargando nuestro sistema judicial. El país necesita urgentemente una reforma inmigratoria integral. Países como Canadá han implementado sistemas de puntos que podrían ser un modelo efectivo."</div>`,
+          question:"¿Cuál de las siguientes es un HECHO presentado en el editorial?",
+          options:["'Esta política claramente fallida está sobrecargando nuestro sistema'","'Podría ser un modelo efectivo'","'El país necesita urgentemente una reforma inmigratoria integral'","'Estados Unidos procesó 1.8 millones de solicitudes de asilo en 2022'"],
+          correct:3,
+          explanation:"Un hecho es una afirmación verificable objetivamente. El número de solicitudes de asilo procesadas es un dato estadístico verificable.",
+          feedback:{0:"Esta es una opinión que incluye un juicio de valor ('claramente fallida').",1:"Esto es una especulación sobre efectividad potencial.",2:"Esto expresa una opinión sobre lo que el país 'necesita'.",3:"¡Correcto! El número de solicitudes procesadas es un dato estadístico verificable."}
+        },
+
+        {
+          id:5, theme:"civics-government", dok:2,
+          topic:"Proceso de enmienda constitucional (Artículo V)",
+          bookPages:"55, 93",
+          context:"El proceso de aprobación de una enmienda constitucional requiere pasos específicos del Artículo V.",
+          stimulus:`<div class="stimulus-title">⚖️ Proceso de Enmienda Constitucional</div>
+<div class="highlight"><strong>Métodos disponibles:</strong><ul>
+<li><strong>Propuesta:</strong> 2/3 de ambas cámaras del Congreso O convención de 2/3 de los estados</li>
+<li><strong>Ratificación:</strong> 3/4 de las legislaturas estatales O convenciones de 3/4 de los estados</li>
+</ul></div>`,
+          question:"Ordene los pasos del proceso más común de enmienda constitucional:",
+          dragItems:[
+            {id:"ratification",text:"Ratificación por 38 legislaturas estatales (3/4 de 50)",correct:2},
+            {id:"proposal",text:"Propuesta aprobada por 2/3 de la Cámara de Representantes",correct:0},
+            {id:"senate",text:"Propuesta aprobada por 2/3 del Senado",correct:1},
+            {id:"implementation",text:"Implementación de la nueva enmienda",correct:3}
+          ],
+          dropZones:[
+            {id:"step1",label:"Paso 1:",description:"Iniciación en el Congreso"},
+            {id:"step2",label:"Paso 2:",description:"Aprobación bicameral"},
+            {id:"step3",label:"Paso 3:",description:"Aprobación estatal"},
+            {id:"step4",label:"Paso 4:",description:"Efectividad legal"}
+          ],
+          explanation:"El proceso requiere: (1) propuesta por 2/3 de la Cámara, (2) aprobación por 2/3 del Senado, (3) ratificación por 3/4 de los estados, (4) implementación.",
+          feedback:{correct:"¡Excelente! Has ordenado correctamente el proceso de enmienda constitucional.",incorrect:"Debe iniciarse en el Congreso (ambas cámaras por 2/3), luego ir a los estados (3/4) para ratificación."}
+        },
+
+        {
+          id:6, theme:"civics-government", dok:2,
+          topic:"Primera Enmienda: libertades constitucionales",
+          bookPages:"56, 58, 117",
+          context:"La Primera Enmienda protege varias libertades fundamentales. Analice el siguiente caso.",
+          stimulus:`<div class="stimulus-title">⚖️ Caso: Estudiantes vs. Distrito Escolar</div>
+<div class="document-excerpt">"Los estudiantes organizaron una protesta pacífica en el campus para expresar oposición a la política de uniformes. El director suspendió a 15 estudiantes, argumentando que la protesta interrumpió el ambiente educativo."</div>
+<div class="highlight"><strong>Primera Enmienda:</strong> "...no se coartará la libertad de expresión... o el derecho del pueblo para reunirse pacíficamente..."</div>`,
+          question:"¿Qué protección de la Primera Enmienda es más relevante en este caso?",
+          options:["Libertad de prensa","Separación de iglesia y estado","Libertad de expresión y reunión pacífica","Libertad de religión"],
+          correct:2,
+          explanation:"Este caso involucra la libertad de expresión (protesta contra una política) y el derecho de reunión pacífica, ambos protegidos por la Primera Enmienda.",
+          feedback:{0:"No hay aspectos de medios de comunicación involucrados.",1:"La separación iglesia-estado no es relevante aquí.",2:"¡Correcto! La protesta pacífica involucra libertad de expresión y reunión.",3:"No hay aspectos religiosos en este caso sobre uniformes."}
+        },
+
+        {
+          id:7, theme:"civics-government", dok:3,
+          topic:"Comparar perspectivas: rol del gobierno en la economía",
+          bookPages:"62–65, 73, 75",
+          context:"Compare estas dos perspectivas sobre el papel del gobierno federal durante la Gran Depresión.",
+          stimulus:`<div class="stimulus-title">📜 Dos Perspectivas sobre el New Deal (1933)</div>
+<div class="document-excerpt"><strong>Fuente A — Apoyo al New Deal:</strong><br>
+"El gobierno federal debe actuar decisivamente para sacar al país de esta crisis. Los programas de empleo y obras públicas construyen la infraestructura que América necesita. Es el deber del gobierno proteger a sus ciudadanos en tiempos de crisis."</div>
+<div class="document-excerpt"><strong>Fuente B — Oposición al New Deal:</strong><br>
+"Estos programas masivos representan una expansión peligrosa del poder federal que viola los principios constitucionales. El libre mercado se corregiría naturalmente sin intervención gubernamental. Estamos creando una dependencia peligrosa del gobierno."</div>`,
+          question:"¿Cuál es la diferencia fundamental entre estas dos perspectivas?",
+          options:["Difieren sobre si el gobierno federal debe intervenir activamente en la economía durante una crisis","Ambas se oponen al New Deal pero proponen alternativas diferentes","Ambas apoyan la misma solución por diferentes razones","Solo difieren en la implementación específica de las políticas"],
+          correct:0,
+          explanation:"La diferencia fundamental es sobre el rol del gobierno: la Fuente A defiende la intervención federal activa; la Fuente B argumenta que tal intervención es peligrosa e inconstitucional.",
+          feedback:{0:"¡Correcto! El debate es sobre si el gobierno debe intervenir activamente en la economía.",1:"La Fuente A apoya el New Deal; la Fuente B se opone.",2:"Las fuentes tienen posiciones completamente opuestas sobre el New Deal.",3:"Las diferencias son fundamentales sobre el rol del gobierno, no solo implementación."}
+        },
+
+        {
+          id:8, theme:"civics-government", dok:1,
+          topic:"Federalismo: división de poderes entre niveles de gobierno",
+          bookPages:"60, 81, 87, 88",
+          context:"En el sistema federal estadounidense, diferentes niveles de gobierno tienen responsabilidades específicas.",
+          stimulus:`<div class="stimulus-title">🏛️ División de Poderes en el Federalismo</div>
+<table class="data-table"><thead><tr><th>Nivel de Gobierno</th><th>Responsabilidades Principales</th></tr></thead>
+<tbody>
+<tr><td>Federal</td><td>Defensa nacional, comercio interestatal, política exterior</td></tr>
+<tr><td>Estatal</td><td>Educación pública, seguridad pública, regulación del matrimonio</td></tr>
+<tr><td>Local</td><td>Servicios municipales, zonificación, sistemas de agua</td></tr>
+</tbody></table>`,
+          question:"¿Qué término describe este sistema donde el poder se divide entre diferentes niveles de gobierno?",
+          options:["Federalismo","República","Controles y equilibrios","Separación de poderes"],
+          correct:0,
+          explanation:"El federalismo divide el poder entre el gobierno nacional (federal) y los gobiernos estatales y locales, cada uno con responsabilidades específicas.",
+          feedback:{0:"¡Correcto! El federalismo es la división de poder entre niveles de gobierno.",1:"República se refiere al tipo de gobierno representativo.",2:"Los controles y equilibrios se refieren a cómo las ramas se limitan mutuamente.",3:"La separación de poderes divide el poder entre las tres ramas (ejecutiva, legislativa, judicial)."}
+        },
+
+        {
+          id:9, theme:"civics-government", dok:2,
+          topic:"Sistema de primarias presidenciales",
+          bookPages:"35, 104",
+          context:"El proceso de nominación presidencial ha evolucionado significativamente. Analice cómo las primarias afectan la democracia.",
+          stimulus:`<div class="stimulus-title">🗳️ Sistema de Primarias Presidenciales</div>
+<table class="data-table"><thead><tr><th>Aspecto</th><th>Antes de Reformas (1968)</th><th>Después de Reformas (1972-presente)</th></tr></thead>
+<tbody>
+<tr><td>Control nominación</td><td>Líderes partidarios en convenciones</td><td>Votantes en primarias estatales</td></tr>
+<tr><td>Participación ciudadana</td><td>Limitada a delegados</td><td>Millones de votantes</td></tr>
+<tr><td>Transparencia</td><td>Negociaciones privadas</td><td>Elecciones públicas</td></tr>
+<tr><td>Duración campaña</td><td>Semanas antes de convención</td><td>Meses de campaña nacional</td></tr>
+</tbody></table>`,
+          question:"¿Cómo han afectado las primarias presidenciales a la democracia estadounidense?",
+          options:["Han fortalecido el control de los líderes partidarios","Han democratizado el proceso de nominación al dar más poder a los votantes ordinarios","No han cambiado significativamente el sistema","Han reducido la participación ciudadana"],
+          correct:1,
+          explanation:"Las reformas trasladaron el poder de nominación desde líderes partidarios hacia votantes ordinarios, aumentando dramáticamente la participación y transparencia.",
+          feedback:{0:"Las primarias redujeron el control de líderes partidarios.",1:"¡Correcto! Las primarias democratizaron el proceso al dar poder a millones de votantes.",2:"El cambio del control de élites a votantes fue un cambio fundamental.",3:"Las primarias han aumentado significativamente la participación ciudadana."}
+        },
+
+        {
+          id:10, theme:"civics-government", dok:1,
+          topic:"Decimocuarta Enmienda: protección igual ante la ley",
+          bookPages:"44, 65",
+          context:"La Decimocuarta Enmienda (1868) estableció principios fundamentales sobre ciudadanía y protección legal.",
+          stimulus:`<div class="stimulus-title">⚖️ Decimocuarta Enmienda (1868)</div>
+<div class="document-excerpt">"Ningún estado hará o ejecutará ley alguna que limite los privilegios o inmunidades de los ciudadanos de los Estados Unidos; ni privará a persona alguna de la vida, la libertad o la propiedad sin el debido proceso legal; ni negará a persona alguna que se encuentre dentro de su jurisdicción la protección igual de las leyes."</div>`,
+          question:"¿Cuál es el principio legal más importante establecido por esta enmienda?",
+          options:["El derecho al voto para todos los ciudadanos","La protección igual ante la ley para todas las personas","El derecho a portar armas","La libertad de expresión y religión"],
+          correct:1,
+          explanation:"La cláusula de 'protección igual de las leyes' es el principio central de la Decimocuarta Enmienda.",
+          feedback:{0:"El derecho al voto se estableció en las enmiendas 15, 19 y 26.",1:"¡Correcto! La protección igual ante la ley es el principio fundamental de esta enmienda.",2:"El derecho a portar armas está en la Segunda Enmienda.",3:"Esos derechos están en la Primera Enmienda."}
+        },
+
+        {
+          id:11, theme:"civics-government", dok:3,
+          topic:"Grupos de interés y cabildeo en política pública",
+          bookPages:"82",
+          context:"Los grupos de interés juegan un papel importante en el proceso político. Analice este caso sobre la industria farmacéutica.",
+          stimulus:`<div class="stimulus-title">🏢 Caso: Regulación de la Industria Farmacéutica</div>
+<div class="document-excerpt">"Durante el debate sobre reducción de precios de medicamentos, la industria farmacéutica gastó $375 millones en cabildeo en 2022. Argumentaron que la regulación reduciría la inversión en investigación. Grupos de pacientes contrarrestaron que los precios altos impiden el acceso a tratamientos vitales."</div>
+<div class="highlight"><strong>Resultado:</strong> El Congreso aprobó una ley limitada que permite negociar precios solo para algunos medicamentos de Medicare.</div>`,
+          question:"¿Qué evidencia mejor apoya la afirmación de que los grupos de interés influyeron en el resultado legislativo?",
+          options:["El hecho de que se aprobó alguna legislación","La presentación de argumentos por ambos lados del debate","La naturaleza limitada de la legislación final comparada con propuestas iniciales más amplias","El alto gasto en cabildeo de la industria farmacéutica"],
+          correct:2,
+          explanation:"La evidencia más fuerte es que la legislación final fue mucho más limitada que las propuestas iniciales, sugiriendo que el cabildeo intensivo logró reducir el alcance de la regulación.",
+          feedback:{0:"Que se aprobara algo no indica el grado de influencia.",1:"Presentar argumentos es parte normal del proceso democrático.",2:"¡Correcto! El resultado limitado sugiere que el cabildeo logró moderar la legislación propuesta.",3:"El gasto solo muestra intento de influencia, no influencia exitosa."}
+        },
+
+        {
+          id:12, theme:"civics-government", dok:2,
+          topic:"Confianza pública en instituciones: encuestas de opinión",
+          bookPages:"82, 85",
+          context:"Las encuestas de opinión proporcionan información sobre las actitudes ciudadanas hacia el gobierno.",
+          stimulus:`<div class="stimulus-title">📊 Confianza Pública en Instituciones Estadounidenses (2023)</div>
+<table class="data-table"><thead><tr><th>Institución</th><th>% Mucha/Bastante Confianza</th><th>Cambio desde 2010</th><th>Diferencia Partidaria</th></tr></thead>
+<tbody>
+<tr><td>Militar</td><td>72%</td><td>-6%</td><td>Baja</td></tr>
+<tr><td>Corte Suprema</td><td>47%</td><td>-15%</td><td>Alta</td></tr>
+<tr><td>Congreso</td><td>24%</td><td>-12%</td><td>Muy alta</td></tr>
+<tr><td>Medios de comunicación</td><td>32%</td><td>-18%</td><td>Muy alta</td></tr>
+</tbody></table>`,
+          question:"¿Qué tendencia es más preocupante para la democracia según estos datos?",
+          options:["Los medios tienen demasiada influencia en la opinión pública","La baja confianza en instituciones políticas clave y el aumento de divisiones partidarias","La alta confianza en el militar podría llevar a un gobierno militarista","La Corte Suprema es demasiado poderosa"],
+          correct:1,
+          explanation:"La baja confianza en instituciones fundamentales (Congreso 24%, Corte Suprema 47%) junto con altas divisiones partidarias sugiere erosión peligrosa de la legitimidad institucional.",
+          feedback:{0:"Los datos muestran baja confianza en medios (32%), no alta influencia.",1:"¡Correcto! La baja confianza institucional y polarización amenazan la estabilidad democrática.",2:"72% de confianza en el militar está dentro de rangos históricos normales.",3:"Los datos muestran confianza declinante en la Corte, no poder excesivo."}
+        },
+
+        {
+          id:13, theme:"civics-government", dok:2,
+          topic:"Colegio Electoral vs. voto popular nacional",
+          bookPages:"60, 67, 96, 103",
+          context:"El Colegio Electoral puede producir resultados diferentes al voto popular nacional. Analice los datos.",
+          stimulus:`<div class="stimulus-title">🗳️ Resultados Electorales: Voto Popular vs. Colegio Electoral</div>
+<table class="data-table"><thead><tr><th>Elección</th><th>Ganador Voto Popular</th><th>% Voto Popular</th><th>Ganador C. Electoral</th><th>Votos Electorales</th></tr></thead>
+<tbody>
+<tr><td>2000</td><td>Al Gore (D)</td><td>48.4%</td><td>George W. Bush (R)</td><td>271</td></tr>
+<tr><td>2016</td><td>Hillary Clinton (D)</td><td>48.2%</td><td>Donald Trump (R)</td><td>304</td></tr>
+<tr><td>2020</td><td>Joe Biden (D)</td><td>51.3%</td><td>Joe Biden (D)</td><td>306</td></tr>
+</tbody></table>
+<div class="highlight"><strong>Nota:</strong> Se necesitan 270 votos electorales para ganar.</div>`,
+          question:"¿Qué característica del Colegio Electoral explica mejor estos resultados?",
+          options:["Los votos electorales se distribuyen proporcionalmente en cada estado","El sistema siempre refleja perfectamente la voluntad popular","El sistema favorece consistentemente a un partido político","Los estados menos poblados tienen proporcionalmente más poder electoral"],
+          correct:3,
+          explanation:"El Colegio Electoral da a estados pequeños un mínimo de 3 votos electorales, dándoles más poder per cápita. Además, el sistema winner-take-all permite ganar sin el voto popular nacional.",
+          feedback:{0:"La mayoría de estados usa winner-take-all, no distribución proporcional.",1:"2000 y 2016 muestran que el Colegio Electoral puede contradecir el voto popular.",2:"Los datos muestran ganadores de ambos partidos, no sesgo consistente.",3:"¡Correcto! La representación desigual y el sistema winner-take-all pueden anular el voto popular."}
+        },
+
+        {
+          id:14, theme:"civics-government", dok:1,
+          topic:"Revisión judicial: control de constitucionalidad",
+          bookPages:"33, 52, 85, 88",
+          context:"El poder judicial tiene la responsabilidad de interpretar la Constitución y las leyes.",
+          stimulus:`<div class="stimulus-title">⚖️ Poder Judicial y Revisión Constitucional</div>
+<p>Cuando una corte determina que una ley aprobada por el Congreso viola la Constitución y es inválida, ejerce el poder de:</p>`,
+          question:"Complete: La _______ es el poder de las cortes para declarar que leyes o acciones gubernamentales son inconstitucionales.",
+          options:["revisión judicial","separación de poderes","jurisdicción original","stare decisis"],
+          correct:"revisión judicial",
+          explanation:"La revisión judicial es el poder de las cortes para examinar leyes y declararlas inconstitucionales, establecido en Marbury v. Madison (1803).",
+          feedback:{"revisión judicial":"¡Correcto! La revisión judicial es el poder fundamental de las cortes para interpretar la constitucionalidad.","separación de poderes":"Este es el principio general de dividir el gobierno en tres ramas.","jurisdicción original":"Esto se refiere a qué casos puede escuchar una corte por primera vez.","stare decisis":"Este es el principio de seguir precedentes legales anteriores."}
+        },
+
+        {
+          id:15, theme:"civics-government", dok:3,
+          topic:"Propaganda política: técnicas persuasivas",
+          bookPages:"76, 110",
+          context:"La propaganda política usa técnicas específicas para influir en la opinión pública. Analice este anuncio.",
+          stimulus:`<div class="stimulus-title">📺 Anuncio Político: Candidato a Senador</div>
+<div class="document-excerpt">"Como veterano militar que sirvió tres tours en Afganistán, [Candidato X] entiende lo que significa defender la libertad. Mientras su oponente estaba en Washington gastando billones de sus dólares, [Candidato X] estaba luchando por América. Los burócratas de carrera han tenido su oportunidad. Es hora de enviar a un verdadero patriota al Senado."</div>
+<div class="highlight"><strong>El anuncio incluye:</strong> imágenes de la bandera americana, uniformes militares, familias trabajadoras y música patriótica de fondo.</div>`,
+          question:"¿Qué técnica de propaganda es más prominente en este anuncio?",
+          options:["Presentación objetiva de posiciones políticas","Análisis detallado de políticas públicas específicas","Apelo emocional al patriotismo combinado con ataques al carácter del oponente","Uso de estadísticas y evidencia empírica"],
+          correct:2,
+          explanation:"El anuncio usa apelo emocional al patriotismo (veterano, bandera, música), ataques al carácter ('burócratas de carrera'), y transferencia de valores positivos, sin discutir políticas específicas.",
+          feedback:{0:"No hay presentación objetiva; el anuncio está lleno de lenguaje emocional y sesgado.",1:"No se mencionan políticas específicas.",2:"¡Correcto! El anuncio combina patriotismo emocional con ataques al oponente, técnicas clásicas de propaganda.",3:"No se presentan estadísticas ni evidencia empírica objetiva."}
+        },
+
+        {
+          id:16, theme:"civics-government", dok:2,
+          topic:"Proceso de confirmación de jueces federales",
+          bookPages:"33, 52, 85, 88",
+          context:"El proceso de confirmación de jueces federales involucra múltiples pasos constitucionales.",
+          stimulus:`<div class="stimulus-title">⚖️ Proceso de Confirmación de Jueces Federales</div>
+<div class="graph-container">
+<ol style="text-align:left;margin:10px 20px">
+<li>Presidente nomina candidato según calificaciones y filosofía judicial</li>
+<li>Senado Judiciary Committee realiza audiencias y vota</li>
+<li>Si aprueba el comité, va al pleno del Senado para debate</li>
+<li>Senado vota por mayoría simple para confirmar o rechazar</li>
+<li>Si es confirmado, el juez sirve durante "buen comportamiento" (de por vida)</li>
+</ol></div>`,
+          question:"¿En qué paso del proceso es más evidente el sistema de controles y equilibrios?",
+          options:["Cuando el presidente nomina basándose en su propia filosofía","Durante las audiencias del comité, que son solo procedimentales","En la permanencia vitalicia de los jueces una vez confirmados","Cuando el Senado puede rechazar las nominaciones presidenciales"],
+          correct:3,
+          explanation:"El sistema de controles y equilibrios es más evidente cuando el Senado ejerce su poder de 'advice and consent' para rechazar nominaciones presidenciales, limitando el poder del ejecutivo.",
+          feedback:{0:"La nominación presidencial no involucra controles de otras ramas.",1:"Las audiencias del comité son parte sustantiva del escrutinio senatorial.",2:"La permanencia vitalicia protege la independencia judicial, no es parte de controles y equilibrios.",3:"¡Correcto! El poder del Senado para rechazar nominaciones es un control directo sobre el poder presidencial."}
+        },
+
+        {
+          id:17, theme:"civics-government", dok:1,
+          topic:"Era Progresista: recall y reformas democráticas",
+          bookPages:"71, 72",
+          context:"Durante la Era Progresista (1890s-1920s), varios términos describían las reformas de la época.",
+          stimulus:`<div class="stimulus-title">📈 Reformas de la Era Progresista</div>
+<p>El proceso por el cual los ciudadanos pueden votar directamente para remover a un funcionario electo de su cargo antes de que termine su período.</p>`,
+          question:"Complete: El _______ permite a los votantes destituir a funcionarios electos corruptos o incompetentes.",
+          options:["referéndum","recall","initiative","sufragio"],
+          correct:"recall",
+          explanation:"El 'recall' (revocatoria) permite a los ciudadanos votar para remover a un funcionario electo antes de que termine su período, una reforma progresista para combatir la corrupción.",
+          feedback:{"recall":"¡Correcto! El recall es el mecanismo democrático para destituir funcionarios electos.","referéndum":"Un referéndum es votar sobre una ley específica, no sobre destituir funcionarios.","initiative":"Una iniciativa permite a los ciudadanos proponer nuevas leyes, no destituir funcionarios.","sufragio":"El sufragio es el derecho al voto en general."}
+        },
+
+        // ══ HISTORIA DE ESTADOS UNIDOS (7 preguntas) ═════════════════════
+
+        {
+          id:18, theme:"us-history", dok:2,
+          topic:"Compromiso de Misuri y la expansión de la esclavitud",
+          bookPages:"42, 43, 44",
+          context:"El Compromiso de Misuri de 1820 intentó mantener el equilibrio político entre estados esclavistas y libres.",
+          stimulus:`<div class="stimulus-title">📜 El Compromiso de Misuri (1820)</div>
+<div class="document-excerpt">"Para preservar la igualdad de representación en el Senado, por cada estado esclavista admitido debe admitirse un estado libre. Misuri será admitido como estado esclavista, Maine como estado libre, y en los territorios al norte de la línea 36°30' estará prohibida la esclavitud."</div>
+<table class="data-table"><thead><tr><th>Antes del Compromiso</th><th>Después del Compromiso</th></tr></thead>
+<tbody>
+<tr><td>11 estados libres, 11 estados esclavistas</td><td>12 estados libres, 12 estados esclavistas</td></tr>
+<tr><td>Tensión sobre admisión de Misuri</td><td>Equilibrio temporal restaurado</td></tr>
+</tbody></table>`,
+          question:"¿Qué causa subyacente de la Guerra Civil se evidencia en la necesidad del Compromiso de Misuri?",
+          options:["Desacuerdos sobre la interpretación de la Constitución","Disputas sobre aranceles comerciales entre Norte y Sur","El conflicto fundamental sobre la expansión de la esclavitud a nuevos territorios","Competencia económica entre agricultura y manufactura"],
+          correct:2,
+          explanation:"El Compromiso de Misuri reveló que la expansión de la esclavitud a nuevos territorios era una fuente central de conflicto político.",
+          feedback:{0:"Parcialmente correcto, pero la interpretación constitucional era secundaria al problema de la esclavitud.",1:"Aunque los aranceles fueron un problema, el Compromiso se centró específicamente en la esclavitud.",2:"¡Correcto! El compromiso fue necesario porque cada nuevo estado planteaba la pregunta de si permitiría la esclavitud.",3:"Aunque había competencia económica, el compromiso trató específicamente la esclavitud."}
+        },
+
+        {
+          id:19, theme:"us-history", dok:3,
+          topic:"Internamiento japonés-americano: contexto histórico y prejuicio",
+          bookPages:"48, 49, 77",
+          context:"Durante la WWII, el gobierno internó a japoneses-americanos. Analice el contexto histórico que influyó en esta política.",
+          stimulus:`<div class="stimulus-title">📋 Orden Ejecutiva 9066 (1942)</div>
+<div class="document-excerpt">"Por la presente autorizo al Secretario de Guerra... prescribir áreas militares de las cuales cualquier persona puede ser excluida..."
+<div class="quote-source">— Presidente Franklin D. Roosevelt, 19 de febrero de 1942</div></div>
+<div class="highlight"><strong>Contexto:</strong> Esta orden se emitió 74 días después de Pearl Harbor. Aproximadamente 120,000 personas de ascendencia japonesa fueron enviadas a campos de internamiento.</div>`,
+          question:"¿Cómo influyó el contexto histórico de Pearl Harbor en la perspectiva del gobierno sobre los japoneses-americanos?",
+          options:["Resultó en políticas que trataron a todos los grupos étnicos por igual","Llevó a una evaluación racional basada en evidencia de amenazas reales","No tuvo impacto significativo en las políticas hacia japoneses-americanos","Creó un clima de miedo y sospecha que llevó a decisiones basadas en prejuicios raciales más que en evidencia"],
+          correct:3,
+          explanation:"El shock y miedo después de Pearl Harbor crearon un ambiente donde los prejuicios raciales preexistentes se combinaron con paranoia de guerra, llevando a una política que violó los derechos constitucionales de ciudadanos americanos.",
+          feedback:{0:"Solo los japoneses-americanos fueron internados masivamente.",1:"No había evidencia de amenazas reales; la política se basó en miedo y prejuicio racial.",2:"Pearl Harbor tuvo un impacto directo y dramático en esta política.",3:"¡Correcto! El trauma de Pearl Harbor exacerbó los prejuicios existentes, llevando a políticas discriminatorias injustificadas."}
+        },
+
+        {
+          id:20, theme:"us-history", dok:2,
+          topic:"Expansión territorial de EE.UU.: métodos y patrones",
+          bookPages:"19, 36, 37, 41",
+          context:"La migración hacia el oeste durante el siglo XIX transformó América. Analice los patrones de expansión territorial.",
+          stimulus:`<div class="stimulus-title">🗺️ Expansión Territorial de EE.UU. (1803-1853)</div>
+<table class="data-table"><thead><tr><th>Adquisición</th><th>Año</th><th>Área (millas²)</th><th>Método</th></tr></thead>
+<tbody>
+<tr><td>Compra de Luisiana</td><td>1803</td><td>827,987</td><td>Compra a Francia</td></tr>
+<tr><td>Anexión de Texas</td><td>1845</td><td>389,166</td><td>Anexión de república independiente</td></tr>
+<tr><td>Cesión Mexicana</td><td>1848</td><td>529,189</td><td>Guerra México-Americana</td></tr>
+<tr><td>Compra de Gadsden</td><td>1853</td><td>29,640</td><td>Compra a México</td></tr>
+</tbody></table>`,
+          question:"¿Qué patrón se observa en los métodos de expansión territorial estadounidense?",
+          options:["La expansión utilizó múltiples métodos: compra, guerra y anexión política","Todo el territorio se obtuvo a través de conflictos militares","La expansión fue gradual y tomó más de un siglo","EE.UU. solo expandió territorio a través de compras pacíficas"],
+          correct:0,
+          explanation:"Los datos muestran que EE.UU. empleó diversos métodos: compras (Luisiana, Gadsden), guerra (Cesión Mexicana), y anexión política (Texas). Una estrategia multifacética de expansión.",
+          feedback:{0:"¡Correcto! EE.UU. usó diplomacia, guerra y política para expandir territorio de manera oportunista.",1:"Varias adquisiciones fueron compras pacíficas.",2:"La mayor parte de la expansión continental ocurrió en solo 50 años.",3:"La Cesión Mexicana se obtuvo a través de guerra, no compra."}
+        },
+
+        {
+          id:21, theme:"us-history", dok:1,
+          topic:"Declaración de Independencia: propósito del gobierno",
+          bookPages:"31",
+          context:"La Declaración de Independencia estableció los principios fundamentales sobre los cuales se fundó EE.UU.",
+          stimulus:`<div class="stimulus-title">📜 Declaración de Independencia (1776)</div>
+<div class="document-excerpt">"Sostenemos como evidentes estas verdades: que todos los hombres son creados iguales; que son dotados de ciertos derechos inalienables; que entre estos están la vida, la libertad y la búsqueda de la felicidad; que para garantizar estos derechos se instituyen entre los hombres los gobiernos, que derivan sus poderes justos del consentimiento de los gobernados."</div>`,
+          question:"Según este pasaje, ¿cuál es el propósito principal del gobierno?",
+          options:["Mantener el orden social tradicional","Proteger los derechos naturales de las personas","Expandir el territorio nacional","Promover el comercio internacional"],
+          correct:1,
+          explanation:"El pasaje establece que los gobiernos se 'instituyen' para 'garantizar estos derechos' (vida, libertad, búsqueda de la felicidad).",
+          feedback:{0:"El documento habla de derechos naturales, no de mantener tradiciones sociales.",1:"¡Correcto! El texto dice que los gobiernos se crean 'para garantizar estos derechos' inalienables.",2:"La expansión territorial no se menciona en este pasaje.",3:"El comercio internacional no se menciona en este pasaje filosófico."}
+        },
+
+        {
+          id:22, theme:"us-history", dok:3,
+          topic:"Movimiento de Derechos Civiles: estrategias y cambio legislativo",
+          bookPages:"44, 108, 109, 115",
+          context:"El Movimiento de Derechos Civiles (1950s-1960s) empleó múltiples estrategias. Analice las causas y efectos.",
+          stimulus:`<div class="stimulus-title">✊ Estrategias del Movimiento de Derechos Civiles</div>
+<table class="data-table"><thead><tr><th>Estrategia</th><th>Ejemplo</th><th>Resultado Inmediato</th><th>Efecto a Largo Plazo</th></tr></thead>
+<tbody>
+<tr><td>Litigio Legal</td><td>Brown vs. Board (1954)</td><td>Segregación escolar inconstitucional</td><td>Base legal para integración</td></tr>
+<tr><td>Desobediencia Civil</td><td>Boicot autobuses Montgomery</td><td>Integración transporte público</td><td>Modelo para protestas pacíficas</td></tr>
+<tr><td>Protestas Masivas</td><td>Marcha en Washington (1963)</td><td>Atención nacional/internacional</td><td>Presión para legislación federal</td></tr>
+<tr><td>Presión Legislativa</td><td>Cabildeo Ley Derechos Civiles</td><td>Ley de Derechos Civiles (1964)</td><td>Fin legal de segregación pública</td></tr>
+</tbody></table>`,
+          question:"¿Cuál fue la relación causal más efectiva entre estrategias del movimiento y el cambio legislativo?",
+          options:["Las protestas masivas crearon presión política que facilitó la aprobación de legislación","La desobediencia civil fue contraproducente para los objetivos del movimiento","Cada estrategia funcionó independientemente sin relación con las otras","Solo el litigio legal fue necesario para lograr cambios"],
+          correct:0,
+          explanation:"Las protestas masivas como la Marcha en Washington generaron atención que creó presión política sobre el Congreso, contribuyendo directamente a la Ley de Derechos Civiles de 1964.",
+          feedback:{0:"¡Correcto! Las protestas masivas amplificaron el mensaje y crearon presión política irresistible.",1:"La desobediencia civil pacífica demostró la moralidad del movimiento y ganó apoyo público.",2:"Las estrategias se reforzaron mutuamente en una campaña coordinada.",3:"Aunque Brown vs. Board fue importante, se necesitaron múltiples estrategias."}
+        },
+
+        {
+          id:23, theme:"us-history", dok:2,
+          topic:"Guerra Fría: Doctrina Truman y política de contención",
+          bookPages:"80, 106, 107",
+          context:"La Guerra Fría entre EE.UU. y la URSS definió la política exterior americana de 1945-1991.",
+          stimulus:`<div class="stimulus-title">🌍 La Doctrina Truman (1947)</div>
+<div class="document-excerpt">"Creo que debe ser la política de Estados Unidos apoyar a los pueblos libres que están resistiendo intentos de subyugación por minorías armadas o por presiones externas."
+<div class="quote-source">— Presidente Harry Truman, discurso al Congreso</div></div>
+<div class="highlight"><strong>Contexto:</strong> Pronunciado mientras Grecia y Turquía enfrentaban presión comunista.</div>`,
+          question:"¿Qué estrategia de Guerra Fría se establece en la Doctrina Truman?",
+          options:["Aislacionismo americano respecto a conflictos extranjeros","Cooperación pacífica con todas las ideologías políticas","Contención del expansionismo comunista a través de apoyo a naciones amenazadas","Confrontación militar directa con la Unión Soviética"],
+          correct:2,
+          explanation:"La Doctrina Truman estableció la política de 'contención' — apoyar activamente a naciones que resistían el comunismo para prevenir su expansión.",
+          feedback:{0:"La doctrina rechaza el aislacionismo, prometiendo apoyo activo.",1:"La doctrina se opone específicamente a la expansión comunista.",2:"¡Correcto! La doctrina estableció la contención como estrategia central de la Guerra Fría.",3:"La doctrina evitó confrontación militar directa."}
+        },
+
+        {
+          id:24, theme:"us-history", dok:1,
+          topic:"Era Progresista: mecanismos de democracia directa",
+          bookPages:"71, 72",
+          context:"Durante la Era Progresista, se introdujeron mecanismos de democracia directa para combatir la corrupción.",
+          stimulus:`<div class="stimulus-title">📈 Herramientas de la Era Progresista</div>
+<p><strong>Definición:</strong> El proceso por el cual los ciudadanos pueden proponer o aprobar leyes directamente, sin pasar por el legislativo.</p>`,
+          question:"Complete: El _______ permite a los votantes destituir a funcionarios electos antes de que termine su período.",
+          options:["referéndum","recall","initiative","sufragio"],
+          correct:"recall",
+          explanation:"El 'recall' o revocatoria permite a los ciudadanos votar para remover a un funcionario antes de que termine su período.",
+          feedback:{"recall":"¡Correcto! El recall es el mecanismo para destituir funcionarios electos.","referéndum":"Un referéndum permite votar sobre una ley específica.","initiative":"Una iniciativa permite proponer nuevas leyes, no destituir funcionarios.","sufragio":"El sufragio es el derecho al voto en general."}
+        },
+
+        // ══ ECONOMÍA (5 preguntas) ════════════════════════════════════════
+
+        {
+          id:25, theme:"economics", dok:2,
+          topic:"Ley de oferta y demanda: mercado de gasolina",
+          bookPages:"123, 124",
+          context:"La ley de oferta y demanda determina los precios en una economía de mercado.",
+          stimulus:`<div class="stimulus-title">📈 Mercado de Gasolina: Efectos de Eventos Externos</div>
+<table class="data-table"><thead><tr><th>Evento</th><th>Efecto en Oferta</th><th>Efecto en Demanda</th><th>Precio Resultante</th></tr></thead>
+<tbody>
+<tr><td>Cierre temporal de refinería</td><td>Disminuye</td><td>Sin cambio</td><td>Aumenta</td></tr>
+<tr><td>Nueva tecnología de extracción</td><td>Aumenta</td><td>Sin cambio</td><td>Disminuye</td></tr>
+<tr><td>Temporada de viajes de verano</td><td>Sin cambio</td><td>Aumenta</td><td>Aumenta</td></tr>
+<tr><td>Recesión económica</td><td>Sin cambio</td><td>Disminuye</td><td>Disminuye</td></tr>
+</tbody></table>`,
+          question:"¿Qué principio económico fundamental demuestran estos datos?",
+          options:["Los precios siempre aumentan con el tiempo por la inflación","Solo los eventos externos pueden cambiar los precios de mercado","La oferta y demanda no afectan los precios en mercados reales","Los precios se mueven en la dirección opuesta a la oferta y en la misma dirección que la demanda"],
+          correct:3,
+          explanation:"Los datos confirman la ley básica: cuando la oferta disminuye, los precios suben; cuando aumenta, los precios bajan. Cuando la demanda aumenta, los precios suben; cuando disminuye, bajan.",
+          feedback:{0:"Los precios pueden tanto subir como bajar según las fuerzas de oferta y demanda.",1:"Los eventos externos afectan los precios cambiando la oferta o demanda.",2:"Los datos claramente muestran que oferta y demanda sí afectan los precios.",3:"¡Correcto! Los datos muestran perfectamente cómo oferta y demanda determinan precios."}
+        },
+
+        {
+          id:26, theme:"economics", dok:3,
+          topic:"Gran Depresión: causas económicas múltiples e interrelacionadas",
+          bookPages:"73, 97, 122–125",
+          context:"La Gran Depresión tuvo múltiples causas interrelacionadas. Analice este diagrama de causalidad múltiple.",
+          stimulus:`<div class="stimulus-title">📉 Causas Múltiples de la Gran Depresión (1929-1933)</div>
+<table class="data-table"><thead><tr><th>Factor Causal</th><th>Descripción</th><th>Efecto Económico</th><th>Relación con Otros Factores</th></tr></thead>
+<tbody>
+<tr><td>Sobreproducción</td><td>Industrias produjeron más de lo que podían vender</td><td>Inventarios excesivos, despidos</td><td>Amplificó efectos de baja demanda</td></tr>
+<tr><td>Especulación bursátil</td><td>Compra de acciones con dinero prestado</td><td>Burbuja artificial, crash de 1929</td><td>Destruyó confianza del consumidor</td></tr>
+<tr><td>Política monetaria restrictiva</td><td>Fed aumentó tasas de interés</td><td>Redujo préstamos e inversión</td><td>Empeoró efectos de falta de crédito</td></tr>
+<tr><td>Desigualdad de ingresos</td><td>60% de familias vivían en pobreza</td><td>Demanda insuficiente</td><td>Contribuyó a sobreproducción</td></tr>
+</tbody></table>`,
+          question:"¿Cuál fue la relación causal más crítica entre estos factores?",
+          options:["La desigualdad de ingresos creó demanda insuficiente que amplificó todos los otros problemas","La política monetaria fue el único factor que realmente importó","Solo la especulación bursátil fue importante; los otros factores fueron irrelevantes","Cada factor actuó independientemente sin relación con los otros"],
+          correct:0,
+          explanation:"La desigualdad de ingresos fue fundamental porque creó demanda insuficiente para sostener la producción, llevando a sobreproducción y alimentando la inestabilidad que generó la especulación.",
+          feedback:{0:"¡Correcto! La desigualdad limitó el poder adquisitivo, creando un desequilibrio fundamental entre producción y consumo.",1:"La política monetaria empeoró la crisis, pero no fue la única causa importante.",2:"Aunque la especulación fue importante, los problemas estructurales subyacentes fueron cruciales.",3:"Los factores estaban interrelacionados en un ciclo que se reforzó mutuamente."}
+        },
+
+        {
+          id:27, theme:"economics", dok:2,
+          topic:"PIB y ciclos económicos: recesión y recuperación",
+          bookPages:"128, 137",
+          context:"El Producto Interno Bruto (PIB) es un indicador clave de la salud económica. Analice estos datos.",
+          stimulus:`<div class="stimulus-title">💹 Crecimiento del PIB de EE.UU. (2018-2022)</div>
+<table class="data-table"><thead><tr><th>Año</th><th>PIB (billones $)</th><th>Crecimiento (%)</th><th>Desempleo (%)</th><th>Inflación (%)</th></tr></thead>
+<tbody>
+<tr><td>2018</td><td>20.5</td><td>+2.9</td><td>3.9</td><td>2.4</td></tr>
+<tr><td>2019</td><td>21.4</td><td>+2.3</td><td>3.7</td><td>1.8</td></tr>
+<tr><td>2020</td><td>20.9</td><td>-3.4</td><td>8.1</td><td>1.2</td></tr>
+<tr><td>2021</td><td>23.0</td><td>+5.7</td><td>5.4</td><td>4.7</td></tr>
+<tr><td>2022</td><td>25.5</td><td>+2.1</td><td>3.6</td><td>8.0</td></tr>
+</tbody></table>`,
+          question:"¿Qué patrón económico es más evidente en estos datos?",
+          options:["El PIB no está relacionado con las tasas de desempleo","La economía creció de manera estable sin interrupciones","El desempleo y la inflación siempre se mueven en la misma dirección","2020 mostró una severa recesión seguida por una fuerte recuperación en 2021"],
+          correct:3,
+          explanation:"Los datos muestran una recesión en 2020 (PIB -3.4%, desempleo 8.1%) seguida por fuerte recuperación en 2021 (PIB +5.7%, desempleo 5.4%), típico de los efectos económicos de la pandemia COVID-19.",
+          feedback:{0:"Hay una relación inversa visible: cuando el PIB cayó en 2020, el desempleo subió.",1:"Hubo una clara interrupción en 2020 con crecimiento negativo del PIB.",2:"En 2021, el desempleo bajó mientras la inflación subió, moviéndose en direcciones opuestas.",3:"¡Correcto! Los datos muestran el patrón clásico de recesión-recuperación durante la pandemia."}
+        },
+
+        {
+          id:28, theme:"economics", dok:1,
+          topic:"Estructuras de mercado: monopolio, oligopolio, competencia perfecta",
+          bookPages:"119, 121",
+          context:"Varios términos describen diferentes tipos de mercado según el número de competidores.",
+          stimulus:`<div class="stimulus-title">🏢 Tipos de Estructuras de Mercado</div>
+<table class="data-table"><thead><tr><th>Estructura</th><th>Número de Vendedores</th><th>Control de Precios</th><th>Ejemplo</th></tr></thead>
+<tbody>
+<tr><td>Competencia perfecta</td><td>Muchos</td><td>Ninguno</td><td>Mercado agrícola</td></tr>
+<tr><td>Monopolio</td><td>Uno</td><td>Total</td><td>Servicios públicos locales</td></tr>
+<tr><td>Oligopolio</td><td>Pocos</td><td>Limitado</td><td>Industria automotriz</td></tr>
+</tbody></table>`,
+          question:"¿Qué término describe un mercado dominado por una sola empresa que puede controlar precios?",
+          options:["Monopolio","Competencia perfecta","Oligopolio","Libre mercado"],
+          correct:0,
+          explanation:"Un monopolio es una estructura de mercado donde una sola empresa domina completamente, dándole poder total para controlar precios sin competencia significativa.",
+          feedback:{0:"¡Correcto! Un monopolio es el control total del mercado por una sola empresa.",1:"La competencia perfecta tiene muchos vendedores sin control de precios.",2:"Un oligopolio tiene pocos vendedores, no uno solo.",3:"Libre mercado es un concepto general, no una estructura específica."}
+        },
+
+        {
+          id:29, theme:"economics", dok:2,
+          topic:"Política fiscal durante recesiones: expansión vs. contracción",
+          bookPages:"120, 136, 137",
+          context:"Las políticas fiscales del gobierno pueden influir en la economía durante recesiones. Analice las opciones.",
+          stimulus:`<div class="stimulus-title">💰 Opciones de Política Fiscal Durante Recesión</div>
+<table class="data-table"><thead><tr><th>Política</th><th>Acción del Gobierno</th><th>Efecto en Demanda</th><th>Efecto en Déficit</th></tr></thead>
+<tbody>
+<tr><td>Aumento del gasto público</td><td>Más inversión en infraestructura</td><td>Aumenta</td><td>Aumenta</td></tr>
+<tr><td>Reducción de impuestos</td><td>Menor carga fiscal</td><td>Aumenta</td><td>Aumenta</td></tr>
+<tr><td>Reducción del gasto</td><td>Recortes en programas</td><td>Disminuye</td><td>Disminuye</td></tr>
+<tr><td>Aumento de impuestos</td><td>Mayor carga fiscal</td><td>Disminuye</td><td>Disminuye</td></tr>
+</tbody></table>`,
+          question:"¿Qué puede inferirse sobre la política fiscal más apropiada durante una recesión?",
+          options:["Las políticas fiscales no tienen efecto en la economía durante recesiones","Aumentar gastos o reducir impuestos para estimular la demanda, aunque aumente el déficit","Reducir gastos y aumentar impuestos para mantener un presupuesto equilibrado","Solo las políticas monetarias son efectivas durante recesiones"],
+          correct:1,
+          explanation:"Durante una recesión, el objetivo es estimular la demanda. Tanto aumentar el gasto como reducir impuestos logran este objetivo al poner más dinero en circulación.",
+          feedback:{0:"Los datos muestran claramente que las políticas fiscales afectan la demanda económica.",1:"¡Correcto! Las políticas fiscales expansivas estimulan la demanda durante recesiones.",2:"Reducir gastos y aumentar impuestos disminuirían la demanda, empeorando la recesión.",3:"Aunque las políticas monetarias son importantes, las fiscales también son efectivas."}
+        },
+
+        // ══ GEOGRAFÍA Y EL MUNDO (5 preguntas) ═══════════════════════════
+
+        {
+          id:30, theme:"geography-world", dok:2,
+          topic:"Urbanización global: megaciudades y países en desarrollo",
+          bookPages:"16",
+          context:"La urbanización global ha creado megaciudades con poblaciones superiores a 10 millones.",
+          stimulus:`<div class="stimulus-title">🏙️ Principales Megaciudades Mundiales (2023)</div>
+<table class="data-table"><thead><tr><th>Ciudad</th><th>País</th><th>Población (mill.)</th><th>Crecimiento 2010-2023</th><th>Nivel Desarrollo</th></tr></thead>
+<tbody>
+<tr><td>Tokio</td><td>Japón</td><td>37.4</td><td>-2%</td><td>Desarrollado</td></tr>
+<tr><td>Delhi</td><td>India</td><td>32.9</td><td>+39%</td><td>En desarrollo</td></tr>
+<tr><td>Shanghai</td><td>China</td><td>28.5</td><td>+24%</td><td>En desarrollo</td></tr>
+<tr><td>São Paulo</td><td>Brasil</td><td>22.8</td><td>+8%</td><td>En desarrollo</td></tr>
+<tr><td>Nueva York</td><td>EE.UU.</td><td>20.1</td><td>+4%</td><td>Desarrollado</td></tr>
+</tbody></table>`,
+          question:"¿Qué patrón global se observa en el crecimiento de megaciudades?",
+          options:["Solo las ciudades de países desarrollados están creciendo","Todas las megaciudades están creciendo al mismo ritmo","No hay relación entre nivel de desarrollo y crecimiento urbano","Las ciudades en países en desarrollo muestran mayor crecimiento que las de países desarrollados"],
+          correct:3,
+          explanation:"Las ciudades en países en desarrollo (Delhi +39%, Shanghai +24%) crecen mucho más rápido que las de países desarrollados (Tokio -2%, Nueva York +4%), reflejando patrones globales de migración rural-urbana.",
+          feedback:{0:"Tokio (país desarrollado) está decreciendo (-2%).",1:"Los rangos van desde -2% hasta +39%, mostrando grandes diferencias.",2:"Los datos muestran una relación clara entre desarrollo y crecimiento urbano.",3:"¡Correcto! Hay una clara correlación entre nivel de desarrollo y velocidad de crecimiento urbano."}
+        },
+
+        {
+          id:31, theme:"geography-world", dok:3,
+          topic:"Cambio climático: efectos interrelacionados en cascada",
+          bookPages:"97",
+          context:"El cambio climático causa múltiples efectos interrelacionados. Analice estas relaciones causa-efecto.",
+          stimulus:`<div class="stimulus-title">🌡️ Efectos Interrelacionados del Cambio Climático</div>
+<table class="data-table"><thead><tr><th>Causa Inicial</th><th>Efecto Primario</th><th>Efecto Secundario</th><th>Efecto Terciario</th></tr></thead>
+<tbody>
+<tr><td>Aumento temperatura global</td><td>Derretimiento glaciares</td><td>Aumento nivel del mar</td><td>Migración poblacional costera</td></tr>
+<tr><td>Mayor evaporación océanos</td><td>Más vapor de agua</td><td>Tormentas más intensas</td><td>Daños en infraestructura</td></tr>
+<tr><td>Cambios patrones lluvia</td><td>Sequías prolongadas</td><td>Reducción producción agrícola</td><td>Inseguridad alimentaria</td></tr>
+<tr><td>Acidificación océanos</td><td>Muerte de corales</td><td>Pérdida biodiversidad marina</td><td>Colapso pesquerías</td></tr>
+</tbody></table>`,
+          question:"¿Cuál es la característica más significativa de estos efectos del cambio climático?",
+          options:["Los efectos forman cadenas causales que se amplifican mutuamente","Solo los efectos primarios son importantes para la humanidad","Cada efecto ocurre independientemente sin relación con otros","Los efectos son demasiado pequeños para tener impacto significativo"],
+          correct:0,
+          explanation:"Los datos muestran cascadas causales donde cada efecto genera efectos adicionales que se amplifican mutuamente, creando sistemas de retroalimentación complejos.",
+          feedback:{0:"¡Correcto! El cambio climático crea sistemas de retroalimentación donde los efectos se amplifican mutuamente.",1:"Los efectos secundarios y terciarios a menudo tienen los mayores impactos humanos.",2:"Los efectos están claramente interconectados en cadenas causales complejas.",3:"Los efectos como migración masiva e inseguridad alimentaria son altamente significativos."}
+        },
+
+        {
+          id:32, theme:"geography-world", dok:2,
+          topic:"Desarrollo de civilizaciones: etapas y patrones históricos",
+          bookPages:"20, 21, 23",
+          context:"El desarrollo de civilizaciones ha seguido patrones similares a lo largo de la historia. Ordene las etapas.",
+          stimulus:`<div class="stimulus-title">🏛️ Desarrollo de Civilizaciones Clásicas</div>
+<div class="highlight"><strong>Factores clave:</strong> Acceso a agua, desarrollo agrícola, excedentes alimentarios, especialización laboral, gobierno centralizado, sistemas de escritura.</div>`,
+          question:"Ordene las etapas del desarrollo civilizacional desde la más temprana hasta la más avanzada:",
+          dragItems:[
+            {id:"agriculture",text:"Desarrollo de agricultura y asentamientos permanentes",correct:0},
+            {id:"surplus",text:"Producción de excedentes alimentarios",correct:1},
+            {id:"specialization",text:"Especialización laboral y clases sociales",correct:2},
+            {id:"writing",text:"Desarrollo de sistemas de escritura",correct:3},
+            {id:"empire",text:"Formación de estados complejos e imperios",correct:4}
+          ],
+          dropZones:[
+            {id:"stage1",label:"Etapa 1:",description:"Base subsistencia"},
+            {id:"stage2",label:"Etapa 2:",description:"Acumulación recursos"},
+            {id:"stage3",label:"Etapa 3:",description:"División trabajo"},
+            {id:"stage4",label:"Etapa 4:",description:"Comunicación compleja"},
+            {id:"stage5",label:"Etapa 5:",description:"Organización política avanzada"}
+          ],
+          explanation:"Las civilizaciones siguen el patrón: agricultura → excedentes → especialización → escritura → estados complejos.",
+          feedback:{correct:"¡Excelente! Has ordenado correctamente las etapas universales del desarrollo civilizacional.",incorrect:"Recuerda la secuencia lógica: agricultura → excedentes → especialización → escritura → estados complejos."}
+        },
+
+        {
+          id:33, theme:"geography-world", dok:1,
+          topic:"Recursos naturales: renovables, no renovables e inagotables",
+          bookPages:"119",
+          context:"Los recursos naturales influyen significativamente en el desarrollo económico de las regiones.",
+          stimulus:`<div class="stimulus-title">🌍 Tipos de Recursos Naturales</div>
+<table class="data-table"><thead><tr><th>Tipo de Recurso</th><th>Características</th><th>Ejemplos</th></tr></thead>
+<tbody>
+<tr><td>Renovables</td><td>Se regeneran naturalmente</td><td>Bosques, pesca, energía solar</td></tr>
+<tr><td>No renovables</td><td>Cantidad limitada, no se regeneran</td><td>Petróleo, carbón, minerales</td></tr>
+<tr><td>Inagotables</td><td>Suministro virtualmente infinito</td><td>Energía solar, eólica, geotermal</td></tr>
+</tbody></table>`,
+          question:"¿Qué término describe los recursos que tienen cantidad limitada y no pueden reemplazarse una vez agotados?",
+          options:["Recursos no renovables","Recursos sostenibles","Recursos inagotables","Recursos renovables"],
+          correct:0,
+          explanation:"Los recursos no renovables existen en cantidades limitadas y no pueden regenerarse en escalas de tiempo humanas, como los combustibles fósiles y minerales.",
+          feedback:{0:"¡Correcto! Los recursos no renovables tienen cantidad limitada y no se regeneran.",1:"'Sostenibles' se refiere al uso responsable, no al tipo de recurso.",2:"Los recursos inagotables tienen suministro virtualmente infinito.",3:"Los recursos renovables se regeneran naturalmente."}
+        },
+
+        {
+          id:34, theme:"geography-world", dok:2,
+          topic:"Migración internacional: patrones y causas",
+          bookPages:"27",
+          context:"Los patrones de migración internacional reflejan factores económicos, políticos y ambientales.",
+          stimulus:`<div class="stimulus-title">🌐 Principales Flujos Migratorios Globales (2020-2023)</div>
+<table class="data-table"><thead><tr><th>Región de Origen</th><th>Región de Destino</th><th>Mill. Migrantes</th><th>Motivo Principal</th></tr></thead>
+<tbody>
+<tr><td>América Latina</td><td>América del Norte</td><td>12.8</td><td>Económico</td></tr>
+<tr><td>África Subsahariana</td><td>Europa</td><td>8.3</td><td>Económico/Conflicto</td></tr>
+<tr><td>Medio Oriente</td><td>Europa</td><td>5.7</td><td>Conflicto/Persecución</td></tr>
+<tr><td>Asia del Sur</td><td>Golfo Pérsico</td><td>15.2</td><td>Económico</td></tr>
+</tbody></table>`,
+          question:"¿Qué puede inferirse sobre los patrones migratorios globales?",
+          options:["La migración es aleatoria sin patrones identificables","Europa es el único destino importante para migrantes","Las personas migran principalmente de regiones menos desarrolladas a más desarrolladas por razones económicas","Solo los conflictos causan migración internacional"],
+          correct:2,
+          explanation:"La mayoría de flujos migratorios van de regiones en desarrollo (América Latina, África, Asia del Sur) hacia regiones más desarrolladas (América del Norte, Europa, Golfo Pérsico), principalmente por motivos económicos.",
+          feedback:{0:"Los datos muestran patrones claros de migración Sur-Norte.",1:"América del Norte y el Golfo Pérsico también son destinos importantes.",2:"¡Correcto! La migración sigue patrones económicos claros desde regiones menos hacia más desarrolladas.",3:"Aunque los conflictos causan migración, los motivos económicos dominan los flujos."}
+        }
+      ];
+
+      // ═══════════════════════════════════════════════════════════════════
+      // FIX (corrección del bug "siempre 0 correctas"):
+      // Asignar el `type` automáticamente a cada pregunta según sus propiedades.
+      // Sin esto, q.type queda undefined y todo el conteo y rendering falla.
+      // ═══════════════════════════════════════════════════════════════════
+      function inferirTipo(q) {
+        if (q.dragItems && q.dropZones) return "drag-drop";
+        if (typeof q.correct === "string") return "dropdown";
+        return "multiple-choice";
+      }
+      questions.forEach(q => { q.type = inferirTipo(q); });
+
+      // ── VARIACIONES ───────────────────────────────────────────────────────
+      const questionVariations = {
+        0:[{context:"Los Artículos de la Confederación fueron reemplazados por la Constitución debido a sus debilidades.",stimulus:`<div class="stimulus-title">📜 Problemas de los Artículos de la Confederación</div><div class="document-excerpt">"El gobierno nacional no puede imponer impuestos, regular el comercio entre estados, o hacer cumplir leyes."<div class="quote-source">— Delegado a la Convención Constitucional, 1787</div></div>`,question:"¿Por qué la Constitución creó un gobierno federal más fuerte que los Artículos de la Confederación?",options:["Para dar más poder a los estados individuales","Para resolver los problemas de un gobierno nacional demasiado débil","Para eliminar completamente los gobiernos estatales","Para crear una monarquía americana"],correct:1,explanation:"Los Artículos crearon un gobierno tan débil que no podía funcionar efectivamente. La Constitución fortaleció el gobierno federal para resolver estos problemas."}],
+        1:[{context:"Un editorial de periódico discute la inmigración. Evalúe el lenguaje para identificar el punto de vista del autor.",stimulus:`<div class="document-excerpt">"Los inmigrantes han revitalizado comunidades urbanas en declive, iniciado negocios innovadores, y contribuido billones en impuestos. Esta vibrante diversidad cultural ha enriquecido la tradición americana de oportunidad y renovación."</div>`,question:"¿Cuál es la perspectiva del autor sobre la inmigración?",options:["Oposición total a la inmigración","Vista positiva de las contribuciones de los inmigrantes","Posición neutral sin opinión clara","Enfoque solo en aspectos negativos"],correct:1,explanation:"El autor usa lenguaje positivo: 'revitalizado', 'innovadores', 'vibrante', 'enriquecido', mostrando perspectiva favorable hacia la inmigración."}],
+        25:[{context:"Analice los factores económicos que afectan los precios de la vivienda para entender las fuerzas del mercado.",stimulus:`<div class="stimulus-title">🏠 Mercado de Vivienda: Factores de Precio</div><table class="data-table"><thead><tr><th>Factor</th><th>Efecto Oferta</th><th>Efecto Demanda</th><th>Precio</th></tr></thead><tbody><tr><td>Tasas de interés bajas</td><td>Sin cambio</td><td>Aumenta</td><td>Sube</td></tr><tr><td>Nueva construcción masiva</td><td>Aumenta</td><td>Sin cambio</td><td>Baja</td></tr><tr><td>Crecimiento poblacional</td><td>Sin cambio</td><td>Aumenta</td><td>Sube</td></tr><tr><td>Recesión económica</td><td>Sin cambio</td><td>Disminuye</td><td>Baja</td></tr></tbody></table>`,question:"¿Qué principio económico demuestran estos datos sobre el mercado de vivienda?",options:["Los precios de vivienda no siguen las leyes económicas","Mayor demanda o menor oferta incrementan precios; menor demanda o mayor oferta los reducen","Solo las tasas de interés afectan los precios de vivienda","Los precios de vivienda siempre suben independientemente"],correct:1,explanation:"Los datos confirman las leyes básicas de oferta y demanda en el mercado de vivienda."}]
+      };
+
+      // ── FUNCIONES DEL EXAMEN ──────────────────────────────────────────────
+      function startExam(){
+        document.getElementById("startScreen").style.display="none";
+        document.getElementById("examInterface").style.display="block";
+        examStarted=true; startTimer(); loadQuestion(0);
+      }
+      function startTimer(){
+        timerInterval=setInterval(()=>{timeLeft--;updateTimerDisplay();if(timeLeft<=0)endExam();},1000);
+      }
+      function updateTimerDisplay(){
+        const m=Math.floor(timeLeft/60),s=timeLeft%60;
+        document.getElementById("timer").textContent=`${m}:${s.toString().padStart(2,"0")}`;
+      }
+
+      function loadQuestion(index){
+        currentQuestion=index;
+        const q=questions[index];
+        document.getElementById("progressBar").style.width=`${((index+1)/questions.length)*100}%`;
+
+        const themeMap={
+          "civics-government":  {cls:"civics-government", name:"Cívica y Gobierno"},
+          "us-history":         {cls:"us-history",        name:"Historia de EE.UU."},
+          "economics":          {cls:"economics",         name:"Economía"},
+          "geography-world":    {cls:"geography-world",   name:"Geografía y el Mundo"}
+        };
+        const th=themeMap[q.theme];
+
+        let html=`<div class="question-header">
+<div class="question-number">Pregunta ${index+1} de ${questions.length}</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+  <div class="dok-badge dok-${q.dok}">DOK ${q.dok}</div>
+  <div class="theme-badge ${th.cls}">${th.name}</div>
+</div></div>`;
+        if(q.context)  html+=`<div class="question-context">${q.context}</div>`;
+        if(q.stimulus) html+=`<div class="stimulus-panel">${q.stimulus}</div>`;
+        if(q.question) html+=`<div class="actual-question">${q.question}</div>`;
+
+        switch(q.type){
+          case"drag-drop":       html+=renderDragDrop(q,index); break;
+          case"dropdown":        html+=renderDD(q,index);       break;
+          default:               html+=renderMC(q,index);       break;
+        }
+        document.getElementById("questionCard").innerHTML=html;
+        if(q.type==="drag-drop") setupDragAndDrop(index);
+        document.getElementById("prevBtn").disabled=(index===0);
+        document.getElementById("nextBtn").textContent=(index===questions.length-1)?"Finalizar Examen":"Siguiente ➡️";
+        const sb=document.getElementById("similarBtn");
+        sb.style.display=(questionVariations[index]&&questionVariations[index].length>0)?"inline-block":"none";
+        if(answers[index]!==undefined) restoreAnswer(q,index);
+      }
+
+      function renderMC(q,idx){
+        let h='<div class="options">';
+        q.options.forEach((o,i)=>{
+          h+=`<div class="option" onclick="selectOption(${idx},${i})"><div class="option-letter">${String.fromCharCode(65+i)}</div><span>${o}</span></div>`;
+        });
+        return h+"</div>";
+      }
+      function renderDD(q,idx){
+        let h=`<select class="dropdown" onchange="saveDropdownAnswer(${idx},this.value)"><option value="">Seleccione una opción...</option>`;
+        q.options.forEach(o=>{ h+=`<option value="${o}">${o}</option>`; });
+        return h+"</select>";
+      }
+      function renderDragDrop(q,idx){
+        const sh=[...q.dragItems].sort(()=>Math.random()-.5);
+        let h=`<div class="drag-drop-container"><div class="drag-items"><h4 style="color:#e74c3c;margin-bottom:15px">📋 Elementos para ordenar:</h4>`;
+        sh.forEach(item=>{
+          h+=`<div class="drag-item" draggable="true" data-item-id="${item.id}" data-correct="${item.correct}" data-question="${idx}">${item.text}</div>`;
+        });
+        h+=`</div><div class="drop-zones"><h4 style="color:#e74c3c;margin-bottom:15px">🎯 Zonas de destino:</h4>`;
+        q.dropZones.forEach((z,i)=>{
+          h+=`<div class="drop-zone" data-zone-id="${z.id}" data-zone-index="${i}" data-question="${idx}"><span class="zone-label">${z.label}</span><span>${z.description}</span></div>`;
+        });
+        h+=`</div></div><div style="margin-top:20px"><button class="nav-button" onclick="checkDragDropAnswer(${idx})" style="background:#27ae60">✅ Verificar Respuesta</button></div>`;
+        return h;
+      }
+
+      function setupDragAndDrop(qi){
+        document.querySelectorAll(`[data-question="${qi}"].drag-item`).forEach(el=>{
+          el.addEventListener("dragstart",e=>{
+            e.dataTransfer.setData("application/json",JSON.stringify({itemId:e.target.dataset.itemId,correct:parseInt(e.target.dataset.correct),questionIndex:parseInt(e.target.dataset.question),text:e.target.textContent.trim()}));
+            e.target.classList.add("dragging");
+          });
+          el.addEventListener("dragend",e=>e.target.classList.remove("dragging"));
+        });
+        document.querySelectorAll(`[data-question="${qi}"].drop-zone`).forEach(el=>{
+          el.addEventListener("dragover",e=>e.preventDefault());
+          el.addEventListener("dragenter",e=>{e.preventDefault();el.classList.add("drag-over");});
+          el.addEventListener("dragleave",e=>el.classList.remove("drag-over"));
+          el.addEventListener("drop",e=>{
+            e.preventDefault(); el.classList.remove("drag-over");
+            const data=JSON.parse(e.dataTransfer.getData("application/json"));
+            const zi=parseInt(el.dataset.zoneIndex);
+            el.querySelector(".dropped-item")?.remove();
+            const di=document.createElement("div");
+            di.className="dropped-item"; di.textContent=data.text;
+            di.dataset.itemId=data.itemId; di.dataset.correct=data.correct;
+            el.appendChild(di); el.classList.add("filled");
+            const orig=document.querySelector(`[data-item-id="${data.itemId}"]`);
+            if(orig) orig.style.display="none";
+            if(!answers[data.questionIndex]) answers[data.questionIndex]={dragDropAnswers:{}};
+            answers[data.questionIndex].dragDropAnswers[zi]=data.correct;
+          });
+        });
+      }
+
+      function checkDragDropAnswer(qi){
+        const q=questions[qi];
+        const zones=document.querySelectorAll(`[data-question="${qi}"].drop-zone`);
+        let ok=0;
+        zones.forEach((z,i)=>{
+          const di=z.querySelector(".dropped-item");
+          if(di){ if(parseInt(di.dataset.correct)===i){z.classList.add("correct");ok++;}else z.classList.add("incorrect");}
+        });
+        const isOk=(ok===q.dragItems.length);
+        document.querySelectorAll(`[data-question="${qi}"].drag-item`).forEach(el=>{el.draggable=false;el.style.opacity=".5";});
+        answers[qi]={type:"drag-drop",correct:isOk,feedbackShown:true};
+        document.getElementById("questionCard").insertAdjacentHTML("beforeend",
+          `<div class="feedback-panel ${isOk?"correct":"incorrect"}" style="display:block">
+<div class="feedback-title">${isOk?"✅ ¡Excelente!":"❌ No del todo correcto"}</div>
+<div class="feedback-explanation">${isOk?q.feedback.correct:q.feedback.incorrect}</div>
+<div class="feedback-explanation"><strong>Explicación:</strong> ${q.explanation}</div>
+<button class="continue-btn" onclick="hideFeedback()">Continuar</button></div>`);
+      }
+
+      function selectOption(qi,oi){
+        if(answers[qi]!==undefined&&answers[qi].feedbackShown) return;
+        const q=questions[qi]; const isOk=(oi===q.correct);
+        answers[qi]={value:oi,feedbackShown:true};
+        document.querySelectorAll(".option").forEach((el,i)=>{
+          el.style.pointerEvents="none";
+          if(i===q.correct) el.classList.add("correct");
+          else if(i===oi&&!isOk) el.classList.add("incorrect");
+        });
+        document.getElementById("questionCard").insertAdjacentHTML("beforeend",
+          `<div class="feedback-panel ${isOk?"correct":"incorrect"}" style="display:block">
+<div class="feedback-title">${isOk?"✅ ¡Correcto!":"❌ Incorrecto"}</div>
+<div class="feedback-explanation">${q.feedback?q.feedback[oi]:""}</div>
+<div class="feedback-explanation"><strong>Explicación:</strong> ${q.explanation}</div>
+${!isOk?`<div class="correct-answer"><strong>Respuesta correcta:</strong> ${q.options[q.correct]}</div>`:""}
+<button class="continue-btn" onclick="hideFeedback()">Continuar</button></div>`);
+      }
+
+      function saveDropdownAnswer(qi,val){
+        const q=questions[qi]; const isOk=(val===q.correct);
+        answers[qi]={value:val,isCorrect:isOk,feedbackShown:true};
+        document.querySelector(".dropdown").disabled=true;
+        setTimeout(()=>{
+          document.getElementById("questionCard").insertAdjacentHTML("beforeend",
+            `<div class="feedback-panel ${isOk?"correct":"incorrect"}" style="display:block">
+<div class="feedback-title">${isOk?"✅ ¡Correcto!":"❌ Incorrecto"}</div>
+<div class="feedback-explanation"><strong>Explicación:</strong> ${q.explanation}</div>
+${q.feedback&&q.feedback[val]?`<div class="feedback-explanation">${q.feedback[val]}</div>`:""}
+${!isOk?`<div class="correct-answer"><strong>Respuesta correcta:</strong> ${q.correct}</div>`:""}
+<button class="continue-btn" onclick="hideFeedback()">Continuar</button></div>`);
+        },300);
+      }
+
+      function hideFeedback(){ document.querySelector(".feedback-panel")?.remove(); }
+
+      function restoreAnswer(q,idx){
+        const a=answers[idx]; if(!a) return;
+        if(q.type==="multiple-choice"&&a.feedbackShown){
+          document.querySelectorAll(".option").forEach((el,i)=>{
+            el.style.pointerEvents="none";
+            if(i===q.correct) el.classList.add("correct");
+            else if(i===a.value&&a.value!==q.correct) el.classList.add("incorrect");
+          });
+        }
+        if(q.type==="dropdown"){ const dd=document.querySelector(".dropdown"); if(dd&&a.value){dd.value=a.value;dd.disabled=a.feedbackShown;} }
+      }
+
+      function generateSimilarQuestion(){
+        const vars=questionVariations[currentQuestion];
+        if(!vars||!vars.length){alert("No hay variaciones disponibles para esta pregunta.");return;}
+        const v=vars[Math.floor(Math.random()*vars.length)];
+        const orig={...questions[currentQuestion]};
+        questions[currentQuestion]={...orig,...v,explanation:v.explanation||orig.explanation,feedback:v.feedback||{0:"Revisa el análisis.",1:"¡Correcto!",2:"Considera todos los factores.",3:"La evidencia es suficiente."}};
+        // Re-inferir el tipo en caso de que la variación sea de otra clase
+        questions[currentQuestion].type = inferirTipo(questions[currentQuestion]);
+        delete answers[currentQuestion]; loadQuestion(currentQuestion);
+        const n=document.createElement("div");
+        n.style.cssText="position:fixed;top:20px;right:20px;z-index:1000;background:#e74c3c;color:white;padding:15px 20px;border-radius:10px;font-weight:bold;box-shadow:0 4px 12px rgba(0,0,0,.3);max-width:300px;text-align:center;animation:slideIn .3s ease-out";
+        n.innerHTML="🔄 Pregunta similar generada<br><small style='font-weight:normal'>¡Practica los mismos conceptos!</small>";
+        document.body.appendChild(n); setTimeout(()=>n.remove(),3000);
+      }
+
+      function previousQuestion(){ if(currentQuestion>0){hideFeedback();loadQuestion(currentQuestion-1);} }
+      function nextQuestion(){
+        if(currentQuestion<questions.length-1){hideFeedback();loadQuestion(currentQuestion+1);}
+        else endExam();
+      }
+
+      // ── INFORME DE ERRORES ────────────────────────────────────────────────
+      function endExam(){
+        clearInterval(timerInterval);
+        let correct=0, incorrect=0, skipped=0;
+
+        questions.forEach((q,i)=>{
+          const a=answers[i];
+          if(!a){skipped++;return;}
+          let ok=false;
+          if(q.type==="multiple-choice"&&a.value===q.correct) ok=true;
+          if(q.type==="dropdown"&&a.value===q.correct) ok=true;
+          if(q.type==="drag-drop"&&a.correct) ok=true;
+          if(ok) correct++; else incorrect++;
+        });
+
+        const pct=Math.round((correct/questions.length)*100);
+        document.getElementById("examInterface").style.display="none";
+        document.getElementById("resultsScreen").style.display="block";
+        document.getElementById("finalScore").textContent=`${pct}%`;
+
+        let msg="";
+        if(pct>=75) msg="¡Excelente! Demuestras sólidas habilidades de análisis en estudios sociales. Estás bien preparado para el GED.";
+        else if(pct>=60) msg="Buen progreso. Sigue practicando análisis de documentos históricos y datos económicos.";
+        else msg="Necesitas más práctica. Consulta las páginas del Steck-Vaughn indicadas en el informe de errores.";
+        document.getElementById("resultMessage").textContent=msg;
+
+        document.getElementById("summaryCards").innerHTML=`
+<div class="summary-card card-correct"><div class="card-num">${correct}</div><div class="card-lbl">✅ Correctas</div></div>
+<div class="summary-card card-incorrect"><div class="card-num">${incorrect}</div><div class="card-lbl">❌ Incorrectas</div></div>
+<div class="summary-card card-skipped"><div class="card-num">${skipped}</div><div class="card-lbl">⏭️ Sin responder</div></div>
+<div class="summary-card" style="background:#f8e7ff;color:#8e44ad"><div class="card-num">${pct}%</div><div class="card-lbl">📊 Puntaje total</div></div>`;
+
+        // Lista de errores
+        let errorsHTML=""; let hasErrors=false;
+        questions.forEach((q,i)=>{
+          const a=answers[i];
+          let ok=false, userLabel="(sin respuesta)";
+          if(a){
+            if(q.type==="multiple-choice"){ok=(a.value===q.correct);userLabel=q.options[a.value]||"(sin respuesta)";}
+            else if(q.type==="dropdown"){ok=(a.value===q.correct);userLabel=a.value||"(sin respuesta)";}
+            else if(q.type==="drag-drop"){ok=a.correct;userLabel=ok?"Orden correcto":"Orden incorrecto";}
+          }
+          if(!ok){
+            hasErrors=true;
+            const correctLabel=
+              q.type==="multiple-choice"?q.options[q.correct]:
+              q.type==="dropdown"?q.correct:"Ver secuencia correcta en la explicación";
+            errorsHTML+=`<div class="error-item">
+<div class="error-item-header">
+  <span class="error-qnum">Pregunta ${i+1}</span>
+  <span class="error-topic">${q.topic}</span>
+  <span class="error-pages">📖 Págs. ${q.bookPages}</span>
+</div>
+<div class="error-answers">
+  <span class="user-answer">Tu respuesta: ${userLabel}</span>
+  <span class="right-answer">Respuesta correcta: ${correctLabel}</span>
+</div>
+<div style="font-size:13px;color:#666;margin-top:6px">${q.explanation}</div>
+</div>`;
+          }
+        });
+        if(!hasErrors) errorsHTML=`<p style="color:#27ae60;font-weight:bold;padding:15px;background:#d5f4e6;border-radius:8px">🎉 ¡No hay errores que reportar! Excelente desempeño.</p>`;
+        document.getElementById("errorsList").innerHTML=errorsHTML;
+
+        // Tabla de rendimiento por tema
+        const topicMap={};
+        questions.forEach((q,i)=>{
+          const key=q.topic;
+          if(!topicMap[key]) topicMap[key]={topic:q.topic,pages:q.bookPages,theme:q.theme,total:0,correct:0};
+          topicMap[key].total++;
+          const a=answers[i];
+          if(a){
+            let ok=false;
+            if(q.type==="multiple-choice"&&a.value===q.correct) ok=true;
+            if(q.type==="dropdown"&&a.value===q.correct) ok=true;
+            if(q.type==="drag-drop"&&a.correct) ok=true;
+            if(ok) topicMap[key].correct++;
+          }
+        });
+
+        const ttMap={
+          "civics-government":  {cls:"tag-cg",  label:"🏛️ Cívica"},
+          "us-history":         {cls:"tag-ush", label:"🇺🇸 Historia"},
+          "economics":          {cls:"tag-eco", label:"💰 Economía"},
+          "geography-world":    {cls:"tag-geo", label:"🌍 Geografía"}
+        };
+
+        let tRows="";
+        Object.values(topicMap).forEach(t=>{
+          const pct2=t.total>0?Math.round(t.correct/t.total*100):0;
+          const barCls=pct2>=75?"bar-green":pct2>=50?"bar-yellow":"bar-red";
+          const tt=ttMap[t.theme];
+          tRows+=`<tr>
+<td>${t.topic}</td>
+<td><span class="theme-tag ${tt.cls}">${tt.label}</span></td>
+<td>${t.correct}/${t.total} (${pct2}%)</td>
+<td><div class="perf-bar-bg"><div class="perf-bar ${barCls}" style="width:${pct2}%"></div></div></td>
+<td><span class="pages-tag">Págs. ${t.pages}</span></td></tr>`;
+        });
+        document.getElementById("perfTableBody").innerHTML=tRows;
+      }
+
+      function restartExam(){
+        currentQuestion=0; timeLeft=4200; answers={}; examStarted=false;
+        document.getElementById("resultsScreen").style.display="none";
+        document.getElementById("startScreen").style.display="block";
+      }
+
+      document.addEventListener("DOMContentLoaded",()=>{
+        document.addEventListener("keydown",e=>{
+          if(!examStarted) return;
+          if(e.key==="ArrowLeft"&&currentQuestion>0) previousQuestion();
+          else if(e.key==="ArrowRight") nextQuestion();
+        });
+        const s=document.createElement("style");
+        s.textContent=`@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}`;
+        document.head.appendChild(s);
+      });
+    </script>
+  </body>
+</html>
