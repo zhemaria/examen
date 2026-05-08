@@ -1,1 +1,1145 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Examen de Artes del Lenguaje GED - Secciones 1 y 3</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; color: #01080f; }
+      ul { padding-left: 35px; }
+      .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+      .header { background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 2px solid #e74c3c; }
+      .timer { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+      .time-display { background: #e74c3c; color: white; padding: 10px 20px; border-radius: 25px; font-size: 18px; font-weight: bold; border: 3px solid #c0392b; }
+      .section-indicator { background: #2980b9; color: white; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; }
+      .progress-container { background: #ecf0f1; border-radius: 10px; padding: 3px; border: 2px solid #95a5a6; }
+      .progress-bar { background: linear-gradient(90deg, #e74c3c, #c0392b); height: 20px; border-radius: 8px; transition: width 0.3s ease; border: 1px solid #a93226; }
+      .question-card { background: white; border-radius: 15px; padding: 30px; margin-bottom: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 2px solid #e74c3c; }
+      .question-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 3px solid #e74c3c; flex-wrap: wrap; gap: 10px; }
+      .question-number { background: #e74c3c; color: white; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 16px; border: 2px solid #c0392b; }
+      .dok-badge { padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; border: 2px solid; }
+      .dok-1 { background: #d5f4e6; color: #27ae60; border-color: #27ae60; }
+      .dok-2 { background: #fff3cd; color: #856404; border-color: #ffc107; }
+      .dok-3 { background: #d1ecf1; color: #0c5460; border-color: #17a2b8; }
+      .skill-badge { padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; border: 2px solid; margin-left: 10px; }
+      .reading { background: #ebf3fd; color: #3498db; border-color: #3498db; }
+      .language { background: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+      .argument { background: #d1ecf1; color: #0c5460; border-color: #17a2b8; }
+      .passage-panel { background: #f8f9fa; border: 2px solid #e74c3c; border-radius: 10px; padding: 20px; margin: 15px 0; max-height: 400px; overflow-y: auto; }
+      .passage-title { font-weight: bold; color: #e74c3c; margin-bottom: 15px; font-size: 16px; }
+      .passage-text { line-height: 1.8; font-size: 16px; }
+      .actual-question { font-size: 18px; font-weight: bold; color: #2c3e50; margin: 20px 0; padding: 15px; background: #fff5f5; border-left: 4px solid #e74c3c; border-radius: 5px; }
+      .options { display: flex; flex-direction: column; gap: 12px; }
+      .option { background: #f8f9fa; border: 2px solid #bdc3c7; border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: flex-start; gap: 10px; }
+      .option:hover { background: #fff5f5; border-color: #e74c3c; transform: translateY(-2px); }
+      .option.correct { background: #d5e8d4; border-color: #27ae60; color: #155724; font-weight: bold; }
+      .option.incorrect { background: #f8d7da; border-color: #e74c3c; color: #721c24; font-weight: bold; }
+      .option-letter { background: #e74c3c; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #c0392b; flex-shrink: 0; }
+      .dropdown { padding: 10px; border: 2px solid #bdc3c7; border-radius: 5px; font-size: 16px; background: white; width: 100%; }
+      .dropdown:focus { outline: none; border-color: #e74c3c; }
+      .navigation { display: flex; justify-content: space-between; align-items: center; background: white; border-radius: 15px; padding: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 2px solid #e74c3c; }
+      .nav-button { background: #e74c3c; color: white; border: none; padding: 12px 24px; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: bold; transition: all 0.3s ease; border: 2px solid #c0392b; }
+      .nav-button:hover:not(:disabled) { background: #c0392b; transform: translateY(-2px); }
+      .nav-button:disabled { background: #95a5a6; cursor: not-allowed; border-color: #7f8c8d; }
+      .start-screen { background: white; border-radius: 15px; padding: 40px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 2px solid #e74c3c; }
+      .start-title { font-size: 32px; color: #2c3e50; margin-bottom: 20px; font-weight: bold; }
+      .start-description { font-size: 18px; color: #7f8c8d; margin-bottom: 30px; line-height: 1.6; text-align: left; }
+      .start-button { background: linear-gradient(45deg, #e74c3c, #c0392b); color: white; border: none; padding: 15px 40px; border-radius: 30px; font-size: 20px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; border: 3px solid #c0392b; }
+      .start-button:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(231,76,60,0.3); }
+      .break-screen { background: white; border-radius: 15px; padding: 40px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 2px solid #f39c12; }
+      .break-title { font-size: 28px; color: #2c3e50; margin-bottom: 20px; font-weight: bold; }
+      .break-message { font-size: 18px; color: #7f8c8d; margin-bottom: 30px; line-height: 1.6; }
+      .break-button { background: linear-gradient(45deg, #f39c12, #e67e22); color: white; border: none; padding: 15px 40px; border-radius: 30px; font-size: 20px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; border: 3px solid #e67e22; }
+      .break-button:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(243,156,18,0.3); }
+      .results { background: white; border-radius: 15px; padding: 30px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 2px solid #27ae60; }
+      .score { font-size: 48px; font-weight: bold; color: #27ae60; margin-bottom: 10px; }
+      .drag-drop-container { display: flex; gap: 30px; margin: 20px 0; flex-wrap: wrap; }
+      .drag-items { flex: 1; min-width: 300px; }
+      .drop-zones { flex: 1; min-width: 300px; }
+      .drag-item { background: #fff5f5; border: 2px solid #e74c3c; border-radius: 8px; padding: 12px; margin: 8px 0; cursor: grab; transition: all 0.3s ease; user-select: none; font-weight: 500; }
+      .drag-item:hover { background: #d5f4e6; border-color: #27ae60; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+      .drag-item.dragging { opacity: 0.5; cursor: grabbing; }
+      .drop-zone { background: #f8f9fa; border: 2px dashed #bdc3c7; border-radius: 8px; padding: 15px; margin: 8px 0; min-height: 60px; display: flex; align-items: center; transition: all 0.3s ease; }
+      .drop-zone.drag-over { background: #fff5f5; border-color: #e74c3c; border-style: solid; }
+      .zone-label { font-weight: bold; color: #7f8c8d; margin-right: 10px; min-width: 80px; }
+      .grammar-context { background: #f8f9fa; border: 2px solid #e74c3c; border-radius: 8px; padding: 20px; margin: 15px 0; font-size: 16px; line-height: 1.8; }
 
+      /* ====== INFORME DE ERRORES ====== */
+      .report-section { background: white; border-radius: 15px; padding: 30px; margin-top: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 2px solid #e74c3c; text-align: left; }
+      .report-section h2 { color: #c0392b; margin-bottom: 5px; font-size: 24px; }
+      .report-subtitle { color: #6c757d; font-size: 14px; margin-bottom: 20px; font-style: italic; }
+      .report-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 25px; }
+      .summary-card { background: #f8f9fa; border-radius: 10px; padding: 15px; text-align: center; border: 2px solid #dee2e6; }
+      .summary-card .card-value { font-size: 28px; font-weight: bold; display: block; }
+      .summary-card .card-label { font-size: 12px; color: #6c757d; margin-top: 4px; }
+      .summary-correct .card-value { color: #27ae60; }
+      .summary-incorrect .card-value { color: #e74c3c; }
+      .summary-skipped .card-value { color: #6c757d; }
+      .summary-score .card-value { color: #e74c3c; }
+      .error-topic-group { margin-bottom: 20px; border: 2px solid #dee2e6; border-radius: 10px; overflow: hidden; }
+      .error-topic-header { padding: 12px 18px; font-weight: bold; font-size: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+      .error-topic-header.skill-reading { background: linear-gradient(135deg, #ebf3fd, #d0e8fb); color: #1a5276; }
+      .error-topic-header.skill-language { background: linear-gradient(135deg, #f8d7da, #f5c6cb); color: #721c24; }
+      .error-topic-header.skill-argument { background: linear-gradient(135deg, #d1ecf1, #b8e4ef); color: #0c5460; }
+      .error-topic-header .page-ref { padding: 4px 12px; border-radius: 15px; font-size: 13px; white-space: nowrap; color: white; }
+      .skill-reading .page-ref { background: #2980b9; }
+      .skill-language .page-ref { background: #c0392b; }
+      .skill-argument .page-ref { background: #16a085; }
+      .error-question-item { padding: 12px 18px; border-bottom: 1px solid #e9ecef; font-size: 14px; line-height: 1.6; display: flex; gap: 10px; align-items: flex-start; }
+      .error-question-item:last-child { border-bottom: none; }
+      .error-q-number { background: #e74c3c; color: white; min-width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; flex-shrink: 0; }
+      .error-q-detail { flex: 1; }
+      .error-q-detail .error-user-answer { color: #e74c3c; font-weight: bold; }
+      .error-q-detail .error-correct-answer { color: #27ae60; font-weight: bold; }
+      .area-summary { margin-top: 25px; }
+      .area-summary table { width: 100%; border-collapse: collapse; font-size: 14px; }
+      .area-summary th { background: #e74c3c; color: white; padding: 10px 14px; text-align: left; font-size: 13px; }
+      .area-summary td { padding: 10px 14px; border-bottom: 1px solid #dee2e6; }
+      .area-summary tr:nth-child(even) { background: #f8f9fa; }
+      .area-summary .perf-bar { background: #e9ecef; border-radius: 8px; height: 14px; overflow: hidden; min-width: 80px; }
+      .area-summary .perf-fill { height: 100%; border-radius: 8px; transition: width 0.5s ease; }
+      .perf-high { background: #27ae60; }
+      .perf-mid { background: #f39c12; }
+      .perf-low { background: #e74c3c; }
+      .all-correct-message { text-align: center; padding: 30px; font-size: 18px; color: #27ae60; }
+      .all-correct-message .trophy { font-size: 64px; display: block; margin-bottom: 15px; }
+      .print-button { background: #6c757d; color: white; border: 2px solid #5a6268; padding: 10px 24px; border-radius: 25px; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.3s ease; margin-top: 15px; }
+      .print-button:hover { background: #5a6268; transform: translateY(-2px); }
+
+      @media (max-width: 768px) {
+        .timer, .question-header, .navigation { flex-direction: column; gap: 15px; }
+        .drag-drop-container { flex-direction: column; }
+        .report-summary { grid-template-columns: repeat(2, 1fr); }
+      }
+      @media print {
+        body { background: white; }
+        .navigation, .start-button, .nav-button, .print-button { display: none !important; }
+        .results, .report-section { box-shadow: none; border: 1px solid #ccc; }
+        .container { max-width: 100%; }
+      }
+@page {
+  margin: 20mm;
+}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="startScreen" class="start-screen">
+        <h1 class="start-title">Examen de Artes del Lenguaje GED<br>
+          <span style="font-size:16px">Creado por el prof. José M. Fernández con Claude Sonnet 4.6<br>
+          <span style="font-size:16px">Abarca las secciones 1 y 3 (excluye la Respuesta Extendida)</span></span></h1>
+        <div class="start-description">
+          <p><strong>El examen está diseñado según las especificaciones oficiales del GED:</strong></p>
+          <ul style="text-align:left;margin:20px 0">
+            <li>✅ <strong>Comprensión de lectura</strong> - Textos informativos y literarios</li>
+            <li>✅ <strong>Análisis de argumentos</strong> y evaluación de evidencia</li>
+            <li>✅ <strong>Gramática y uso del lenguaje</strong> en contexto</li>
+            <li>✅ <strong>Variedad de formatos:</strong> opción múltiple, menús desplegables, arrastrar y soltar</li>
+          </ul>
+          <p><strong>⏰ Estructura del Examen:</strong></p>
+          <ul style="text-align:left;margin:20px 0">
+            <li>🔴 <strong>Sección 1:</strong> 35 minutos - 18 preguntas</li>
+            <li>🍵 <strong>Descanso:</strong> 10 minutos (temporizador pausado)</li>
+            <li>🔵 <strong>Sección 3:</strong> 60 minutos - 27 preguntas</li>
+          </ul>
+          <p><strong>📊 Distribución de contenido:</strong></p>
+          <ul style="text-align:left;margin:20px 0">
+            <li>📖 <strong>Comprensión lectora:</strong> ~75% de las preguntas</li>
+            <li>✏️ <strong>Gramática y lenguaje:</strong> ~25% de las preguntas</li>
+            <li>🧠 <strong>Niveles DOK:</strong> 20% DOK-1, 80% DOK-2/3</li>
+          </ul>
+          <p style="text-align:center;font-size:18px"><strong>🎯 Total:</strong> 95 minutos | <strong>❓ Preguntas: </strong>45</p>
+          <p style="margin-top:15px;padding:10px;background:#fff3cd;border-radius:8px;border-left:4px solid #f39c12;font-size:14px">
+            📚 Al finalizar recibirás un <strong>Informe de Errores y Guía de Estudio</strong> con las páginas del <em>Steck-Vaughn GED: Razonamiento a través de las Artes del Lenguaje</em> que debes repasar.
+          </p>
+        </div>
+        <button class="start-button" onclick="startExam()">Comenzar Sección 1</button>
+      </div>
+
+      <div id="breakScreen" style="display:none" class="break-screen">
+        <h2 class="break-title">☕ Descanso de 10 minutos</h2>
+        <div class="break-message">
+          <p><strong>¡Has completado la Sección 1!</strong></p>
+          <p>Toma un descanso antes de continuar con la Sección 3.</p>
+          <p>El temporizador está pausado. Cuando estés listo, presiona el botón para continuar.</p>
+          <div style="margin:20px 0">
+            <p><strong>📈 Progreso hasta ahora:</strong></p>
+            <p>✅ Sección 1 completada (18 preguntas - 35 minutos)</p>
+            <p>🔄 Por completar: Sección 3 (27 preguntas - 60 minutos)</p>
+          </div>
+        </div>
+        <button class="break-button" onclick="startSection3()">Continuar con Sección 3</button>
+      </div>
+
+      <div id="examInterface" style="display:none">
+        <div class="header">
+          <div class="timer">
+            <div>
+              <h2>📚 Examen de Artes del Lenguaje GED</h2>
+              <p id="sectionInfo">Sección 1: Comprensión y gramática (35 min)</p>
+            </div>
+            <div style="display:flex;gap:15px;align-items:center">
+              <div class="section-indicator" id="sectionIndicator">Sección 1</div>
+              <div class="time-display" id="timer">35:00</div>
+            </div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar" id="progressBar" style="width:0%"></div>
+          </div>
+        </div>
+        <div class="question-card" id="questionCard"></div>
+        <div class="navigation">
+          <button class="nav-button" id="prevBtn" onclick="previousQuestion()" disabled>⬅️ Anterior</button>
+          <div style="text-align:center">
+            <span style="color:#7f8c8d;font-size:14px;display:block">Comprensión y Análisis del Lenguaje</span>
+            <span id="progressText" style="color:#e74c3c;font-weight:bold">Pregunta 1 de 18</span>
+          </div>
+          <button class="nav-button" id="nextBtn" onclick="nextQuestion()">Siguiente ➡️</button>
+        </div>
+      </div>
+
+      <div id="resultsScreen" style="display:none">
+        <div class="results">
+          <h2>🎉 ¡Examen Completado!</h2>
+          <div class="score" id="finalScore">0%</div>
+          <p id="resultMessage">Has terminado el examen de Artes del Lenguaje del GED</p>
+          <div style="margin:20px 0;text-align:left">
+            <h3>📊 Desglose por áreas:</h3>
+            <div id="skillBreakdown"></div>
+          </div>
+          <button class="nav-button" onclick="restartExam()" style="margin-top:20px">🔄 Reiniciar Examen</button>
+        </div>
+        <div id="errorReport" class="report-section" style="display:none"></div>
+      </div>
+    </div>
+
+    <script>
+    let currentQuestion = 0;
+    let currentSection = 1;
+    let timeLeft = 2100;
+    let timer;
+    let answers = {};
+    let examStarted = false;
+
+    const questions = [
+      // ========== SECCIÓN 1 (18 PREGUNTAS) ==========
+      {
+        section:1, dok:1, skill:"reading", type:"multiple-choice",
+        topic:"Idea principal y detalles", bookPages:"págs. 2–3",
+        passage:{ title:"Memorando de Oficina - Política de Vacaciones",
+          text:`MEMORANDO\nPara: Todo el personal\nDe: Recursos Humanos\nFecha: 15 de marzo, 2024\nAsunto: Actualización de la política de vacaciones\n\nSe informa a todo el personal que a partir del 1 de abril de 2024, entrarán en vigor los siguientes cambios en la política de vacaciones:\n\n1. Los empleados de tiempo completo acumularán 1.5 días de vacaciones por mes trabajado.\n2. Los días de vacaciones deben solicitarse con al menos dos semanas de anticipación.\n3. No se pueden tomar más de 10 días consecutivos de vacaciones sin aprobación del supervisor.\n4. Los días de vacaciones no utilizados al final del año fiscal (31 de diciembre) se perderán.\n\nPara más información, contacte al departamento de Recursos Humanos en la extensión 2150.` },
+        question:"Según el memorando, ¿cuántos días de vacaciones acumula un empleado de tiempo completo por mes?",
+        options:["1 día por mes","1.5 días por mes","2 días por mes","10 días por mes"],
+        correct:1,
+        explanation:"El memorando establece claramente que 'Los empleados de tiempo completo acumularán 1.5 días de vacaciones por mes trabajado.'"
+      },
+      {
+        section:1, dok:1, skill:"language", type:"dropdown",
+        topic:"Tiempos verbales simples", bookPages:"págs. 126–127",
+        context:"Complete la siguiente oración seleccionando la forma verbal correcta:",
+        question:"María __________ al trabajo todos los días en autobús.",
+        options:["va","van","vamos","voy"],
+        correct:"va",
+        explanation:"Con el sujeto 'María' (tercera persona singular), el verbo 'ir' se conjuga como 'va'."
+      },
+      {
+        section:1, dok:1, skill:"reading", type:"multiple-choice",
+        topic:"Idea principal y detalles", bookPages:"págs. 2–3",
+        passage:{ title:"Receta - Ensalada de Frutas Tropicales",
+          text:`ENSALADA DE FRUTAS TROPICALES\n\nIngredientes:\n- 2 mangos maduros, pelados y cortados en cubos\n- 1 piña fresca, sin cáscara y cortada en trozos\n- 3 kiwis, pelados y rebanados\n- 1 taza de fresas, sin hojas y cortadas por la mitad\n- 2 cucharadas de miel\n- Jugo de 1 limón\n- Hojas de menta para decorar\n\nInstrucciones:\n1. En un tazón grande, combine todos los frutos cortados.\n2. En un recipiente pequeño, mezcle la miel con el jugo de limón.\n3. Vierta la mezcla de miel y limón sobre las frutas.\n4. Revuelva suavemente para cubrir todas las frutas.\n5. Refrigere por al menos 30 minutos antes de servir.\n6. Decore con hojas de menta al momento de servir.\n\nRinde: 6 porciones\nTiempo de preparación: 20 minutos` },
+        question:"¿Cuánto tiempo debe refrigerarse la ensalada antes de servir?",
+        options:["20 minutos","Al menos 30 minutos","1 hora","No necesita refrigerarse"],
+        correct:1,
+        explanation:"El paso 5 indica claramente: 'Refrigere por al menos 30 minutos antes de servir.'"
+      },
+      {
+        section:1, dok:2, skill:"reading", type:"multiple-choice",
+        topic:"Determinar el propósito del autor", bookPages:"págs. 14–15, 60–61",
+        passage:{ title:"El Impacto de las Redes Sociales en la Comunicación",
+          text:"Las redes sociales han transformado radicalmente la manera en que nos comunicamos en el siglo XXI. Plataformas como Facebook, Twitter e Instagram han creado nuevas formas de interacción social que trascienden las barreras geográficas y temporales.\n\nUna de las ventajas más significativas de las redes sociales es su capacidad para conectar a personas de todo el mundo instantáneamente. Las familias separadas por la distancia pueden mantenerse en contacto, los activistas pueden organizar movimientos sociales, y las empresas pueden llegar a clientes globales con facilidad.\n\nSin embargo, esta revolución comunicativa también ha generado preocupaciones legítimas. Muchos expertos argumentan que la comunicación digital ha reducido la profundidad de nuestras interacciones interpersonales. Las conversaciones cara a cara, que permiten la lectura de expresiones faciales y lenguaje corporal, están siendo reemplazadas por intercambios breves de texto que pueden carecer de contexto emocional.\n\nAdemás, la velocidad de la comunicación en redes sociales ha contribuido a la propagación de información errónea. Las noticias falsas pueden difundirse rápidamente antes de que haya tiempo para verificar su veracidad, lo que representa un desafío significativo para la sociedad informada.\n\nA pesar de estos desafíos, es innegable que las redes sociales han democratizado la comunicación, dando voz a grupos que anteriormente tenían acceso limitado a los medios de comunicación masiva." },
+        question:"¿Cuál es el argumento principal del autor sobre las redes sociales?",
+        options:["Las redes sociales son completamente negativas para la sociedad","Las redes sociales han transformado la comunicación con beneficios y desafíos","Las redes sociales solo benefician a las empresas","Las redes sociales deben prohibirse completamente"],
+        correct:1,
+        explanation:"El autor presenta un análisis equilibrado que reconoce tanto los beneficios (conexión global, democratización) como los desafíos (comunicación superficial, desinformación)."
+      },
+      {
+        section:1, dok:2, skill:"language", type:"dropdown",
+        topic:"Connotaciones y selección de palabras", bookPages:"págs. 18–19, 26",
+        context:"Seleccione la palabra que mejor complete la oración en términos de coherencia y precisión:",
+        question:"El científico __________ que sus experimentos podrían revolucionar la medicina moderna.",
+        options:["pensó","creyó","afirmó","supuso"],
+        correct:"afirmó",
+        explanation:"'Afirmó' es la opción más precisa porque indica una declaración profesional y fundamentada, apropiada para el contexto científico."
+      },
+      {
+        section:1, dok:2, skill:"reading", type:"multiple-choice",
+        topic:"Interpretar el lenguaje figurado", bookPages:"págs. 38–39",
+        passage:{ title:"El Jardín Comunitario de Riverside",
+          text:"Cuando llegué al jardín comunitario de Riverside por primera vez, no esperaba encontrar un oasis de tranquilidad en medio del bullicio urbano. Era un sábado por la mañana, y el sol matutino iluminaba suavemente las hileras de vegetales que se extendían como un tapete verde y dorado.\n\nMaría, una mujer de unos sesenta años con las manos manchadas de tierra, me recibió con una sonrisa genuina. \"Aquí cultivamos más que plantas,\" me dijo mientras me guiaba entre los surcos de tomates y calabazas. \"Cultivamos comunidad.\"\n\nSus palabras cobraron sentido cuando observé a las familias trabajando juntas. Los niños corrían entre las plantas de girasol que los superaban en altura, mientras sus padres intercambiaban técnicas de cultivo y recetas para conservar la cosecha. Un grupo de adultos mayores compartía bancos improvisados bajo la sombra de un árbol frondoso, sus conversaciones mezclándose con el zumbido de las abejas.\n\nEl jardín había surgido cinco años atrás de un lote abandonado. Los vecinos se habían organizado para transformar el espacio descuidado en algo productivo y hermoso. Ahora, cada parcela alquilada por $20 al año no solo proporcionaba alimentos frescos, sino que había creado lazos intergeneracionales que antes no existían en el barrio.\n\n\"Al principio, muchos pensaron que era una idea romántica que no funcionaría,\" reflexionó María. \"Pero mira a tu alrededor. Hemos demostrado que cuando las personas se unen con un propósito común, pueden crear algo extraordinario.\"" },
+        question:"¿Qué sugiere la frase 'Cultivamos más que plantas' en el contexto del pasaje?",
+        options:["El jardín produce una gran variedad de cultivos diferentes","Los jardineros también cultivan relaciones y vínculos comunitarios","El jardín es más grande de lo que parece a primera vista","Los cultivos requieren técnicas especiales de cultivo"],
+        correct:1,
+        explanation:"La frase es una metáfora que se desarrolla a lo largo del texto, mostrando cómo el jardín ha creado lazos intergeneracionales y fortalecido la comunidad del barrio."
+      },
+      {
+        section:1, dok:2, skill:"argument", type:"multiple-choice",
+        topic:"Afirmaciones en textos persuasivos", bookPages:"págs. 62–65, 72–73",
+        passage:{ title:"Carta al Editor - Horarios Escolares",
+          text:"Estimado Editor,\n\nComo padre de dos estudiantes de escuela secundaria, escribo para expresar mi preocupación sobre la propuesta de cambiar el horario escolar de 8:00 AM - 3:00 PM a 7:30 AM - 2:30 PM.\n\nLos defensores de este cambio argumentan que terminando más temprano, los estudiantes tendrían más tiempo para actividades extracurriculares y empleos de medio tiempo. Sin embargo, esta perspectiva no considera las consecuencias negativas del cambio.\n\nPrimero, múltiples estudios de la Academia Americana de Medicina del Sueño demuestran que los adolescentes necesitan comenzar la escuela más tarde, no más temprano. Sus ritmos circadianos naturales hacen que se duerman más tarde y despierten más tarde. Comenzar a las 7:30 AM agravaría la privación de sueño que ya enfrentan nuestros jóvenes.\n\nSegundo, el cambio afectaría desproporcionalmente a las familias trabajadoras. Muchos padres dependen del horario actual para llevar a sus hijos a la escuela antes de ir al trabajo. Un inicio más temprano crearía dificultades logísticas y económicas para estas familias.\n\nFinalmente, la evidencia muestra que el rendimiento académico mejora cuando los estudiantes están bien descansados. El distrito de Seattle implementó un horario más tardío en 2016 y vio mejoras en las calificaciones y la asistencia.\n\nLes urjo a rechazar esta propuesta y considerar opciones que realmente beneficien a nuestros estudiantes.\n\nAtentamente,\nDr. Patricia González" },
+        question:"¿Cuál es la afirmación principal que la autora trata de apoyar?",
+        options:["Las actividades extracurriculares son menos importantes que el sueño","Cambiar el horario escolar a más temprano sería perjudicial","Los estudiantes de Seattle obtienen mejores calificaciones","Los padres siempre deben llevar a sus hijos a la escuela"],
+        correct:1,
+        explanation:"Toda la carta está estructurada para argumentar contra el cambio propuesto, presentando evidencia científica, consideraciones familiares y ejemplos de otros distritos."
+      },
+      {
+        section:1, dok:3, skill:"argument", type:"multiple-choice",
+        topic:"Comparar y contrastar argumentos", bookPages:"págs. 96–97, 100",
+        passage:{ title:"Debate: Energía Nuclear vs. Energía Solar",
+          text:"POSICIÓN A: La energía nuclear es la solución más viable para combatir el cambio climático. Una sola planta nuclear puede generar electricidad para cientos de miles de hogares sin emitir gases de efecto invernadero durante su operación. Países como Francia han demostrado que es posible obtener más del 70% de su electricidad de fuentes nucleares de manera segura. Los accidentes nucleares son extremadamente raros cuando se siguen protocolos adecuados de seguridad. Además, la tecnología nuclear moderna incluye sistemas de seguridad pasivos que hacen que los reactores se apaguen automáticamente en caso de emergencia.\n\nPOSICIÓN B: La energía solar es una alternativa más segura y sostenible que la energía nuclear. Los costos de la energía solar han disminuido más del 80% en la última década, haciéndola competitiva económicamente. A diferencia de la energía nuclear, la solar no genera residuos radiactivos que permanecen peligrosos durante miles de años. Las instalaciones solares se pueden construir más rápidamente que las plantas nucleares, que requieren décadas desde la planificación hasta la operación. El potencial de accidentes catastróficos, aunque bajo, hace que la energía solar sea una opción más prudente para el futuro energético." },
+        question:"¿Cuál de las siguientes afirmaciones representa mejor la principal diferencia en el enfoque argumentativo entre las dos posiciones?",
+        options:["La Posición A se enfoca en eficiencia energética, mientras que la Posición B se enfoca en costo económico","La Posición A enfatiza capacidad y historial probado, mientras que la Posición B enfatiza seguridad y rapidez de implementación","La Posición A usa ejemplos internacionales, mientras que la Posición B usa solo datos técnicos","Ambas posiciones están de acuerdo en los mismos puntos fundamentales"],
+        correct:1,
+        explanation:"La Posición A destaca la capacidad de generación y el éxito histórico (Francia), mientras que la Posición B se centra en la seguridad (no residuos radiactivos) y la rapidez de construcción comparativa."
+      },
+      {
+        section:1, dok:2, skill:"language", type:"drag-drop",
+        topic:"Organización de párrafos", bookPages:"págs. 158–159",
+        context:"Organice las siguientes oraciones para formar un párrafo coherente sobre el proceso de solicitud de empleo:",
+        question:"Arrastra las oraciones en el orden lógico correcto:",
+        dragItems:[
+          {id:"intro", text:"Buscar empleo puede ser un proceso desafiante pero sistemático.", correct:0},
+          {id:"research", text:"Primero, es esencial investigar las empresas que ofrecen posiciones en su campo.", correct:1},
+          {id:"prepare", text:"Luego, debe preparar un currículum actualizado y cartas de presentación personalizadas.", correct:2},
+          {id:"apply", text:"El siguiente paso es enviar las solicitudes siguiendo cuidadosamente las instrucciones.", correct:3},
+          {id:"conclusion", text:"Finalmente, la persistencia y el seguimiento apropiado son clave para el éxito.", correct:4}
+        ],
+        dropZones:[
+          {id:"step1", label:"Oración 1:", description:"Introducción al tema"},
+          {id:"step2", label:"Oración 2:", description:"Primer paso del proceso"},
+          {id:"step3", label:"Oración 3:", description:"Segundo paso del proceso"},
+          {id:"step4", label:"Oración 4:", description:"Tercer paso del proceso"},
+          {id:"step5", label:"Oración 5:", description:"Conclusión"}
+        ],
+        explanation:"El párrafo sigue una estructura lógica: introducción, tres pasos secuenciales (investigar, preparar, aplicar), y una conclusión sobre la persistencia."
+      },
+      {
+        section:1, dok:1, skill:"language", type:"multiple-choice",
+        topic:"Concordancia entre sujeto y verbo", bookPages:"págs. 134–135, 152–153",
+        context:"Identifique el error gramatical en la siguiente oración:",
+        question:"¿Cuál de las siguientes oraciones contiene un error de concordancia?",
+        options:["Los estudiantes estudian para sus exámenes finales.","El grupo de músicos tocan en el parque los domingos.","María y José trabajan en la misma oficina.","La biblioteca cierra a las ocho de la noche."],
+        correct:1,
+        explanation:"La opción B tiene un error de concordancia. 'El grupo' (singular) debe concordar con 'toca' (singular), no 'tocan' (plural)."
+      },
+      {
+        section:1, dok:2, skill:"reading", type:"multiple-choice",
+        topic:"Comparar y contrastar en la no ficción", bookPages:"págs. 12–13",
+        passage:{ title:"El Arte de la Cerámica Tradicional",
+          text:"La cerámica tradicional representa una de las formas de arte más antiguas de la humanidad, con evidencia que se remonta a más de 10,000 años. Esta práctica ancestral no solo ha servido propósitos utilitarios, sino que también ha sido un medio de expresión cultural y artística a través de los siglos.\n\nEl proceso de creación de cerámica comienza con la selección cuidadosa de la arcilla. Los artesanos experimentados saben que no todas las arcillas son iguales; algunas son más plásticas y fáciles de moldear, mientras que otras contienen minerales que proporcionan colores únicos después de la cocción. La preparación de la arcilla es crucial: debe ser amasada para eliminar burbujas de aire que podrían causar grietas durante el secado o la cocción.\n\nUna vez preparada la arcilla, el artesano puede elegir entre varias técnicas de formado. El torno de alfarero, inventado hace aproximadamente 4,000 años, revolucionó la producción cerámica al permitir la creación de formas simétricas y refinadas. Sin embargo, muchos ceramistas contemporáneos también valoran las técnicas manuales como el enrollado y el pellizco, que permiten mayor expresión individual y conexión táctil con el material.\n\nLa fase de decoración ofrece infinitas posibilidades creativas. Los engobes (arcillas líquidas coloreadas) se pueden aplicar antes de la primera cocción, mientras que los esmaltes se aplican después. Algunas tradiciones culturales han desarrollado técnicas distintivas: la cerámica japonesa raku enfatiza la imperfección y la naturalidad, mientras que la porcelana china busca la perfección técnica y la delicadeza.\n\nEl momento culminante es la cocción, donde la arcilla se transforma permanentemente en cerámica a través del calor intenso. Esta transformación irreversible convierte un material moldeable en uno duradero, simbolizando quizás la capacidad humana de crear permanencia en un mundo transitorio." },
+        question:"Según el pasaje, ¿qué aspecto de la cerámica japonesa raku contrasta con la porcelana china?",
+        options:["El tipo de arcilla utilizada en la fabricación","La temperatura de cocción requerida","La filosofía estética: imperfección natural versus perfección técnica","El tiempo que toma completar una pieza"],
+        correct:2,
+        explanation:"El texto establece específicamente que 'la cerámica japonesa raku enfatiza la imperfección y la naturalidad, mientras que la porcelana china busca la perfección técnica y la delicadeza.'"
+      },
+      {
+        section:1, dok:3, skill:"reading", type:"multiple-choice",
+        topic:"Analizar el estilo y el tono", bookPages:"págs. 18–19, 76",
+        passage:{ title:"Fragmento de 'Cien años de soledad' (García Márquez)",
+          text:"Muchos años después, frente al pelotón de fusilamiento, el coronel Aureliano Buendía habría de recordar aquella tarde remota en que su padre lo llevó a conocer el hielo. Macondo era entonces una aldea de veinte casas de barro y cañabrava construidas a la orilla de un río de aguas diáfanas que se precipitaban por un lecho de piedras pulidas, blancas y enormes como huevos prehistóricos. El mundo era tan reciente que muchas cosas carecían de nombre y para mencionarlas había que señalarlas con el dedo.\n\nTodos los años, por el mes de marzo, una familia de gitanos desarrapados plantaba su carpa cerca de la aldea, y con un grande alboroto de pitos y timbales daban a conocer los nuevos inventos. Primero llevaron el imán. Un gitano corpulento, de barba montaraz y manos de gorrión, que se presentó con el nombre de Melquíades, hizo una truculenta demostración pública de lo que él mismo llamaba la octava maravilla de los sabios alquimistas de Macedonia.\n\nFue de casa en casa arrastrando dos lingotes metálicos, y todo el mundo se espantó al ver que los calderos, las pailas, las tenazas y los anafes se caían de su sitio, y las maderas crujían por la desesperación de los clavos y los tornillos tratando de desenclavarse, y aun los objetos perdidos desde hacía mucho tiempo aparecían por donde más se les había buscado, y se arrastraban en turbulenta procesión detrás de los fierros mágicos de Melquíades." },
+        question:"¿Qué efecto logra García Márquez al comenzar con 'Muchos años después' y luego narrar eventos del pasado?",
+        options:["Crear confusión sobre la secuencia temporal de los eventos","Establecer un sentido de destino y nostalgia que enmarca toda la narrativa","Mostrar que el coronel tiene problemas de memoria","Demostrar que los eventos no ocurrieron realmente"],
+        correct:1,
+        explanation:"Esta técnica narrativa crea una perspectiva circular del tiempo que caracteriza la obra de García Márquez, donde el futuro trágico (fusilamiento) da significado retrospectivo a la inocencia del pasado (conocer el hielo)."
+      },
+      {
+        section:1, dok:2, skill:"language", type:"dropdown",
+        topic:"Conjunciones para combinar oraciones", bookPages:"págs. 142–147",
+        context:"Seleccione la conjunción que mejor conecta las dos ideas en la oración:",
+        question:"Quería ir al concierto, __________ no tenía suficiente dinero.",
+        options:["y","pero","así que","porque"],
+        correct:"pero",
+        explanation:"'Pero' es una conjunción adversativa que introduce un contraste o una idea opuesta, apropiada para conectar el deseo de ir con la imposibilidad de hacerlo."
+      },
+      {
+        section:1, dok:2, skill:"reading", type:"multiple-choice",
+        topic:"Determinar el propósito del autor", bookPages:"págs. 14–15",
+        passage:{ title:"Aviso de Seguridad de Productos",
+          text:"La Administración de Alimentos y Medicamentos (FDA) ha emitido un aviso sobre el retiro voluntario del producto 'Barritas Energéticas Vitality', lote #A22-45, debido a la posible presencia no declarada de cacahuates. Los consumidores que tengan alergia o sensibilidad severa a los cacahuates corren el riesgo de una reacción alérgica grave o potencialmente mortal si consumen este producto.\n\nEl producto fue distribuido a nivel nacional en tiendas minoristas y a través de pedidos en línea entre el 1 de enero y el 15 de marzo de 2024. Se insta a los consumidores que hayan comprado estas barritas energéticas a no consumirlas y a devolverlas al lugar de compra para obtener un reembolso completo. Hasta la fecha no se han reportado enfermedades relacionadas con este problema." },
+        question:"¿Cuál es el propósito principal de este aviso?",
+        options:["Promocionar un nuevo producto de la competencia","Informar sobre los beneficios de las barritas energéticas","Proporcionar una receta para hacer barritas en casa","Alertar a los consumidores sobre un riesgo potencial para la salud y dar instrucciones"],
+        correct:3,
+        explanation:"El propósito del texto es claramente alertar sobre un peligro (alérgeno no declarado) e indicar los pasos a seguir (no consumir, devolver el producto)."
+      },
+      {
+        section:1, dok:1, skill:"language", type:"multiple-choice",
+        topic:"Puntuación: dos puntos y punto y coma", bookPages:"págs. 144–147, 160–161",
+        context:"Elija la opción que utiliza correctamente los dos puntos:",
+        question:"¿Cuál de las siguientes oraciones está puntuada correctamente?",
+        options:["Necesito comprar varias cosas: leche, pan y huevos.","Necesito comprar: leche, pan y huevos.","Las cosas que necesito son: leche, pan y huevos.","Compraré: leche, pan, y huevos mañana."],
+        correct:0,
+        explanation:"Los dos puntos se usan correctamente después de una cláusula independiente para introducir una lista. En la opción A, 'Necesito comprar varias cosas' es una cláusula independiente completa."
+      },
+      {
+        section:1, dok:3, skill:"argument", type:"multiple-choice",
+        topic:"Comparar y contrastar argumentos", bookPages:"págs. 96–97, 100",
+        passage:{ title:"Opiniones sobre los Vehículos Eléctricos",
+          text:"AUTOR 1: La transición a vehículos eléctricos (VE) es un paso crucial e ineludible hacia un futuro sostenible. Reducen drásticamente la contaminación del aire en nuestras ciudades, disminuyen nuestra dependencia de los combustibles fósiles y, a largo plazo, sus costos de mantenimiento y 'combustible' son significativamente menores. La infraestructura de carga está creciendo exponencialmente, haciendo que la 'ansiedad de rango' sea una preocupación del pasado.\n\nAUTOR 2: Si bien los vehículos eléctricos parecen una solución limpia, su panorama completo es más complejo. La extracción de litio y cobalto para las baterías tiene un alto costo ambiental y social. Además, la electricidad que los carga a menudo proviene de la quema de combustibles fósiles, simplemente trasladando la contaminación de lugar. Hasta que nuestra red eléctrica sea verdaderamente verde y el reciclaje de baterías sea eficiente, los VE no son la panacea que muchos afirman." },
+        question:"¿Qué punto de acuerdo implícito existe entre ambos autores?",
+        options:["Los vehículos eléctricos son demasiado caros para el consumidor promedio.","La reducción de la dependencia de combustibles fósiles es un objetivo deseable.","La infraestructura de carga es actualmente inadecuada.","El reciclaje de baterías es un problema resuelto."],
+        correct:1,
+        explanation:"Ambos autores enmarcan sus argumentos en el contexto de la sostenibilidad y el impacto de los combustibles fósiles. Ambos operan bajo la premisa de que reducir el uso de combustibles fósiles es un objetivo importante."
+      },
+      {
+        section:1, dok:2, skill:"reading", type:"multiple-choice",
+        topic:"Analizar los personajes", bookPages:"págs. 34–35",
+        passage:{ title:"Fragmento de 'El viejo y el mar' (Hemingway)",
+          text:"Todo en él era viejo, salvo sus ojos; y éstos tenían el color mismo del mar y eran alegres e invictos.\n\"Santiago\", le dijo el muchacho, \"¿puedo ir a buscarte sardinas para mañana?\"\n\"No. Ve a jugar al béisbol. Todavía puedo usar el remo y tú puedes usar la red.\"\n\"Me gustaría ir. Si no puedo pescar contigo, me gustaría servirte de alguna manera.\"\n\"Me has comprado una cerveza\", dijo el viejo. \"Ya eres un hombre.\"" },
+        question:"Basado en este diálogo, ¿cuál es la mejor descripción de la relación entre el viejo y el muchacho?",
+        options:["Una relación estrictamente profesional de jefe y empleado.","Una relación de rivalidad y competencia.","Una relación de afecto profundo y respeto mutuo, similar a la de un abuelo y un nieto.","Una relación distante y formal."],
+        correct:2,
+        explanation:"El deseo del muchacho de 'servirle de alguna manera' y la respuesta enaltecedora del viejo ('Ya eres un hombre') sugieren un fuerte vínculo personal basado en el cariño y el respeto."
+      },
+      {
+        section:1, dok:2, skill:"language", type:"multiple-choice",
+        topic:"Modificadores mal colocados", bookPages:"págs. 148–149",
+        context:"La siguiente oración tiene un error en la estructura. ¿Cuál de las opciones la corrige mejor?",
+        question:"Habiendo terminado su tarea, la televisión fue encendida.",
+        options:["Habiendo terminado su tarea, la televisión se encendió.","Después de terminar su tarea, encendió la televisión.","La televisión fue encendida, habiendo terminado su tarea.","Encendiendo la televisión, la tarea fue terminada."],
+        correct:1,
+        explanation:"La oración original tiene un 'modificador colgante'. 'Habiendo terminado su tarea' debería modificar a la persona que hizo la tarea, no a 'la televisión'. La opción B corrige esto al aclarar el sujeto implícito."
+      },
+
+      // ========== SECCIÓN 3 (27 PREGUNTAS) ==========
+      {
+        section:3, dok:2, skill:"reading", type:"multiple-choice",
+        topic:"Determinar la idea principal y los detalles", bookPages:"págs. 2–3",
+        passage:{ title:"La Psicología del Color en el Marketing",
+          text:"El color es una herramienta de comunicación no verbal poderosa. En el marketing y la construcción de marcas, la elección de una paleta de colores no es una decisión arbitraria; es una estrategia calculada para evocar emociones específicas y transmitir los valores de una marca. Las investigaciones demuestran que hasta el 90% de los juicios rápidos sobre productos pueden basarse solo en el color.\n\nPor ejemplo, el rojo se asocia comúnmente con la energía, la pasión y la urgencia. Es por eso que se utiliza a menudo en las ventas de liquidación y en la industria de la comida rápida para estimular el apetito y crear una sensación de inmediatez. Por el contrario, el azul inspira sentimientos de confianza, seguridad y serenidad. No es de extrañar que muchas instituciones financieras, compañías de tecnología y proveedores de atención médica lo incorporen en sus logotipos.\n\nEl verde, evocador de la naturaleza y la tranquilidad, es la elección obvia para las marcas que quieren ser percibidas como orgánicas, saludables o ecológicas. El amarillo, optimista y juvenil, se usa para captar la atención de los compradores en los escaparates. Sin embargo, el impacto del color puede variar significativamente entre culturas. Mientras que el blanco simboliza la pureza y las bodas en las culturas occidentales, en muchas culturas orientales se asocia con el luto. Por lo tanto, una estrategia de color global exitosa debe ser culturalmente sensible." },
+        question:"¿Cuál es la idea principal del pasaje?",
+        options:["El azul es el mejor color para los logotipos de empresas.","Los colores tienen significados universales en todo el mundo.","La elección del color en el marketing es una decisión estratégica para influir en la percepción y las emociones del consumidor.","Las ventas de liquidación siempre deben usar el color rojo para tener éxito."],
+        correct:2,
+        explanation:"El pasaje completo discute cómo los colores se eligen deliberadamente en el marketing para provocar emociones y comunicar valores, citando múltiples ejemplos y consideraciones como la cultura."
+      },
+      {
+        section:3, dok:2, skill:"reading", type:"multiple-choice",
+        topic:"Sacar conclusiones en textos de no ficción", bookPages:"págs. 20–21",
+        passage:{ title:"La Psicología del Color en el Marketing",
+          text:"El color es una herramienta de comunicación no verbal poderosa. En el marketing y la construcción de marcas, la elección de una paleta de colores no es una decisión arbitraria; es una estrategia calculada para evocar emociones específicas y transmitir los valores de una marca. Las investigaciones demuestran que hasta el 90% de los juicios rápidos sobre productos pueden basarse solo en el color.\n\nPor ejemplo, el rojo se asocia comúnmente con la energía, la pasión y la urgencia. Es por eso que se utiliza a menudo en las ventas de liquidación y en la industria de la comida rápida para estimular el apetito y crear una sensación de inmediatez. Por el contrario, el azul inspira sentimientos de confianza, seguridad y serenidad. No es de extrañar que muchas instituciones financieras, compañías de tecnología y proveedores de atención médica lo incorporen en sus logotipos.\n\nEl verde, evocador de la naturaleza y la tranquilidad, es la elección obvia para las marcas que quieren ser percibidas como orgánicas, saludables o ecológicas. El amarillo, optimista y juvenil, se usa para captar la atención de los compradores en los escaparates. Sin embargo, el impacto del color puede variar significativamente entre culturas. Mientras que el blanco simboliza la pureza y las bodas en las culturas occidentales, en muchas culturas orientales se asocia con el luto. Por lo tanto, una estrategia de color global exitosa debe ser culturalmente sensible." },
+        question:"Según el autor, ¿por qué un banco podría elegir el color azul para su marca?",
+        options:["Para parecer juvenil y optimista.","Para estimular el apetito de sus clientes.","Para evocar sentimientos de confianza y seguridad.","Para mostrar que es una marca ecológica."],
+        correct:2,
+        explanation:"El texto establece explícitamente que 'el azul inspira sentimientos de confianza, seguridad y serenidad', y menciona a las instituciones financieras como ejemplo de quienes lo usan."
+      },
+      {
+        section:3, dok:3, skill:"reading", type:"multiple-choice",
+        topic:"Determinar el propósito del autor", bookPages:"págs. 14–15",
+        passage:{ title:"La Psicología del Color en el Marketing",
+          text:"El color es una herramienta de comunicación no verbal poderosa. En el marketing y la construcción de marcas, la elección de una paleta de colores no es una decisión arbitraria; es una estrategia calculada para evocar emociones específicas y transmitir los valores de una marca. Las investigaciones demuestran que hasta el 90% de los juicios rápidos sobre productos pueden basarse solo en el color.\n\nPor ejemplo, el rojo se asocia comúnmente con la energía, la pasión y la urgencia. Es por eso que se utiliza a menudo en las ventas de liquidación y en la industria de la comida rápida para estimular el apetito y crear una sensación de inmediatez. Por el contrario, el azul inspira sentimientos de confianza, seguridad y serenidad. No es de extrañar que muchas instituciones financieras, compañías de tecnología y proveedores de atención médica lo incorporen en sus logotipos.\n\nEl verde, evocador de la naturaleza y la tranquilidad, es la elección obvia para las marcas que quieren ser percibidas como orgánicas, saludables o ecológicas. El amarillo, optimista y juvenil, se usa para captar la atención de los compradores en los escaparates. Sin embargo, el impacto del color puede variar significativamente entre culturas. Mientras que el blanco simboliza la pureza y las bodas en las culturas occidentales, en muchas culturas orientales se asocia con el luto. Por lo tanto, una estrategia de color global exitosa debe ser culturalmente sensible." },
+        question:"El autor incluye el ejemplo del color blanco para...",
+        options:["probar que todos los colores tienen el mismo significado en todas partes.","sugerir que el blanco es un mal color para el marketing.","reforzar la idea de que la estrategia de color debe considerar las diferencias culturales.","argumentar que las bodas y los funerales son conceptos similares."],
+        correct:2,
+        explanation:"El ejemplo del blanco, con sus significados opuestos en diferentes culturas, sirve como evidencia directa para la conclusión del párrafo: que la sensibilidad cultural es crucial en una estrategia de color global."
+      },
+      {
+        section:3, dok:2, skill:"language", type:"multiple-choice",
+        topic:"Convenciones y puntuación (apóstrofos)", bookPages:"págs. 130–131, 138–139",
+        context:"Lea la oración. ¿Qué revisión corrige el error de apóstrofo?",
+        question:"Los muchos beneficios del auto nuevo incluyen su mejor rendimiento de combustible y sus características de seguridad.",
+        options:["Los muchos beneficio's del auto nuevo...","Los muchos beneficios del auto nuevo incluyen su' mejor rendimiento...","Los muchos beneficios del auto nuevo incluyen su mejor rendimiento de combustible y sus característica's de seguridad.","No se necesita ninguna corrección."],
+        correct:3,
+        explanation:"La oración original está escrita correctamente. 'Beneficios' y 'características' son sustantivos plurales, no posesivos, por lo que no necesitan apóstrofo."
+      },
+      {
+        section:3, dok:2, skill:"argument", type:"multiple-choice",
+        topic:"Afirmaciones en textos persuasivos", bookPages:"págs. 62–65, 72–73",
+        passage:{ title:"Discurso sobre el Trabajo Voluntario",
+          text:"(1) Amigos, vecinos, les pregunto hoy: ¿cuándo fue la última vez que hicieron algo por su comunidad sin esperar nada a cambio? (2) El trabajo voluntario es el alma de una comunidad fuerte. (3) No se trata solo de realizar una tarea; se trata de tejer la tela social que nos une a todos.\n\n(4) Algunos podrían decir que están demasiado ocupados, que sus trabajos y familias consumen todo su tiempo. (5) Lo entiendo. (6) Pero consideren esto: incluso una hora a la semana puede marcar una diferencia monumental. (7) Un estudio del Centro Nacional para el Voluntariado mostró que las comunidades con altas tasas de voluntariado tienen tasas de criminalidad más bajas y un mayor rendimiento educativo. (8) No se trata de dar nuestro tiempo, se trata de invertirlo en un futuro mejor para nuestros hijos.\n\n(9) Ya sea sirviendo comida en un refugio, limpiando un parque local o leyendo a un niño en la biblioteca, cada acto de voluntariado es una onda en un estanque que se extiende mucho más allá de la acción inicial. (10) Es un testimonio de nuestro carácter y un faro de esperanza. (11) Les insto a que encuentren una causa que les apasione y den el primer paso hoy." },
+        question:"¿Cuál de las siguientes afirmaciones describe mejor el argumento principal del orador?",
+        options:["Las personas deberían priorizar el voluntariado sobre sus trabajos.","El voluntariado es una inversión beneficiosa para toda la comunidad.","Solo se necesitan unas pocas personas para hacer trabajo voluntario.","El voluntariado es la única manera de reducir las tasas de criminalidad."],
+        correct:1,
+        explanation:"El orador argumenta consistentemente que el voluntariado fortalece a la comunidad ('alma de una comunidad fuerte', 'invertirlo en un futuro mejor'), utilizando evidencia y ejemplos para apoyar esta idea central."
+      },
+      {
+        section:3, dok:2, skill:"argument", type:"multiple-choice",
+        topic:"Clasificar evidencia como válida o inválida", bookPages:"págs. 70–71",
+        passage:{ title:"Discurso sobre el Trabajo Voluntario",
+          text:"(1) Amigos, vecinos, les pregunto hoy: ¿cuándo fue la última vez que hicieron algo por su comunidad sin esperar nada a cambio? (2) El trabajo voluntario es el alma de una comunidad fuerte. (3) No se trata solo de realizar una tarea; se trata de tejer la tela social que nos une a todos.\n\n(4) Algunos podrían decir que están demasiado ocupados, que sus trabajos y familias consumen todo su tiempo. (5) Lo entiendo. (6) Pero consideren esto: incluso una hora a la semana puede marcar una diferencia monumental. (7) Un estudio del Centro Nacional para el Voluntariado mostró que las comunidades con altas tasas de voluntariado tienen tasas de criminalidad más bajas y un mayor rendimiento educativo. (8) No se trata de dar nuestro tiempo, se trata de invertirlo en un futuro mejor para nuestros hijos.\n\n(9) Ya sea sirviendo comida en un refugio, limpiando un parque local o leyendo a un niño en la biblioteca, cada acto de voluntariado es una onda en un estanque que se extiende mucho más allá de la acción inicial. (10) Es un testimonio de nuestro carácter y un faro de esperanza. (11) Les insto a que encuentren una causa que les apasione y den el primer paso hoy." },
+        question:"¿Qué tipo de evidencia utiliza el orador en la oración (7)?",
+        options:["Anécdota personal","Opinión de un experto","Datos estadísticos de un estudio","Analogía"],
+        correct:2,
+        explanation:"La oración (7) cita explícitamente 'un estudio del Centro Nacional para el Voluntariado' y sus hallazgos, que son datos de investigación, no una historia personal o una opinión."
+      },
+      {
+        section:3, dok:3, skill:"argument", type:"multiple-choice",
+        topic:"Analizar los elementos de la persuasión", bookPages:"págs. 62–63, 74–75",
+        passage:{ title:"Discurso sobre el Trabajo Voluntario",
+          text:"(1) Amigos, vecinos, les pregunto hoy: ¿cuándo fue la última vez que hicieron algo por su comunidad sin esperar nada a cambio? (2) El trabajo voluntario es el alma de una comunidad fuerte. (3) No se trata solo de realizar una tarea; se trata de tejer la tela social que nos une a todos.\n\n(4) Algunos podrían decir que están demasiado ocupados, que sus trabajos y familias consumen todo su tiempo. (5) Lo entiendo. (6) Pero consideren esto: incluso una hora a la semana puede marcar una diferencia monumental. (7) Un estudio del Centro Nacional para el Voluntariado mostró que las comunidades con altas tasas de voluntariado tienen tasas de criminalidad más bajas y un mayor rendimiento educativo. (8) No se trata de dar nuestro tiempo, se trata de invertirlo en un futuro mejor para nuestros hijos.\n\n(9) Ya sea sirviendo comida en un refugio, limpiando un parque local o leyendo a un niño en la biblioteca, cada acto de voluntariado es una onda en un estanque que se extiende mucho más allá de la acción inicial. (10) Es un testimonio de nuestro carácter y un faro de esperanza. (11) Les insto a que encuentren una causa que les apasione y den el primer paso hoy." },
+        question:"En las oraciones (4) y (5), el orador reconoce el contraargumento de que la gente está 'demasiado ocupada'. ¿Por qué el orador incluye este punto?",
+        options:["Para estar de acuerdo en que la mayoría de la gente no tiene tiempo para ser voluntaria.","Para mostrar empatía hacia la audiencia antes de refutar el punto.","Para sugerir que el voluntariado solo es para personas jubiladas o desempleadas.","Para terminar el discurso abruptamente."],
+        correct:1,
+        explanation:"Esta es una técnica retórica común. Al reconocer y validar la preocupación de la audiencia ('Lo entiendo'), el orador genera confianza y hace que la audiencia sea más receptiva a la refutación que sigue."
+      },
+      {
+        section:3, dok:2, skill:"reading", type:"multiple-choice",
+        topic:"Interpretar el lenguaje figurado", bookPages:"págs. 38–39",
+        passage:{ title:"Discurso sobre el Trabajo Voluntario",
+          text:"(1) Amigos, vecinos, les pregunto hoy: ¿cuándo fue la última vez que hicieron algo por su comunidad sin esperar nada a cambio? (2) El trabajo voluntario es el alma de una comunidad fuerte. (3) No se trata solo de realizar una tarea; se trata de tejer la tela social que nos une a todos.\n\n(4) Algunos podrían decir que están demasiado ocupados, que sus trabajos y familias consumen todo su tiempo. (5) Lo entiendo. (6) Pero consideren esto: incluso una hora a la semana puede marcar una diferencia monumental. (7) Un estudio del Centro Nacional para el Voluntariado mostró que las comunidades con altas tasas de voluntariado tienen tasas de criminalidad más bajas y un mayor rendimiento educativo. (8) No se trata de dar nuestro tiempo, se trata de invertirlo en un futuro mejor para nuestros hijos.\n\n(9) Ya sea sirviendo comida en un refugio, limpiando un parque local o leyendo a un nicho en la biblioteca, cada acto de voluntariado es una onda en un estanque que se extiende mucho más allá de la acción inicial. (10) Es un testimonio de nuestro carácter y un faro de esperanza. (11) Les insto a que encuentren una causa que les apasione y den el primer paso hoy." },
+        question:"El uso de la frase 'una onda en un estanque' en la oración (9) es un ejemplo de lenguaje figurado. ¿Qué significa en este contexto?",
+        options:["El trabajo voluntario causa problemas inesperados.","Las acciones de voluntariado tienen un impacto pequeño y limitado.","Los actos de voluntariado a menudo implican trabajar cerca del agua.","Un solo acto de voluntariado puede tener efectos positivos amplios y continuos."],
+        correct:3,
+        explanation:"La metáfora de una onda que se expande desde un punto central ilustra cómo un pequeño acto puede crecer y afectar a muchas más personas de las que se pretendía inicialmente."
+      },
+      {
+        section:3, dok:2, skill:"language", type:"dropdown",
+        topic:"Concordancia entre sujeto y verbo", bookPages:"págs. 134–135, 152–153",
+        context:"Complete la oración con la forma correcta del verbo.",
+        question:"Ni el gerente ni los empleados __________ satisfechos con la nueva política.",
+        options:["está","están","estoy","estamos"],
+        correct:"están",
+        explanation:"Con la construcción 'ni... ni...', el verbo concuerda con el sujeto más cercano. En este caso, 'los empleados' es plural, por lo que el verbo debe ser plural ('están')."
+      },
+      {
+        section:3, dok:1, skill:"reading", type:"multiple-choice",
+        topic:"Hacer inferencias en la no ficción", bookPages:"págs. 16–17",
+        passage:{ title:"Garantía de Producto Electrónico",
+          text:"GARANTÍA LIMITADA DE UN AÑO. TechCorp garantiza este producto contra defectos de materiales y mano de obra bajo uso normal por un período de UN (1) AÑO a partir de la fecha de compra minorista original. Si surge un defecto y se recibe una reclamación válida dentro del Período de Garantía, a su elección, TechCorp (1) reparará el producto sin cargo, (2) cambiará el producto por uno nuevo o (3) reembolsará el precio de compra. Esta garantía no se aplica a: (a) daños causados por accidente, abuso o mal uso; (b) daños causados por servicio realizado por cualquier persona que no sea un Representante Autorizado de TechCorp; (c) un producto que ha sido modificado." },
+        question:"Según la garantía, ¿qué sucederá si un cliente derrama líquido sobre el producto y deja de funcionar?",
+        options:["TechCorp reparará el producto sin cargo.","TechCorp cambiará el producto por uno nuevo.","TechCorp reembolsará el precio de compra.","La garantía no cubrirá el daño."],
+        correct:3,
+        explanation:"La garantía excluye explícitamente los 'daños causados por accidente, abuso o mal uso'. Derramar líquido sobre el producto se consideraría un accidente, por lo que el daño no estaría cubierto."
+      },
+      {
+        section:3, dok:2, skill:"language", type:"drag-drop",
+        topic:"Organización de párrafos", bookPages:"págs. 158–159",
+        context:"Un gerente está escribiendo un correo electrónico para anunciar un nuevo sistema de software. Ordene las oraciones para crear un mensaje claro y profesional.",
+        question:"Arrastre las oraciones al orden correcto.",
+        dragItems:[
+          {id:"greeting", text:"Estimado equipo,", correct:0},
+          {id:"main_point", text:"Me complace anunciar que implementaremos un nuevo software de gestión de proyectos, 'ProjecTrack', a partir del 1 de agosto.", correct:1},
+          {id:"details", text:"Habrá sesiones de capacitación obligatorias la próxima semana; recibirán una invitación por separado con los horarios.", correct:2},
+          {id:"call_to_action", text:"Mientras tanto, pueden familiarizarse con el software a través de los tutoriales en línea en este enlace: [enlace].", correct:3},
+          {id:"closing", text:"Gracias por su cooperación en esta importante transición. Saludos cordiales, El Gerente.", correct:4}
+        ],
+        dropZones:[
+          {id:"z1", label:"Parte 1:", description:"Saludo inicial"},
+          {id:"z2", label:"Parte 2:", description:"Anuncio principal"},
+          {id:"z3", label:"Parte 3:", description:"Detalles importantes"},
+          {id:"z4", label:"Parte 4:", description:"Acción sugerida"},
+          {id:"z5", label:"Parte 5:", description:"Cierre y despedida"}
+        ],
+        explanation:"La estructura lógica de un correo electrónico profesional es: Saludo → idea principal → detalles clave → acción a tomar → cierre."
+      },
+      {
+        section:3, dok:3, skill:"argument", type:"multiple-choice",
+        topic:"Identificar la evidencia incorrecta o inválida", bookPages:"págs. 68–69",
+        passage:{ title:"Sobre la Inteligencia Artificial",
+          text:"La narrativa predominante en torno a la inteligencia artificial (IA) a menudo se balancea entre dos extremos: una utopía de eficiencia y ocio, o una distopía de desempleo masivo y pérdida de control. Ambas visiones, aunque dramáticas, simplifican en exceso una transición que probablemente será mucho más matizada. El verdadero desafío no es si la IA 'se apoderará', sino cómo podemos integrarla de manera ética y equitativa en la sociedad.\n\nEn lugar de ver la IA como un reemplazo de los humanos, deberíamos verla como una herramienta de aumento. Un radiólogo que utiliza IA para analizar imágenes médicas no se vuelve obsoleto; se vuelve más preciso y rápido, capaz de atender a más pacientes. Un escritor que utiliza IA para la investigación no pierde su creatividad; la libera de tareas tediosas. El enfoque debe estar en la recapacitación y adaptación de la fuerza laboral, no en el pánico. La regulación gubernamental será clave, no para sofocar la innovación, sino para asegurar que sus beneficios se distribuyan ampliamente y que se establezcan salvaguardas contra el mal uso y el sesgo algorítmico." },
+        question:"¿Cuál de las siguientes afirmaciones, si fuera cierta, debilitaría más el argumento del autor sobre la IA como herramienta de 'aumento'?",
+        options:["Un estudio muestra que las empresas que adoptan la IA tienden a invertir más en la capacitación de los empleados.","Nuevas IAs son capaces de realizar tareas creativas y de diagnóstico complejo sin ninguna intervención humana.","La regulación gubernamental ha demostrado ser efectiva en la gestión de nuevas tecnologías en el pasado.","La mayoría de los trabajadores expresan entusiasmo por aprender a usar nuevas herramientas de IA."],
+        correct:1,
+        explanation:"El argumento central del autor se basa en que la IA es una herramienta para 'aumentar' las capacidades humanas, no para reemplazarlas. Si una nueva IA pudiera realizar tareas complejas completamente de forma autónoma, el modelo de 'reemplazo' se volvería más plausible."
+      },
+      {
+        section:3, dok:2, skill:"reading", type:"multiple-choice",
+        topic:"Determinar la idea principal y los detalles", bookPages:"págs. 2–3",
+        passage:{ title:"Estrategias de Marketing Digital",
+          text:"El marketing digital ha revolucionado la forma en que las empresas se conectan con sus clientes. A diferencia del marketing tradicional, que se basa en medios como televisión, radio y periódicos, el marketing digital utiliza plataformas en línea para llegar a audiencias específicas. Las empresas pueden ahora segmentar sus mensajes según datos demográficos, intereses y comportamientos de compra. Esta precisión permite campañas más efectivas y un mejor retorno de la inversión. Sin embargo, la saturación digital también presenta desafíos, ya que los consumidores están constantemente bombardeados con información publicitaria." },
+        question:"Según el pasaje, ¿cuál es la principal ventaja del marketing digital sobre el marketing tradicional?",
+        options:["Es más barato que los medios tradicionales","Permite la segmentación precisa de audiencias","No requiere conocimientos técnicos especializados","Garantiza mejores resultados en todas las campañas"],
+        correct:1,
+        explanation:"El pasaje específicamente menciona que 'Las empresas pueden ahora segmentar sus mensajes según datos demográficos, intereses y comportamientos de compra' como característica distintiva del marketing digital."
+      },
+      {
+        section:3, dok:3, skill:"argument", type:"multiple-choice",
+        topic:"Analizar la estructura de los argumentos", bookPages:"págs. 72–73",
+        passage:{ title:"Carta al Editor - Energía Renovable",
+          text:"Estimado Editor: El debate sobre la energía renovable en nuestra ciudad ha ignorado un factor crucial: la confiabilidad. Mientras que los defensores de la energía solar y eólica destacan los beneficios ambientales, raramente mencionan que estas fuentes son intermitentes. El sol no siempre brilla y el viento no siempre sopla. Hasta que no desarrollemos tecnologías de almacenamiento más eficientes y económicas, dependemos de fuentes de energía tradicionales como respaldo. En lugar de eliminar completamente el carbón y el gas natural, deberíamos adoptar un enfoque gradual que combine fuentes renovables con tradicionales. Esto garantizaría un suministro energético estable mientras protegemos el medio ambiente. Sinceramente, Dra. María González, Ingeniera Eléctrica" },
+        question:"¿Cuál es el argumento principal de la autora?",
+        options:["La energía renovable es completamente ineficaz","Se debe adoptar un enfoque gradual que combine energías renovables y tradicionales","Las tecnologías de almacenamiento ya están suficientemente desarrolladas","Los beneficios ambientales de la energía renovable son exagerados"],
+        correct:1,
+        explanation:"La autora claramente establece que 'deberíamos adoptar un enfoque gradual que combine fuentes renovables con tradicionales' como su propuesta principal."
+      },
+      {
+        section:3, dok:1, skill:"language", type:"multiple-choice",
+        topic:"Concordancia entre sujeto y verbo", bookPages:"págs. 134–135",
+        passage:{ title:"Concordancia verbal",
+          text:"Los estudiantes de la universidad _____ muy motivados para completar sus estudios. Cada uno de ellos _____ trabajado duro durante el semestre." },
+        question:"Selecciona las opciones correctas para completar las oraciones:",
+        options:["están / ha","están / han","está / ha","está / han"],
+        correct:0,
+        explanation:"La primera oración requiere 'están' (plural) para concordar con 'estudiantes'. La segunda requiere 'ha' (singular) para concordar con 'cada uno'."
+      },
+      {
+        section:3, dok:2, skill:"reading", type:"multiple-choice",
+        topic:"Determinar el propósito del autor", bookPages:"págs. 14–15",
+        passage:{ title:"Ciudades Inteligentes",
+          text:"Las ciudades inteligentes utilizan tecnología avanzada para mejorar la calidad de vida de sus habitantes. Sensores colocados estratégicamente monitorean el tráfico, la calidad del aire y el consumo de energía en tiempo real. Esta información se procesa mediante algoritmos que optimizan semáforos, rutas de transporte público y sistemas de iluminación. Barcelona, por ejemplo, ha implementado sensores de estacionamiento que dirigen a los conductores hacia espacios disponibles, reduciendo la congestión vehicular. Sin embargo, estas tecnologías también plantean preocupaciones sobre la privacidad, ya que recopilan grandes cantidades de datos sobre los movimientos y hábitos de los ciudadanos." },
+        question:"¿Cuál es el propósito principal de los sensores en las ciudades inteligentes?",
+        options:["Recopilar datos sobre los ciudadanos para fines comerciales","Monitorear y optimizar diversos sistemas urbanos","Reemplazar completamente a los trabajadores municipales","Crear un sistema de vigilancia para la seguridad pública"],
+        correct:1,
+        explanation:"El pasaje indica que los sensores 'monitorean el tráfico, la calidad del aire y el consumo de energía' y esta información se usa para 'optimizar' diversos sistemas urbanos."
+      },
+      {
+        section:3, dok:3, skill:"reading", type:"multiple-choice",
+        topic:"Analizar el estilo y el tono", bookPages:"págs. 18–19, 76",
+        passage:{ title:"Fragmento literario - Isabel Allende",
+          text:"Era una de esas mañanas de enero en que el calor se adhiere a la piel como una segunda naturaleza y el aire vibra con promesas que no se cumplirán. Clara despertó antes del amanecer, como había hecho cada día durante los últimos treinta años, no por disciplina sino por una inquietud que la habitaba desde la infancia. Se acercó a la ventana y observó el jardín donde las flores parecían marchitarse antes de florecer completamente. Todo en esa casa hablaba de memorias enterradas, de secretos que se filtraban a través de las grietas de las paredes como agua subterránea." },
+        question:"¿Qué ambiente predomina en este fragmento?",
+        options:["Alegría y esperanza por un nuevo día","Melancolía y peso del pasado","Energía y vitalidad matutina","Tranquilidad y paz doméstica"],
+        correct:1,
+        explanation:"El fragmento utiliza imágenes como 'promesas que no se cumplirán', 'flores que se marchitan', 'memorias enterradas' y 'secretos' para crear un ambiente melancólico cargado del peso del pasado."
+      },
+      {
+        section:3, dok:1, skill:"language", type:"multiple-choice",
+        topic:"Comas con cláusulas dependientes", bookPages:"págs. 142–143",
+        passage:{ title:"Uso de Comas",
+          text:"Aunque estaba lloviendo fuerte decidimos continuar con el picnic." },
+        question:"¿Dónde se necesita agregar una coma en esta oración?",
+        options:["Después de 'aunque'","Después de 'fuerte'","Después de 'decidimos'","No se necesita coma"],
+        correct:1,
+        explanation:"Las cláusulas subordinadas adverbiales que van al inicio de la oración deben separarse de la cláusula principal con una coma. La coma va después de 'fuerte'."
+      },
+      {
+        section:3, dok:2, skill:"argument", type:"multiple-choice",
+        topic:"Determinar el propósito del autor", bookPages:"págs. 14–15, 60–61",
+        passage:{ title:"Editorial - Trabajo Remoto",
+          text:"El trabajo remoto ha demostrado ser más que una tendencia temporal; es una transformación fundamental en la cultura laboral. Los estudios muestran que los empleados remotos reportan mayor satisfacción laboral y mejor equilibrio vida-trabajo. Además, las empresas han reducido costos operativos significativamente al disminuir gastos de oficina. Sin embargo, algunos gerentes argumentan que la colaboración presencial es irreemplazable y que la productividad ha disminuido. No obstante, estos argumentos se basan más en percepciones tradicionales que en datos objetivos. La evidencia sugiere que el futuro del trabajo será híbrido, combinando la flexibilidad del trabajo remoto con la colaboración ocasional presencial." },
+        question:"¿Cuál es la posición del autor sobre el trabajo remoto?",
+        options:["Es completamente negativo y debe eliminarse","Es positivo pero reconoce algunos desafíos válidos","Es mayoritariamente positivo y cuestiona los argumentos en contra","Es neutral y presenta ambos lados sin tomar posición"],
+        correct:2,
+        explanation:"El autor presenta evidencia positiva y luego cuestiona los argumentos en contra, diciendo que se basan en 'percepciones tradicionales' más que en 'datos objetivos'."
+      },
+      {
+        section:3, dok:3, skill:"reading", type:"multiple-choice",
+        topic:"Sacar conclusiones", bookPages:"págs. 20–21, 46–47",
+        passage:{ title:"Psicología del Consumidor y el Color",
+          text:"La psicología del color en el marketing no es casualidad; es una ciencia meticulosamente estudiada. El rojo estimula la urgencia y el apetito, razón por la cual se usa en restaurantes de comida rápida y ventas de liquidación. El azul transmite confianza y seguridad, empleado frecuentemente por bancos y empresas tecnológicas. El verde evoca naturaleza y salud, preferido por marcas orgánicas y ambientales. Sin embargo, la percepción del color también depende del contexto cultural. Mientras que el blanco representa pureza en Occidente, simboliza luto en algunas culturas asiáticas. Los marketers exitosos consideran tanto la psicología universal del color como las variaciones culturales específicas de su mercado objetivo." },
+        question:"¿Qué conclusión se puede extraer sobre el uso efectivo del color en marketing?",
+        options:["Los colores tienen efectos universales que funcionan en todas las culturas","Solo importa la psicología del color, no el contexto cultural","El marketing efectivo debe considerar tanto factores psicológicos como culturales","Las diferencias culturales hacen que la psicología del color sea irrelevante"],
+        correct:2,
+        explanation:"El pasaje indica que 'los marketers exitosos consideran tanto la psicología universal del color como las variaciones culturales específicas', mostrando que ambos factores son importantes."
+      },
+      {
+        section:3, dok:2, skill:"reading", type:"multiple-choice",
+        topic:"Determinar la idea principal y los detalles", bookPages:"págs. 2–3",
+        passage:{ title:"Protocolos de Seguridad en Laboratorios",
+          text:"Los protocolos de seguridad en laboratorios científicos han evolucionado considerablemente desde principios del siglo XX. Anteriormente, los investigadores trabajaban con sustancias peligrosas sin protección adecuada, resultando en numerosos accidentes y enfermedades ocupacionales. Hoy en día, regulaciones estrictas requieren el uso de equipos de protección personal, sistemas de ventilación especializada y procedimientos de emergencia bien definidos. La implementación de estas medidas ha reducido los accidentes laborales en un 75% en los últimos treinta años. No obstante, la investigación en campos emergentes como la nanotecnología presenta nuevos desafíos de seguridad que requieren protocolos constantemente actualizados." },
+        question:"¿Cuál es la idea principal de este pasaje?",
+        options:["Los laboratorios del pasado eran más peligrosos que los actuales","La evolución y efectividad de los protocolos de seguridad en laboratorios","Los nuevos campos científicos necesitan protocolos diferentes","Los accidentes de laboratorio han disminuido en 75%"],
+        correct:1,
+        explanation:"El pasaje abarca la evolución histórica de los protocolos, su efectividad actual y los desafíos futuros, haciendo de la evolución y efectividad el tema central."
+      },
+      {
+        section:3, dok:2, skill:"language", type:"multiple-choice",
+        topic:"Pronombres personales y posesivos", bookPages:"págs. 124–125, 150–151",
+        passage:{ title:"Uso de Pronombres",
+          text:"María y Ana fueron al mercado. _____ compraron verduras frescas para la cena." },
+        question:"¿Qué pronombre completa correctamente la oración?",
+        options:["Ella","Ellas","Ellos","Ello"],
+        correct:1,
+        explanation:"'María y Ana' son dos personas de género femenino, por lo que el pronombre plural femenino 'ellas' es el correcto."
+      },
+      {
+        section:3, dok:3, skill:"argument", type:"multiple-choice",
+        topic:"Comparar y contrastar argumentos", bookPages:"págs. 96–97, 100",
+        passage:{ title:"Debate sobre Inteligencia Artificial",
+          text:"Participante A: 'La inteligencia artificial revolucionará positivamente nuestras vidas, automatizando tareas repetitivas y permitiendo que los humanos se enfoquen en actividades más creativas y significativas.' Participante B: 'Si bien la IA puede ser beneficiosa, debemos proceder con cautela. La automatización masiva podría resultar en desempleo generalizado y aumentar la desigualdad económica.' Moderador: 'Ambas perspectivas tienen mérito. La clave está en implementar la IA de manera que maximice los beneficios mientras mitiga los riesgos potenciales.'" },
+        question:"¿Cuál es la diferencia principal entre las posiciones de los participantes A y B?",
+        options:["A se opone completamente a la IA mientras B la apoya","A enfatiza beneficios potenciales mientras B enfatiza riesgos potenciales","A habla de aspectos técnicos mientras B habla de aspectos económicos","No hay diferencia real entre sus posiciones"],
+        correct:1,
+        explanation:"El Participante A se enfoca en los beneficios positivos (automatización, más tiempo para creatividad) mientras que B se enfoca en los riesgos (desempleo, desigualdad)."
+      },
+      {
+        section:3, dok:1, skill:"language", type:"multiple-choice",
+        topic:"Comillas y puntuación de diálogo", bookPages:"págs. 160–161",
+        passage:{ title:"Puntuación de Diálogo",
+          text:"¿Vienes a la reunión mañana preguntó Carlos." },
+        question:"¿Cómo debería puntuarse correctamente esta oración?",
+        options:['"¿Vienes a la reunión mañana?" preguntó Carlos.','"¿Vienes a la reunión mañana?" preguntó Carlos?','¿"Vienes a la reunión mañana" preguntó Carlos?','"¿Vienes a la reunión mañana" preguntó Carlos?"'],
+        correct:0,
+        explanation:"En el diálogo, las comillas encierran completamente lo dicho, incluyendo los signos de interrogación, y se termina con punto después de la aclaración narrativa."
+      },
+      {
+        section:3, dok:2, skill:"reading", type:"multiple-choice",
+        topic:"Determinar la idea principal y los detalles", bookPages:"págs. 2–3",
+        passage:{ title:"Revolución de la Agricultura Vertical",
+          text:"La agricultura vertical representa una innovación prometedora para abordar la seguridad alimentaria mundial. Mediante el cultivo en capas apiladas dentro de edificios controlados, esta técnica puede producir cosechas todo el año, independientemente del clima exterior. Utiliza un 95% menos agua que la agricultura tradicional y elimina la necesidad de pesticidas. Singapur, con limitaciones severas de tierra arable, ha adoptado esta tecnología para reducir su dependencia de importaciones de alimentos. Sin embargo, los altos costos de energía para la iluminación LED y los sistemas de control climático siguen siendo obstáculos significativos para la adopción masiva." },
+        question:"Según el pasaje, ¿cuál es la principal limitación de la agricultura vertical?",
+        options:["La falta de variedades de cultivos que se pueden cultivar","Los altos costos de energía para operación","La resistencia de los agricultores tradicionales","La dependencia del clima exterior"],
+        correct:1,
+        explanation:"El pasaje específicamente identifica 'los altos costos de energía para la iluminación LED y los sistemas de control climático' como 'obstáculos significativos para la adopción masiva'."
+      },
+      {
+        section:3, dok:3, skill:"reading", type:"multiple-choice",
+        topic:"Identificar el tema", bookPages:"págs. 44–45",
+        passage:{ title:"Fragmento: El Impacto de las Redes Sociales",
+          text:"Las redes sociales han tejido una red invisible que conecta a miles de millones de personas, pero también han creado una paradoja moderna: nunca habíamos estado tan conectados y, simultáneamente, tan solos. Los usuarios construyen identidades digitales cuidadosamente curadas, mostrando solo los aspectos más favorables de sus vidas. Esta representación selectiva genera comparaciones constantes con otros, alimentando sentimientos de inadecuación y ansiedad. Irónicamente, plataformas diseñadas para acercar a las personas pueden alejarlas de conexiones auténticas y significativas. El desafío no radica en abandonar estas tecnologías, sino en aprender a usarlas de manera que enriquezcan, en lugar de empobrecer, nuestras relaciones humanas." },
+        question:"¿Cuál es el tema central que desarrolla este pasaje?",
+        options:["Los beneficios de las redes sociales para la comunicación global","La paradoja entre conexión digital y aislamiento emocional","Los peligros de compartir información personal en línea","La necesidad de regular las plataformas de redes sociales"],
+        correct:1,
+        explanation:"El pasaje desarrolla la paradoja mencionada explícitamente: 'nunca habíamos estado tan conectados y, simultáneamente, tan solos', explorando cómo las redes sociales conectan pero también aíslan."
+      },
+      // PREGUNTA 45 - nueva
+      {
+        section:3, dok:1, skill:"reading", type:"multiple-choice",
+        topic:"Determinar la secuencia de eventos", bookPages:"págs. 6–7",
+        passage:{ title:"Instrucciones: Cómo preparar un currículum vitae",
+          text:"Para preparar un currículum vitae efectivo, siga estos pasos. Primero, reúna toda su información personal, incluyendo datos de contacto actualizados. A continuación, liste su experiencia laboral comenzando por el trabajo más reciente. Después, incluya su educación formal y cualquier certificación relevante. Luego, agregue habilidades especiales como idiomas o programas de computadora que domine. Finalmente, revise cuidadosamente el documento completo para eliminar errores ortográficos o gramaticales antes de enviarlo a los empleadores." },
+        question:"¿Qué paso se realiza DESPUÉS de listar la experiencia laboral?",
+        options:["Reunir información personal y datos de contacto","Revisar el documento para eliminar errores","Incluir la educación formal y certificaciones relevantes","Agregar habilidades especiales como idiomas"],
+        correct:2,
+        explanation:"Según el texto, el orden es: (1) información personal, (2) experiencia laboral, (3) educación y certificaciones, (4) habilidades especiales, (5) revisar. Por tanto, después de la experiencia laboral se incluye la educación."
+      }
+    ]; // fin questions
+
+    // ====================================================
+    // FUNCIONES DEL EXAMEN
+    // ====================================================
+    function startExam() {
+      document.getElementById("startScreen").style.display = "none";
+      document.getElementById("examInterface").style.display = "block";
+      examStarted = true;
+      currentSection = 1;
+      timeLeft = 2100;
+      startTimer();
+      loadQuestion(0);
+    }
+
+    function startSection3() {
+      document.getElementById("breakScreen").style.display = "none";
+      document.getElementById("examInterface").style.display = "block";
+      currentSection = 3;
+      timeLeft = 3600;
+      document.getElementById("sectionInfo").textContent = "Sección 3: Análisis avanzado y argumentos (60 min)";
+      document.getElementById("sectionIndicator").textContent = "Sección 3";
+      startTimer();
+      loadQuestion(18);
+    }
+
+    function startTimer() {
+      clearInterval(timer);
+      timer = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        if (timeLeft <= 0) {
+          timeLeft = 0;
+          updateTimerDisplay();
+          clearInterval(timer);
+          if (currentSection === 1) showBreak();
+          else endExam();
+        }
+      }, 1000);
+    }
+
+    function showBreak() {
+      clearInterval(timer);
+      document.getElementById("examInterface").style.display = "none";
+      document.getElementById("breakScreen").style.display = "block";
+    }
+
+    function updateTimerDisplay() {
+      const m = Math.floor(timeLeft/60), s = timeLeft%60;
+      document.getElementById("timer").textContent = `${m}:${s.toString().padStart(2,"0")}`;
+    }
+
+    function loadQuestion(index) {
+      if (index >= questions.length || index < 0) { endExam(); return; }
+      currentQuestion = index;
+      const q = questions[index];
+
+      let progressPercent, navText;
+      if (currentSection === 1) {
+        progressPercent = ((index+1)/18)*100;
+        navText = `Pregunta ${index+1} de 18`;
+      } else {
+        const qInSec = index - 18 + 1;
+        progressPercent = (qInSec/27)*100;
+        navText = `Pregunta ${qInSec} de 27`;
+      }
+      document.getElementById("progressBar").style.width = `${progressPercent}%`;
+      document.getElementById("progressText").textContent = navText;
+
+      const skillNames = {reading:"Comprensión de Lectura", language:"Gramática y Lenguaje", argument:"Análisis de Argumentos"};
+      let html = `<div class="question-header">
+        <div class="question-number">${navText}</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <div class="dok-badge dok-${q.dok}">DOK ${q.dok}</div>
+          <div class="skill-badge ${q.skill}">${skillNames[q.skill]}</div>
+        </div></div>`;
+
+      if (q.context) html += `<div class="grammar-context">${q.context}</div>`;
+      if (q.passage) html += `<div class="passage-panel"><div class="passage-title">📖 ${q.passage.title}</div><div class="passage-text">${q.passage.text}</div></div>`;
+      if (q.question) html += `<div class="actual-question">${q.question}</div>`;
+
+      if (q.type === "multiple-choice") {
+        html += '<div class="options">';
+        q.options.forEach((opt,i) => {
+          html += `<div class="option" id="opt-${i}" onclick="selectOption(${index},${i})"><div class="option-letter">${String.fromCharCode(65+i)}</div><span>${opt}</span></div>`;
+        });
+        html += '</div>';
+      } else if (q.type === "dropdown") {
+        const parts = q.question.split("__________");
+        html = html.replace(q.question, '');
+        html += parts[0];
+        html += `<select class="dropdown" onchange="saveDropdownAnswer(${index},this.value)"><option value="">Seleccione...</option>`;
+        q.options.forEach(opt => { html += `<option value="${opt}">${opt}</option>`; });
+        html += `</select>${parts[1]||''}`;
+      } else if (q.type === "drag-drop") {
+        html += renderDragDrop(q, index);
+      }
+
+      document.getElementById("questionCard").innerHTML = html;
+      if (q.type === "drag-drop") setupDragAndDrop(index);
+
+      const isFirstSec = (currentSection===1&&index===0)||(currentSection===3&&index===18);
+      const isLastSec = (currentSection===1&&index===17)||(currentSection===3&&index===44);
+      document.getElementById("prevBtn").disabled = isFirstSec;
+      document.getElementById("nextBtn").textContent = isLastSec ? (currentSection===1?"Finalizar Sección 1 ➡️":"Finalizar Examen ➡️") : "Siguiente ➡️";
+
+      if (answers[index] !== undefined) restoreAnswer(q, index);
+    }
+
+    function renderDragDrop(q, index) {
+      let html = `<div class="drag-drop-container"><div class="drag-items"><h4 style="color:#e74c3c;margin-bottom:15px">📋 Elementos para organizar:</h4><div id="dragItems-${index}">`;
+      const shuffled = [...q.dragItems].sort(()=>Math.random()-0.5);
+      shuffled.forEach(item => {
+        html += `<div class="drag-item" draggable="true" data-item-id="${item.id}" data-correct="${item.correct}" data-qidx="${index}">${item.text}</div>`;
+      });
+      html += `</div></div><div class="drop-zones"><h4 style="color:#e74c3c;margin-bottom:15px">🎯 Zonas de destino:</h4><div id="dropZones-${index}">`;
+      q.dropZones.forEach((zone,i) => {
+        html += `<div class="drop-zone" data-zone="${i}" data-qidx="${index}"><span class="zone-label">${zone.label}</span><span>${zone.description}</span></div>`;
+      });
+      html += `</div></div></div>`;
+      return html;
+    }
+
+    function setupDragAndDrop(qIndex) {
+      const dragItems = document.querySelectorAll(`#dragItems-${qIndex} .drag-item`);
+      const dropZones = document.querySelectorAll(`#dropZones-${qIndex} .drop-zone`);
+      let draggedItem = null;
+      dragItems.forEach(item => {
+        item.addEventListener("dragstart", e => { draggedItem = item; setTimeout(()=>item.style.display="none",0); });
+        item.addEventListener("dragend", () => { setTimeout(()=>{if(draggedItem){draggedItem.style.display="block";draggedItem=null;}},0); });
+      });
+      dropZones.forEach(zone => {
+        zone.addEventListener("dragover", e => e.preventDefault());
+        zone.addEventListener("dragenter", e => { e.preventDefault(); zone.classList.add("drag-over"); });
+        zone.addEventListener("dragleave", () => zone.classList.remove("drag-over"));
+        zone.addEventListener("drop", e => {
+          e.preventDefault();
+          zone.classList.remove("drag-over");
+          if (zone.querySelector(".drag-item")) return;
+          zone.appendChild(draggedItem);
+          const qi = parseInt(draggedItem.dataset.qidx);
+          if (!answers[qi]) answers[qi] = {dropped:{}, type:"drag-drop", isCorrect:false};
+          const zoneIdx = parseInt(zone.dataset.zone);
+          const correctIdx = parseInt(draggedItem.dataset.correct);
+          answers[qi].dropped[zoneIdx] = (zoneIdx === correctIdx);
+          // Check if all correct
+          const q = questions[qi];
+          const allDropped = Object.keys(answers[qi].dropped).length === q.dragItems.length;
+          if (allDropped) {
+            answers[qi].isCorrect = Object.values(answers[qi].dropped).every(v=>v);
+          }
+        });
+      });
+    }
+
+    function selectOption(qIndex, optIndex) {
+      if (answers[qIndex] !== undefined) return;
+      const q = questions[qIndex];
+      const isCorrect = optIndex === q.correct;
+      answers[qIndex] = {value:optIndex, isCorrect:isCorrect, type:"multiple-choice"};
+      document.querySelectorAll(".option").forEach((opt,i) => {
+        opt.style.pointerEvents = "none";
+        if (i === q.correct) opt.classList.add("correct");
+        else if (i === optIndex && !isCorrect) opt.classList.add("incorrect");
+      });
+    }
+
+    function saveDropdownAnswer(qIndex, value) {
+      if (!value) return;
+      const q = questions[qIndex];
+      const isCorrect = value === q.correct;
+      answers[qIndex] = {value:value, isCorrect:isCorrect, type:"dropdown"};
+      const dd = document.querySelector(".dropdown");
+      if (dd) dd.style.border = isCorrect ? "2px solid #27ae60" : "2px solid #e74c3c";
+    }
+
+    function restoreAnswer(q, index) {
+      const ans = answers[index];
+      if (!ans) return;
+      if (q.type === "multiple-choice") {
+        document.querySelectorAll(".option").forEach((opt,i) => {
+          opt.style.pointerEvents = "none";
+          if (i === q.correct) opt.classList.add("correct");
+          else if (i === ans.value && !ans.isCorrect) opt.classList.add("incorrect");
+        });
+      } else if (q.type === "dropdown") {
+        const dd = document.querySelector(".dropdown");
+        if (dd && ans.value) {
+          dd.value = ans.value;
+          dd.style.border = ans.isCorrect ? "2px solid #27ae60" : "2px solid #e74c3c";
+        }
+      }
+    }
+
+    function previousQuestion() {
+      if (currentSection===1&&currentQuestion>0) loadQuestion(currentQuestion-1);
+      else if (currentSection===3&&currentQuestion>18) loadQuestion(currentQuestion-1);
+    }
+
+    function nextQuestion() {
+      if (questions[currentQuestion] && questions[currentQuestion].type==="drag-drop") {
+        const ans = answers[currentQuestion];
+        if (!ans || Object.keys(ans.dropped||{}).length < questions[currentQuestion].dragItems.length) {
+          alert("Por favor, arrastra todos los elementos a las zonas de destino antes de continuar.");
+          return;
+        }
+      }
+      if (currentSection===1) {
+        if (currentQuestion<17) loadQuestion(currentQuestion+1);
+        else showBreak();
+      } else {
+        if (currentQuestion<44) loadQuestion(currentQuestion+1);
+        else endExam();
+      }
+    }
+
+    // ====================================================
+    // FIN DEL EXAMEN E INFORME
+    // ====================================================
+    function getUserAnswerText(q, ans) {
+      if (!ans || ans.value === undefined) return "(sin respuesta)";
+      if (q.type === "multiple-choice") return q.options[ans.value] || "N/A";
+      if (q.type === "dropdown") return ans.value;
+      if (q.type === "drag-drop") return "(orden incorrecto)";
+      return "(sin respuesta)";
+    }
+
+    function getCorrectText(q) {
+      if (q.type === "multiple-choice") return q.options[q.correct];
+      if (q.type === "dropdown") return q.correct;
+      if (q.type === "drag-drop") {
+        const ordered = [...q.dragItems].sort((a,b)=>a.correct-b.correct);
+        return ordered.map(it=>it.text.substring(0,40)+"...").join(" → ");
+      }
+      return String(q.correct);
+    }
+
+    function endExam() {
+      clearInterval(timer);
+      let correctCount = 0, skippedCount = 0;
+      let incorrectQuestions = [], areaStats = {};
+      let skillScores = {reading:{c:0,t:0}, language:{c:0,t:0}, argument:{c:0,t:0}};
+
+      questions.forEach((q, index) => {
+        if (!areaStats[q.topic]) areaStats[q.topic] = {total:0,correct:0,incorrect:0,pages:q.bookPages,skill:q.skill};
+        areaStats[q.topic].total++;
+        if (q.skill) skillScores[q.skill].t++;
+
+        const ans = answers[index];
+        let isCorrect = false;
+
+        if (!ans || ans.value === undefined && q.type !== "drag-drop") {
+          skippedCount++;
+          areaStats[q.topic].incorrect++;
+          incorrectQuestions.push({
+            number:index+1, question:q.question||"(ver pasaje)", topic:q.topic,
+            bookPages:q.bookPages, skill:q.skill,
+            userAnswer:"(sin respuesta)", correctAnswer:getCorrectText(q), explanation:q.explanation
+          });
+          return;
+        }
+
+        if (q.type === "drag-drop") {
+          if (ans && ans.dropped) {
+            const allCorrect = Object.keys(ans.dropped).length===q.dragItems.length &&
+              Object.values(ans.dropped).every(v=>v);
+            isCorrect = allCorrect;
+          }
+        } else {
+          isCorrect = ans.isCorrect;
+        }
+
+        if (isCorrect) {
+          correctCount++;
+          areaStats[q.topic].correct++;
+          if (q.skill) skillScores[q.skill].c++;
+        } else {
+          areaStats[q.topic].incorrect++;
+          incorrectQuestions.push({
+            number:index+1, question:q.question||"(ver pasaje)", topic:q.topic,
+            bookPages:q.bookPages, skill:q.skill,
+            userAnswer:getUserAnswerText(q,ans), correctAnswer:getCorrectText(q), explanation:q.explanation
+          });
+        }
+      });
+
+      const answeredCount = questions.length - skippedCount;
+      const percentage = Math.round((correctCount/questions.length)*100);
+
+      document.getElementById("examInterface").style.display = "none";
+      document.getElementById("resultsScreen").style.display = "block";
+      document.getElementById("finalScore").textContent = `${percentage}%`;
+
+      const skillNames2 = {reading:"Comprensión de Lectura", language:"Gramática y Lenguaje", argument:"Análisis de Argumentos"};
+      const skillIcons = {reading:"📖", language:"✏️", argument:"🎯"};
+      let breakdown = '<div style="text-align:left;margin:15px 0">';
+      ["reading","language","argument"].forEach(sk => {
+        const s = skillScores[sk];
+        const p = s.t>0 ? Math.round((s.c/s.t)*100) : 0;
+        breakdown += `<p><strong>${skillIcons[sk]} ${skillNames2[sk]}:</strong> ${s.c}/${s.t} (${p}%)</p>`;
+      });
+      breakdown += `<p style="margin-top:10px"><strong>Preguntas respondidas:</strong> ${answeredCount} de ${questions.length} | <strong>Sin responder:</strong> ${skippedCount}</p>`;
+      breakdown += '</div>';
+      document.getElementById("skillBreakdown").innerHTML = breakdown;
+
+      let msg;
+      if (percentage>=85) msg="¡Excelente! Demuestras sólidas habilidades en comprensión lectora y análisis. Estás muy bien preparado para el GED de Artes del Lenguaje.";
+      else if (percentage>=70) msg="Buen trabajo. Tu comprensión lectora es sólida. Continúa practicando análisis de argumentos y gramática contextual.";
+      else if (percentage>=55) msg="Progreso notable. Enfócate en la práctica de análisis de textos complejos y la identificación de argumentos en los pasajes.";
+      else msg="Necesitas más práctica. Concéntrate en técnicas de comprensión lectora, análisis de pasajes y gramática en contexto. ¡No te rindas!";
+      document.getElementById("resultMessage").textContent = msg;
+
+      generateErrorReport(correctCount, incorrectQuestions.length, skippedCount, percentage, incorrectQuestions, areaStats, skillScores);
+    }
+
+    function generateErrorReport(correctCount, incorrectCount, skippedCount, percentage, incorrectQuestions, areaStats, skillScores) {
+      const div = document.getElementById("errorReport");
+      if (incorrectQuestions.length === 0) {
+        div.style.display = "block";
+        div.innerHTML = `<div class="all-correct-message"><span class="trophy">🏆</span><h2>¡Felicitaciones! ¡Todas correctas!</h2><p>Has demostrado dominio completo de las Artes del Lenguaje GED.</p></div>`;
+        return;
+      }
+
+      let errorsByTopic = {};
+      incorrectQuestions.forEach(iq => {
+        if (!errorsByTopic[iq.topic]) errorsByTopic[iq.topic] = {pages:iq.bookPages, skill:iq.skill, questions:[]};
+        errorsByTopic[iq.topic].questions.push(iq);
+      });
+
+      const skillLabels = {reading:"📖 Comprensión de Lectura", language:"✏️ Gramática y Lenguaje", argument:"🎯 Análisis de Argumentos"};
+
+      let html = `<h2>📋 Informe de Errores y Guía de Estudio</h2>
+        <p class="report-subtitle">Libro: <strong>Steck-Vaughn GED: Razonamiento a través de las Artes del Lenguaje</strong></p>
+        <div class="report-summary">
+          <div class="summary-card summary-correct"><span class="card-value">${correctCount}</span><span class="card-label">✅ Correctas</span></div>
+          <div class="summary-card summary-incorrect"><span class="card-value">${incorrectCount}</span><span class="card-label">❌ Incorrectas</span></div>
+          <div class="summary-card summary-skipped"><span class="card-value">${skippedCount}</span><span class="card-label">⏭️ Sin responder</span></div>
+          <div class="summary-card summary-score"><span class="card-value">${percentage}%</span><span class="card-label">📊 Puntuación</span></div>
+        </div>
+        <h3 style="margin-bottom:15px;color:#c0392b">📕 Temas a Reforzar</h3>`;
+
+      Object.entries(errorsByTopic).sort((a,b)=>b[1].questions.length-a[1].questions.length).forEach(([topic, data]) => {
+        const skLabel = skillLabels[data.skill] || topic;
+        html += `<div class="error-topic-group">
+          <div class="error-topic-header skill-${data.skill}">
+            <span>${skLabel} — ${topic} (${data.questions.length} error${data.questions.length>1?'es':''})</span>
+            <span class="page-ref">📖 ${data.pages}</span>
+          </div>`;
+        data.questions.forEach(q => {
+          html += `<div class="error-question-item">
+            <div class="error-q-number">${q.number}</div>
+            <div class="error-q-detail"><strong>${q.question}</strong><br>
+            Tu respuesta: <span class="error-user-answer">${q.userAnswer}</span> | 
+            Correcta: <span class="error-correct-answer">${q.correctAnswer}</span><br>
+            <em style="font-size:13px;color:#555">💡 ${q.explanation}</em></div>
+          </div>`;
+        });
+        html += `</div>`;
+      });
+
+      // Area summary table
+      html += `<div class="area-summary"><h3 style="margin-bottom:15px;color:#c0392b">📊 Rendimiento por Tema</h3>
+        <table><thead><tr>
+          <th>Tema</th><th>Área</th><th style="text-align:center">✅</th><th style="text-align:center">Total</th><th>Rendimiento</th><th>Estudiar en</th>
+        </tr></thead><tbody>`;
+      Object.entries(areaStats).sort((a,b)=>(a[1].correct/a[1].total)-(b[1].correct/b[1].total)).forEach(([topic, s]) => {
+        const p = s.total>0 ? Math.round((s.correct/s.total)*100) : 0;
+        const cls = p>=75?"perf-high":p>=50?"perf-mid":"perf-low";
+        const skLabel = (skillLabels[s.skill]||s.skill).replace(/^[^\s]+\s/,'');
+        html += `<tr><td>${topic}</td><td>${skLabel}</td>
+          <td style="text-align:center">${s.correct}</td><td style="text-align:center">${s.total}</td>
+          <td><div class="perf-bar"><div class="perf-fill ${cls}" style="width:${p}%"></div></div><span style="font-size:12px;color:#6c757d">${p}%</span></td>
+          <td style="font-size:12px">${p<100?s.pages:'✅ Dominado'}</td></tr>`;
+      });
+      html += `</tbody></table></div>
+        <div style="text-align:center;margin-top:20px">
+          <button class="print-button" onclick="abrirYImprimir()">🖨️ Imprimir Informe</button>
+        </div>`;
+
+      div.style.display = "block";
+      div.innerHTML = html;
+    }
+
+    function restartExam() {
+      currentQuestion = 0; currentSection = 1; answers = {}; examStarted = false; clearInterval(timer);
+      document.getElementById("resultsScreen").style.display = "none";
+      document.getElementById("errorReport").style.display = "none";
+      document.getElementById("startScreen").style.display = "block";
+      document.getElementById("sectionInfo").textContent = "Sección 1: Comprensión y gramática (35 min)";
+      document.getElementById("sectionIndicator").textContent = "Sección 1";
+      document.getElementById("timer").textContent = "35:00";
+      document.getElementById("progressBar").style.width = "0%";
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      document.addEventListener("keydown", function(e) {
+        if (!examStarted) return;
+        if (e.key==="ArrowLeft" && !document.getElementById("prevBtn").disabled) previousQuestion();
+        else if (e.key==="ArrowRight") nextQuestion();
+      });
+    });
+
+function abrirYImprimir() {
+  const contenido = document.querySelector(".results-container").innerHTML;
+
+  const ventana = window.open('', '', 'width=900,height=700');
+
+  ventana.document.write(`
+    <html>
+      <head>
+        <title>Informe GED Estudios Sociales</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+          }
+          th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+          }
+          th {
+            background: #e74c3c;
+            color: white;
+          }
+          .score-banner {
+            text-align: center;
+            margin-bottom: 20px;
+          }
+        </style>
+      </head>
+      <body>
+        ${contenido}
+      </body>
+    </html>
+  `);
+
+  ventana.document.close();
+
+  ventana.onload = function() {
+    ventana.focus();
+    ventana.print();
+  };
+}
+
+    </script>
+  </body>
+</html>
