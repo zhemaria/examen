@@ -1,1 +1,2851 @@
+<!DOCTYPE html>
+<html lang="es">
+  <!--Esta prueba ha sido creada por José M.  Fernandez, del Harry S Truman College de Chicago basada en los NRS de Matemáticas [https://www.iccb.org/wp-content/pdfs/adulted/publications_reports/Math_Content_Standards_7-2014.pdf] del estado de Illinois, utilizando NotebookLM, Gemini 2.5 Por y Claude sonnet 4.5 en junio de 2025  -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prueba de Nivel de Matemáticas - NRS 1-4</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+      ul {
+        padding-left: 35px;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: #003f7f;
+        text-shadow: 0.5px 0.5px black;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .timer {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 15px;
+        border-radius: 10px;
+        margin-top: 20px;
+        font-size: 24px;
+        font-weight: bold;
+        text-shadow: none;
+      }
+
+      .content {
+        padding: 30px;
+      }
+
+      .start-screen {
+        text-align: center;
+      }
+
+      .start-screen h2 {
+        color: #333;
+        margin-bottom: 20px;
+      }
+
+      .instructions {
+        background: #f8f9fa;
+        padding: 25px;
+        border-radius: 10px;
+        margin: 20px 0;
+        text-align: left;
+      }
+
+      .instructions h3 {
+        color: #495057;
+        margin-bottom: 15px;
+      }
+
+      .instructions ul {
+        margin-left: 20px;
+      }
+
+      .instructions li {
+        margin: 10px 0;
+        color: #6c757d;
+      }
+
+      .student-info {
+        background: #e9ecef;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+
+      .student-info input {
+        width: 100%;
+        padding: 12px;
+        margin: 8px 0;
+        border: 2px solid #ced4da;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+
+      .btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 25px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .question-container {
+        background: #f8f9fa;
+        padding: 25px;
+        border-radius: 10px;
+        margin: 20px 0;
+        display: none;
+      }
+
+      /* NUEVO: Banner para modo revisión */
+      .review-mode-banner {
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+        border: 2px solid #ffc107;
+        padding: 12px 20px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        color: #856404;
+        font-weight: bold;
+        text-align: center;
+        font-size: 15px;
+        display: none;
+      }
+
+      .review-mode-banner.visible {
+        display: block;
+      }
+
+      .review-mode-banner.marked-mode {
+        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        border-color: #dc3545;
+        color: #721c24;
+      }
+
+      .question-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .question-number {
+        background: #007bff;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+      }
+
+      .question-number.is-marked::before {
+        content: "🚩 ";
+      }
+
+      .level-indicator {
+        background: #28a745;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 15px;
+        font-size: 14px;
+      }
+
+      /* NUEVO: Contador de marcadas */
+      .marked-counter {
+        background: #fff3cd;
+        color: #856404;
+        padding: 8px 14px;
+        border-radius: 15px;
+        font-size: 14px;
+        font-weight: bold;
+        border: 1px solid #ffeaa7;
+        display: none;
+      }
+
+      .marked-counter.visible {
+        display: inline-block;
+      }
+
+      /* NUEVO: Botón marcar para revisión */
+      .mark-review-wrapper {
+        text-align: center;
+        margin: 5px 0 20px 0;
+      }
+
+      .btn-mark-review {
+        background: #ffc107;
+        color: #333;
+        border: 2px solid #e0a800;
+        padding: 10px 22px;
+        border-radius: 25px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-mark-review:hover {
+        background: #e0a800;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(255, 193, 7, 0.4);
+      }
+
+      .btn-mark-review.marked {
+        background: #dc3545;
+        color: white;
+        border-color: #c82333;
+      }
+
+      .btn-mark-review.marked:hover {
+        background: #c82333;
+        box-shadow: 0 4px 10px rgba(220, 53, 69, 0.4);
+      }
+
+      .question-text {
+        font-size: 18px;
+        color: #333;
+        margin-bottom: 20px;
+        line-height: 1.6;
+      }
+
+      .options {
+        display: grid;
+        gap: 15px;
+        margin: 20px 0;
+      }
+
+      .option {
+        background: white;
+        border: 2px solid #e9ecef;
+        padding: 15px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+      }
+
+      .option:hover {
+        border-color: #007bff;
+        background: #f1f8ff;
+      }
+
+      .option.selected {
+        border-color: #007bff;
+        background: #e3f2fd;
+      }
+
+      .option input[type="radio"] {
+        margin-right: 15px;
+        transform: scale(1.2);
+      }
+
+      .navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+      }
+
+      .btn-nav {
+        background: #6c757d;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      .btn-nav:hover {
+        background: #5a6268;
+      }
+
+      .btn-next {
+        background: #28a745;
+      }
+
+      .btn-next:hover {
+        background: #218838;
+      }
+
+      .btn-finish {
+        background: #dc3545;
+      }
+
+      .btn-finish:hover {
+        background: #c82333;
+      }
+
+      .progress {
+        width: 100%;
+        height: 8px;
+        background: #e9ecef;
+        border-radius: 4px;
+        margin: 20px 0;
+        overflow: hidden;
+      }
+
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+        border-radius: 4px;
+        transition: width 0.3s ease;
+      }
+
+      .results {
+        display: none;
+        text-align: center;
+      }
+
+      .results h2 {
+        color: #28a745;
+        margin-bottom: 20px;
+      }
+
+      .print-section {
+        background: #f8f9fa;
+        padding: 40px;
+        border-radius: 15px;
+        margin: 20px 0;
+        text-align: center;
+      }
+
+      .print-icon {
+        font-size: 64px;
+        color: #007bff;
+        margin-bottom: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .print-icon:hover {
+        color: #0056b3;
+        transform: scale(1.1);
+      }
+
+      .print-button {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        color: white;
+        border: none;
+        padding: 20px 40px;
+        border-radius: 25px;
+        font-size: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin: 10px;
+        box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+      }
+
+      .print-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 123, 255, 0.4);
+      }
+
+      .copy-button {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+      }
+
+      .copy-button:hover {
+        box-shadow: 0 10px 25px rgba(40, 167, 69, 0.4);
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .time-warning {
+        color: #dc3545;
+        font-weight: bold;
+      }
+
+      /* Sistema de notificaciones */
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 20px 25px;
+        border-radius: 12px;
+        color: white;
+        font-weight: bold;
+        z-index: 1000;
+        min-width: 350px;
+        max-width: 500px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        transform: translateX(600px);
+        transition: transform 0.4s ease;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      .notification.show {
+        transform: translateX(0);
+      }
+
+      .notification.success {
+        background: linear-gradient(135deg, #28a745, #20c997);
+      }
+
+      .notification.error {
+        background: linear-gradient(135deg, #dc3545, #e74c3c);
+      }
+
+      .notification.warning {
+        background: linear-gradient(135deg, #ffc107, #fd7e14);
+        color: #333;
+      }
+
+      .notification.info {
+        background: linear-gradient(135deg, #17a2b8, #007bff);
+      }
+
+      .notification .close-btn {
+        float: right;
+        background: none;
+        border: none;
+        color: inherit;
+        font-size: 20px;
+        cursor: pointer;
+        margin-left: 15px;
+        padding: 5px;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .notification .close-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      /* Overlay para confirmaciones */
+      .confirmation-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+      }
+
+      .confirmation-dialog {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+        max-width: 400px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .confirmation-dialog h3 {
+        margin-bottom: 15px;
+        color: #333;
+      }
+
+      .confirmation-dialog p {
+        margin-bottom: 20px;
+        color: #666;
+      }
+
+      .confirmation-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+      }
+
+      .confirmation-buttons button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      .btn-confirm {
+        background: #dc3545;
+        color: white;
+      }
+
+      .btn-cancel {
+        background: #6c757d;
+        color: white;
+      }
+
+      /* NUEVO: Diálogo de opciones al finalizar */
+      .review-options-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.75);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 2500;
+        padding: 20px;
+      }
+
+      .review-options-overlay.show {
+        display: flex;
+      }
+
+      .review-options-dialog {
+        background: white;
+        padding: 35px 30px;
+        border-radius: 15px;
+        max-width: 520px;
+        width: 100%;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+      }
+
+      .review-options-dialog h3 {
+        color: #333;
+        margin-bottom: 10px;
+        text-align: center;
+        font-size: 22px;
+      }
+
+      .review-options-dialog p.subtitle {
+        color: #666;
+        margin-bottom: 25px;
+        text-align: center;
+        font-size: 15px;
+      }
+
+      .review-option-btn {
+        width: 100%;
+        padding: 16px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .review-option-btn:hover {
+        transform: translateX(5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+      }
+
+      .review-option-btn .option-icon {
+        font-size: 24px;
+        flex-shrink: 0;
+      }
+
+      .review-option-btn .option-text {
+        flex: 1;
+        font-size: 15px;
+        line-height: 1.3;
+      }
+
+      .review-option-btn.review-all {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: #003f7f;
+      }
+
+      .review-option-btn.review-marked {
+        background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        color: #333;
+      }
+
+      .review-option-btn.review-marked:disabled {
+        background: #e9ecef;
+        color: #adb5bd;
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+
+      .review-option-btn.review-marked:disabled:hover {
+        transform: none;
+        box-shadow: none;
+      }
+
+      .review-option-btn.finish-now {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+      }
+
+      /* Estilos para impresión - OPTIMIZADO PARA UNA PÁGINA */
+      @media print {
+        * {
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+
+        body {
+          background: white;
+          color: black;
+          font-family: Arial, sans-serif;
+          padding: 0;
+          margin: 0;
+          font-size: 12px;
+          line-height: 1.2;
+        }
+
+        .container {
+          box-shadow: none;
+          border-radius: 0;
+          max-width: none;
+          margin: 0;
+          padding: 0;
+        }
+
+        .header {
+          background: white !important;
+          color: black !important;
+          border-bottom: 2px solid #000;
+          padding: 10px 0 !important;
+          text-align: center;
+        }
+
+        .header h1 {
+          font-size: 18px !important;
+          margin: 0 !important;
+        }
+
+        .header h2 {
+          font-size: 14px !important;
+          margin: 5px 0 0 0 !important;
+        }
+
+        .print-section,
+        .notification,
+        .confirmation-overlay,
+        .review-options-overlay,
+        .timer {
+          display: none !important;
+        }
+
+        .print-content {
+          display: block !important;
+          padding: 15px !important;
+          page-break-inside: avoid;
+        }
+
+        .print-content h1 {
+          font-size: 16px !important;
+          margin: 0 0 5px 0 !important;
+        }
+
+        .print-content h2 {
+          font-size: 12px !important;
+          margin: 0 0 10px 0 !important;
+          font-weight: normal;
+        }
+
+        .print-content h3 {
+          font-size: 13px !important;
+          margin: 8px 0 5px 0 !important;
+          color: black !important;
+        }
+
+        .print-content hr {
+          margin: 8px 0 !important;
+        }
+
+        #studentInfoPrint {
+          margin-bottom: 15px !important;
+        }
+
+        #studentInfoPrint > div {
+          background: #f5f5f5 !important;
+          padding: 10px !important;
+          border: 1px solid #ccc !important;
+          border-radius: 5px !important;
+        }
+
+        #studentInfoPrint h3 {
+          margin-bottom: 8px !important;
+          font-size: 12px !important;
+        }
+
+        #studentInfoPrint p {
+          margin: 2px 0 !important;
+          font-size: 11px !important;
+        }
+
+        #scoreSummaryPrint {
+          margin-bottom: 15px !important;
+        }
+
+        #scoreSummaryPrint > div {
+          background: #e8f4fd !important;
+          padding: 12px !important;
+          border: 2px solid #333 !important;
+          border-radius: 5px !important;
+          text-align: center;
+        }
+
+        #scoreSummaryPrint h3 {
+          margin-bottom: 8px !important;
+          font-size: 13px !important;
+        }
+
+        #scoreSummaryPrint > div > div:first-of-type {
+          font-size: 16px !important;
+          font-weight: bold !important;
+          margin-bottom: 5px !important;
+        }
+
+        #scoreSummaryPrint > div > div:last-of-type {
+          font-size: 14px !important;
+          font-weight: bold !important;
+          background: white !important;
+          padding: 6px !important;
+          border-radius: 4px !important;
+          border: 1px solid #333 !important;
+          margin-top: 8px !important;
+        }
+
+        #levelBreakdownPrint {
+          margin-top: 15px !important;
+        }
+
+        #levelBreakdownPrint h3 {
+          text-align: center;
+          margin-bottom: 10px !important;
+          font-size: 12px !important;
+        }
+
+        #levelBreakdownPrint > div > div {
+          display: grid !important;
+          grid-template-columns: repeat(4, 1fr) !important;
+          gap: 8px !important;
+        }
+
+        .level-card {
+          border: 1px solid #333 !important;
+          padding: 8px !important;
+          text-align: center !important;
+          page-break-inside: avoid;
+          background: #f9f9f9 !important;
+        }
+
+        .level-card h4 {
+          font-size: 10px !important;
+          margin: 0 0 4px 0 !important;
+          font-weight: bold !important;
+        }
+
+        .level-card > div:first-of-type {
+          font-size: 12px !important;
+          font-weight: bold !important;
+          margin-bottom: 2px !important;
+        }
+
+        .level-card > div:last-of-type {
+          font-size: 9px !important;
+          margin: 0 !important;
+        }
+
+        .print-content > div:last-child {
+          margin-top: 15px !important;
+          font-size: 9px !important;
+          text-align: center;
+          color: #666 !important;
+        }
+
+        .print-content > div:last-child p {
+          margin: 2px 0 !important;
+        }
+
+        /* Asegurar que todo quepa en una página */
+        @page {
+          margin: 0.8in 0.5in 0.4in 0.5in; /* superior, derecho, inferior, izquierdo */
+          size: letter;
+        }
+
+        /* Forzar contenido en una página */
+        .print-content {
+          max-height: 9.7in;
+          overflow: hidden;
+          padding-top: 1.2in !important; /* FORZAR margen superior interno */
+          margin-top: 0.5in !important; /* Margen adicional */
+        }
+
+        /* Agregar espacio superior forzado */
+        .print-content::before {
+          content: "";
+          display: block;
+          height: 0.8in;
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          margin: 10px;
+          border-radius: 10px;
+        }
+
+        .header {
+          padding: 20px;
+        }
+
+        .content {
+          padding: 20px;
+        }
+
+        .question-header {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .print-icon {
+          font-size: 48px;
+        }
+
+        .print-button {
+          padding: 15px 30px;
+          font-size: 16px;
+        }
+
+        .review-options-dialog {
+          padding: 25px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Prueba de Nivel (Placement Test) de Matemáticas</h1>
+        <div id="timer" class="timer">Minutos restante: 30:00</div>
+      </div>
+
+      <div class="content">
+        <!-- Pantalla de inicio -->
+        <div id="startScreen" class="start-screen">
+          <div class="instructions">
+            <h3>Instrucciones:</h3>
+            <ul>
+              <li>
+                Esta prueba contiene 30 preguntas distribuidas en 4 niveles de
+                dificultad. Dispones de 30 minutos para completarla
+              </li>
+              <li>
+                Lee cada pregunta cuidadosamente antes de responder y selecciona
+                la respuesta que consideres correcta. Puedes navegar entre
+                preguntas usando los botones "Anterior" y "Siguiente"
+              </li>
+              <li>
+                Si tienes dudas sobre alguna respuesta, puedes marcarla con
+                el botón 🚩 "Marcar para revisión" y volver a ella al final
+                de la prueba
+              </li>
+              <li>Al finalizar, podrás imprimir tus resultados</li>
+            </ul>
+          </div>
+
+          <div class="student-info">
+            <h3>Información del Estudiante:</h3>
+            <input
+              type="text"
+              id="studentId"
+              placeholder="ID de estudiante"
+            />
+            <input
+              type="text"
+              id="studentName"
+              placeholder="Nombre completo del estudiante"
+              required
+            />
+            <input
+              type="email"
+              id="studentEmail"
+              placeholder="Correo electrónico del estudiante"
+              required
+            />
+          </div>
+
+          <button class="btn" onclick="startTest()">Comenzar Prueba</button>
+        </div>
+
+        <!-- Contenedor de preguntas -->
+        <div id="questionContainer" class="question-container">
+          <div class="progress">
+            <div id="progressBar" class="progress-bar" style="width: 0%"></div>
+          </div>
+
+          <!-- NUEVO: Banner de modo revisión -->
+          <div id="reviewModeBanner" class="review-mode-banner"></div>
+
+          <div class="question-header">
+            <span id="questionNumber" class="question-number"
+              >Pregunta 1 de 30</span
+            >
+            <span id="markedCounter" class="marked-counter">0 marcadas</span>
+            <span id="levelIndicator" class="level-indicator">Nivel ABE 1</span>
+          </div>
+
+          <!-- NUEVO: Botón para marcar pregunta -->
+          <div class="mark-review-wrapper">
+            <button
+              id="markReviewBtn"
+              class="btn-mark-review"
+              onclick="toggleMarkReview()"
+              type="button"
+            >
+              🚩 Marcar para revisión
+            </button>
+          </div>
+
+          <div id="questionText" class="question-text"></div>
+
+          <div id="optionsContainer" class="options"></div>
+
+          <div class="navigation">
+            <button
+              id="prevBtn"
+              class="btn-nav"
+              onclick="previousQuestion()"
+              disabled
+            >
+              Anterior
+            </button>
+            <button
+              id="nextBtn"
+              class="btn-nav btn-next"
+              onclick="nextQuestion()"
+            >
+              Siguiente
+            </button>
+            <button
+              id="finishBtn"
+              class="btn-nav btn-finish hidden"
+              onclick="finishTest()"
+            >
+              Terminar Prueba
+            </button>
+          </div>
+        </div>
+
+        <!-- Pantalla de resultados -->
+        <div id="resultsScreen" class="results">
+          <h2>¡Prueba Completada!</h2>
+
+          <div class="print-section">
+            <div class="print-icon">🖨️</div>
+            <h3>Resultados Listos</h3>
+            <p>
+              Tus resultados han sido calculados y están listos para imprimir.
+            </p>
+            <p>
+              Haz clic en uno de los botones para obtener una copia de tus
+              resultados:
+            </p>
+
+            <div style="margin-top: 30px">
+              <button class="print-button" onclick="printResults()">
+                🖨️ Imprimir Resultados
+              </button>
+              <button class="print-button copy-button" onclick="copyResults()">
+                📋 Copiar Resultados
+              </button>
+            </div>
+
+            <p style="margin-top: 20px; font-size: 14px; color: #666">
+              Si tienes problemas para imprimir, usa el botón "Copiar" y pega el
+              texto en un documento.
+            </p>
+          </div>
+
+          <!-- Contenido oculto para impresión -->
+          <div id="printContent" class="print-content" style="display: none">
+            <div style="text-align: center; margin-bottom: 15px">
+              <h1>Resultados de la Prueba de Matemáticas</h1>
+              <h2>NRS Placement Test - Niveles ABE 1-4</h2>
+              <hr style="margin: 10px 0" />
+            </div>
+
+            <div id="studentInfoPrint" style="margin-bottom: 15px"></div>
+            <div id="scoreSummaryPrint" style="margin-bottom: 15px"></div>
+            <div id="levelBreakdownPrint"></div>
+
+            <div
+              style="
+                margin-top: 20px;
+                font-size: 10px;
+                color: #666;
+                text-align: center;
+              "
+            >
+              <p>Fecha de la prueba: <span id="testDate"></span></p>
+              <p>Duración de la prueba: 30 minutos</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sistema de notificaciones -->
+    <div id="notification" class="notification">
+      <span id="notificationText"></span>
+      <button class="close-btn" onclick="closeNotification()">&times;</button>
+    </div>
+
+    <!-- Overlay de confirmación -->
+    <div id="confirmationOverlay" class="confirmation-overlay">
+      <div class="confirmation-dialog">
+        <h3 id="confirmationTitle">Confirmar acción</h3>
+        <p id="confirmationMessage">¿Estás seguro?</p>
+        <div class="confirmation-buttons">
+          <button class="btn-confirm" id="confirmBtn">Sí</button>
+          <button class="btn-cancel" id="cancelBtn">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- NUEVO: Overlay de opciones de revisión al final -->
+    <div id="reviewOptionsOverlay" class="review-options-overlay">
+      <div class="review-options-dialog">
+        <h3>¿Cómo quieres continuar?</h3>
+        <p class="subtitle" id="reviewOptionsSubtitle">
+          Has llegado a la última pregunta. Elige qué hacer:
+        </p>
+
+        <button class="review-option-btn review-all" onclick="startReviewAll()">
+          <span class="option-icon">📋</span>
+          <span class="option-text">
+            <strong>Revisar todas las preguntas</strong><br>
+            <span style="font-size: 13px; opacity: 0.85;">Volver al inicio y repasar las 30</span>
+          </span>
+        </button>
+
+        <button id="reviewMarkedBtn" class="review-option-btn review-marked" onclick="startReviewMarked()">
+          <span class="option-icon">🚩</span>
+          <span class="option-text">
+            <strong>Revisar solo las marcadas</strong> (<span id="markedCountInDialog">0</span>)<br>
+            <span style="font-size: 13px; opacity: 0.85;">Repasar únicamente las que marcaste con duda</span>
+          </span>
+        </button>
+
+        <button class="review-option-btn finish-now" onclick="finishFromDialog()">
+          <span class="option-icon">✅</span>
+          <span class="option-text">
+            <strong>Finalizar prueba ahora</strong><br>
+            <span style="font-size: 13px; opacity: 0.85;">Entregar y ver los resultados</span>
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // Variables globales
+      let currentQuestion = 0;
+      let answers = {};
+      let timeLeft = 1800;
+      let timerInterval;
+      let questions = [];
+      let studentInfo = {};
+      let reviewMode = false; // Compatibilidad con versión anterior
+
+      // NUEVO: Variables para sistema de marcado y revisión
+      let markedForReview = new Set();
+      let reviewModeType = null; // null | 'all' | 'marked'
+      let markedQuestionsList = []; // Lista ordenada de preguntas marcadas
+      let currentMarkedIndex = 0; // Índice actual dentro de markedQuestionsList
+
+      // Inicialización
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("Aplicación de prueba de matemáticas cargada");
+
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" && e.target.tagName !== "BUTTON") {
+            e.preventDefault();
+          }
+        });
+
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") {
+            closeNotification();
+          }
+        });
+
+        console.log("Sistema listo para iniciar prueba");
+      });
+
+      // Sistema de notificaciones
+      function showNotification(message, type = "info", duration = 5000) {
+        const notification = document.getElementById("notification");
+        const notificationText = document.getElementById("notificationText");
+
+        notification.className = "notification";
+        notification.classList.add(type);
+
+        notificationText.innerHTML = message;
+        notification.classList.add("show");
+
+        setTimeout(() => {
+          closeNotification();
+        }, duration);
+      }
+
+      function closeNotification() {
+        const notification = document.getElementById("notification");
+        notification.classList.remove("show");
+      }
+
+      function showConfirmation(title, message, onConfirm, onCancel = null) {
+        const overlay = document.getElementById("confirmationOverlay");
+        const titleEl = document.getElementById("confirmationTitle");
+        const messageEl = document.getElementById("confirmationMessage");
+        const confirmBtn = document.getElementById("confirmBtn");
+        const cancelBtn = document.getElementById("cancelBtn");
+
+        titleEl.textContent = title;
+        messageEl.textContent = message;
+        overlay.style.display = "flex";
+
+        confirmBtn.onclick = () => {
+          overlay.style.display = "none";
+          if (onConfirm) onConfirm();
+        };
+
+        cancelBtn.onclick = () => {
+          overlay.style.display = "none";
+          if (onCancel) onCancel();
+        };
+      }
+
+      // ===== NUEVO: Funciones para marcado y revisión selectiva =====
+
+      window.toggleMarkReview = function () {
+        if (markedForReview.has(currentQuestion)) {
+          markedForReview.delete(currentQuestion);
+          showNotification(
+            `Pregunta ${currentQuestion + 1} desmarcada`,
+            "info",
+            2000
+          );
+        } else {
+          markedForReview.add(currentQuestion);
+          showNotification(
+            `🚩 Pregunta ${currentQuestion + 1} marcada para revisión`,
+            "warning",
+            2000
+          );
+        }
+        updateMarkButton();
+        updateMarkedCounter();
+        updateQuestionNumberStyle();
+      };
+
+      function updateMarkButton() {
+        const btn = document.getElementById("markReviewBtn");
+        if (!btn) return;
+        if (markedForReview.has(currentQuestion)) {
+          btn.classList.add("marked");
+          btn.innerHTML = "🚩 Marcada — clic para desmarcar";
+        } else {
+          btn.classList.remove("marked");
+          btn.innerHTML = "🚩 Marcar para revisión";
+        }
+      }
+
+      function updateMarkedCounter() {
+        const counter = document.getElementById("markedCounter");
+        if (!counter) return;
+        const count = markedForReview.size;
+        if (count > 0) {
+          counter.textContent = `🚩 ${count} marcada${count === 1 ? "" : "s"}`;
+          counter.classList.add("visible");
+        } else {
+          counter.classList.remove("visible");
+        }
+      }
+
+      function updateQuestionNumberStyle() {
+        const qNum = document.getElementById("questionNumber");
+        if (!qNum) return;
+        if (markedForReview.has(currentQuestion)) {
+          qNum.classList.add("is-marked");
+        } else {
+          qNum.classList.remove("is-marked");
+        }
+      }
+
+      function updateReviewBanner() {
+        const banner = document.getElementById("reviewModeBanner");
+        if (!banner) return;
+
+        if (reviewModeType === "marked" && markedQuestionsList.length > 0) {
+          banner.classList.add("visible", "marked-mode");
+          banner.innerHTML = `🚩 Revisando preguntas marcadas — ${
+            currentMarkedIndex + 1
+          } de ${markedQuestionsList.length}`;
+        } else if (reviewModeType === "all") {
+          banner.classList.add("visible");
+          banner.classList.remove("marked-mode");
+          banner.innerHTML =
+            "🔍 Modo revisión: puedes finalizar la prueba en cualquier momento";
+        } else {
+          banner.classList.remove("visible", "marked-mode");
+          banner.innerHTML = "";
+        }
+      }
+
+      // Mostrar diálogo de opciones al llegar al final
+      function showReviewOptionsDialog() {
+        const overlay = document.getElementById("reviewOptionsOverlay");
+        const markedCountSpan = document.getElementById("markedCountInDialog");
+        const reviewMarkedBtn = document.getElementById("reviewMarkedBtn");
+        const subtitle = document.getElementById("reviewOptionsSubtitle");
+
+        const count = markedForReview.size;
+        markedCountSpan.textContent = count;
+
+        if (count === 0) {
+          reviewMarkedBtn.disabled = true;
+          subtitle.textContent =
+            "Has llegado a la última pregunta. No marcaste ninguna pregunta para revisión, pero aún puedes elegir:";
+        } else {
+          reviewMarkedBtn.disabled = false;
+          subtitle.innerHTML = `Has llegado a la última pregunta. Marcaste <strong>${count}</strong> pregunta${
+            count === 1 ? "" : "s"
+          } para revisión. Elige cómo continuar:`;
+        }
+
+        overlay.classList.add("show");
+      }
+
+      function hideReviewOptionsDialog() {
+        document
+          .getElementById("reviewOptionsOverlay")
+          .classList.remove("show");
+      }
+
+      window.startReviewAll = function () {
+        hideReviewOptionsDialog();
+        reviewModeType = "all";
+        reviewMode = true; // Compatibilidad
+        currentQuestion = 0;
+        displayQuestion();
+        showNotification(
+          "🔍 Modo revisión: El botón 'Terminar Prueba' está disponible en todo momento.",
+          "info",
+          5000
+        );
+      };
+
+      window.startReviewMarked = function () {
+        hideReviewOptionsDialog();
+
+        // Construir lista ordenada de marcadas
+        markedQuestionsList = [...markedForReview].sort((a, b) => a - b);
+
+        if (markedQuestionsList.length === 0) {
+          showNotification(
+            "No hay preguntas marcadas para revisar.",
+            "warning",
+            3000
+          );
+          return;
+        }
+
+        reviewModeType = "marked";
+        reviewMode = true; // Compatibilidad
+        currentMarkedIndex = 0;
+        currentQuestion = markedQuestionsList[0];
+        displayQuestion();
+
+        showNotification(
+          `🚩 Revisando ${markedQuestionsList.length} pregunta${
+            markedQuestionsList.length === 1 ? "" : "s"
+          } marcada${markedQuestionsList.length === 1 ? "" : "s"}. El botón 'Terminar Prueba' está disponible.`,
+          "info",
+          6000
+        );
+      };
+
+      window.finishFromDialog = function () {
+        hideReviewOptionsDialog();
+        finishTest();
+      };
+
+      // ===== FIN funciones nuevas =====
+
+      // Templates de preguntas
+      const questionTemplates = {
+        // ===== ABE 1 (8 preguntas): Aritmética básica, fracciones, decimales, geometría =====
+        abe1: [
+          // 1. Suma multi-dígito (Nivel 1 - Tema 6)
+          {
+            generateQuestion: () => {
+              const num1 = Math.floor(Math.random() * 9000) + 1000;
+              const num2 = Math.floor(Math.random() * 900) + 100;
+              const correct = num1 + num2;
+              const incorrectOptions = [
+                correct - 100, correct + 100,
+                correct - 10, correct + 10,
+                correct - 1, correct + 1,
+                num1 - num2, num1 + num2 + 1000,
+              ];
+              const options = generateUniqueOptions(correct, incorrectOptions, 4);
+              return {
+                text: `¿Cuál es el resultado de sumar ${num1} + ${num2}?`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 2. Resta multi-dígito en problema verbal (Nivel 1 - Tema 7, 8)
+          {
+            generateQuestion: () => {
+              const total = Math.floor(Math.random() * 1500) + 500;
+              const vendido = Math.floor(Math.random() * (total - 200)) + 100;
+              const objetos = ["galletas", "panes", "boletos", "libros"];
+              const lugares = ["una panadería", "una librería", "un teatro", "una tienda"];
+              const idx = Math.floor(Math.random() * objetos.length);
+              const correct = total - vendido;
+              const incorrectOptions = [
+                correct - 100, correct + 100,
+                correct - 10, correct + 10,
+                total, vendido,
+                correct + 1, correct - 1,
+              ];
+              const options = generateUniqueOptions(correct, incorrectOptions, 4);
+              return {
+                text: `${lugares[idx].charAt(0).toUpperCase() + lugares[idx].slice(1)} tenía ${total} ${objetos[idx]} y vendió ${vendido}. ¿Cuántos ${objetos[idx]} le quedan?`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 3. Multiplicación multi-dígito (Nivel 1 - Tema 12)
+          {
+            generateQuestion: () => {
+              const num1 = Math.floor(Math.random() * 90) + 10; // 2 dígitos
+              const num2 = Math.floor(Math.random() * 90) + 10; // 2 dígitos
+              const correct = num1 * num2;
+              const incorrectOptions = [
+                correct + num1, correct - num1,
+                correct + num2, correct - num2,
+                correct + 100, correct - 100,
+                num1 + num2,
+              ];
+              const options = generateUniqueOptions(correct, incorrectOptions, 4);
+              return {
+                text: `¿Cuál es el resultado de multiplicar ${num1} × ${num2}?`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 4. División con interpretación de resto (Nivel 1 - Tema 19)
+          {
+            generateQuestion: () => {
+              const cap = [25, 30, 35, 40][Math.floor(Math.random() * 4)];
+              const grupos = Math.floor(Math.random() * 5) + 3; // 3 a 7
+              const extra = Math.floor(Math.random() * (cap - 1)) + 1; // hay sobrante
+              const total = grupos * cap + extra;
+              const correct = grupos + 1; // necesita uno más por el sobrante
+              const incorrectOptions = [
+                grupos, // se queda corto
+                grupos + 2,
+                Math.floor(total / cap), // no redondea hacia arriba
+                Math.ceil(total / cap) + 1,
+              ];
+              const options = generateUniqueOptions(correct, incorrectOptions, 4);
+              return {
+                text: `Un autobús lleva ${cap} pasajeros. Si hay ${total} personas que necesitan transportarse, ¿cuántos autobuses se necesitan como mínimo?`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 5. Valor posicional (Nivel 1 - Tema 2)
+          {
+            generateQuestion: () => {
+              const digits = [3, 4, 5, 6, 7, 8, 9];
+              const digit = digits[Math.floor(Math.random() * digits.length)];
+              const position = Math.floor(Math.random() * 3);
+              let number, correct;
+              if (position === 0) {
+                const u = Math.floor(Math.random() * 10);
+                const c = Math.floor(Math.random() * 9) + 1;
+                const m = Math.floor(Math.random() * 9) + 1;
+                number = m * 1000 + c * 100 + digit * 10 + u;
+                correct = "Decenas";
+              } else if (position === 1) {
+                const u = Math.floor(Math.random() * 10);
+                const d = Math.floor(Math.random() * 10);
+                const m = Math.floor(Math.random() * 9) + 1;
+                number = m * 1000 + digit * 100 + d * 10 + u;
+                correct = "Centenas";
+              } else {
+                const u = Math.floor(Math.random() * 10);
+                const d = Math.floor(Math.random() * 10);
+                const c = Math.floor(Math.random() * 10);
+                number = digit * 1000 + c * 100 + d * 10 + u;
+                correct = "Unidades de millar";
+              }
+              const options = ["Unidades", "Decenas", "Centenas", "Unidades de millar"];
+              return {
+                text: `¿Cuál es el valor posicional del dígito ${digit} en el número ${number}?`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 6. Simplificar fracción (Nivel 1 - Tema 22)
+          {
+            generateQuestion: () => {
+              const baseN = Math.floor(Math.random() * 3) + 1; // 1, 2, 3
+              const baseD = baseN + Math.floor(Math.random() * 3) + 1; // baseN+1 a baseN+3
+              const factor = [2, 3, 4, 5][Math.floor(Math.random() * 4)];
+              const n = baseN * factor;
+              const d = baseD * factor;
+              const correct = `${baseN}/${baseD}`;
+              // Distractores: fracciones también simplificadas pero incorrectas
+              const incorrectOptions = [
+                `${baseN}/${baseD + 1}`,
+                `${baseN + 1}/${baseD}`,
+                `${n}/${d}`, // sin simplificar
+                `${baseD}/${baseN}`, // invertida
+                `${n / 2}/${d / 2}`, // semi-simplificada (no la mínima)
+              ];
+              // Filtrar duplicados y opciones no válidas
+              const seen = new Set([correct]);
+              const valid = [];
+              for (const opt of incorrectOptions) {
+                if (!seen.has(opt)) {
+                  seen.add(opt);
+                  valid.push(opt);
+                }
+              }
+              const options = [correct, ...valid.slice(0, 3)];
+              return {
+                text: `Simplifica la fracción ${n}/${d} a su mínima expresión.`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 7. Multiplicar decimales (Nivel 1 - Tema 32)
+          {
+            generateQuestion: () => {
+              const a = (Math.floor(Math.random() * 40) + 10) / 10; // 1.0 - 5.0
+              const b = (Math.floor(Math.random() * 8) + 2) / 10; // 0.2 - 1.0
+              const product = a * b;
+              const correct = product.toFixed(2);
+              // Distractores típicos: omitir punto decimal, mover punto
+              const incorrectOptions = [
+                (a * b * 10).toFixed(2),
+                (a * b / 10).toFixed(2),
+                (a + b).toFixed(2),
+                (a * b + 0.1).toFixed(2),
+                (a * b - 0.1).toFixed(2),
+              ];
+              const seen = new Set([correct]);
+              const valid = [];
+              for (const opt of incorrectOptions) {
+                if (!seen.has(opt)) {
+                  seen.add(opt);
+                  valid.push(opt);
+                }
+              }
+              const options = [correct, ...valid.slice(0, 3)];
+              return {
+                text: `¿Cuál es el resultado de multiplicar ${a.toFixed(1)} × ${b.toFixed(1)}?`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 8. Área de triángulo (Nivel 1 - Tema 43)
+          {
+            generateQuestion: () => {
+              const base = (Math.floor(Math.random() * 8) + 4) * 2; // pares 8-22
+              const altura = Math.floor(Math.random() * 8) + 4; // 4-11
+              const correct = `${(base * altura) / 2} cm²`;
+              const incorrectOptions = [
+                `${base * altura} cm²`, // sin dividir entre 2
+                `${base + altura} cm²`, // confusión con perímetro
+                `${2 * (base + altura)} cm²`, // perímetro rectángulo
+                `${(base * altura) / 2 + 5} cm²`,
+                `${(base * altura) / 2 - 5} cm²`,
+              ];
+              const seen = new Set([correct]);
+              const valid = [];
+              for (const opt of incorrectOptions) {
+                if (!seen.has(opt)) {
+                  seen.add(opt);
+                  valid.push(opt);
+                }
+              }
+              const options = [correct, ...valid.slice(0, 3)];
+              return {
+                text: `¿Cuál es el área de un triángulo con base de ${base} cm y altura de ${altura} cm?`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+        ],
+        // ===== ABE 2 (8 preguntas): Enteros, razones/proporciones, %, estadística =====
+        abe2: [
+          // 1. Sumar enteros con signos (Nivel 2 - Tema 6)
+          {
+            generateQuestion: () => {
+              const a = -(Math.floor(Math.random() * 15) + 5); // -5 a -19
+              const b = Math.floor(Math.random() * 12) + 3; // 3 a 14
+              const correct = a + b;
+              const incorrectOptions = [
+                a - b, // restar en lugar de sumar
+                -a + b, // signo equivocado
+                Math.abs(a) + b, // tratar como positivos
+                correct + 1, correct - 1,
+                correct + 2, correct - 2,
+              ];
+              const options = generateUniqueOptions(correct, incorrectOptions, 4);
+              return {
+                text: `¿Cuál es el resultado de (${a}) + ${b}?`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 2. Multiplicar enteros (Nivel 2 - Tema 7)
+          {
+            generateQuestion: () => {
+              // Garantizar uno negativo y uno positivo para producto negativo
+              const a = -(Math.floor(Math.random() * 8) + 3); // -3 a -10
+              const b = Math.floor(Math.random() * 8) + 3; // 3 a 10
+              const correct = a * b;
+              const incorrectOptions = [
+                -correct, // signo equivocado
+                a + b, // suma en lugar de producto
+                a - b,
+                correct + 1, correct - 1,
+                correct + b, correct - b,
+              ];
+              const options = generateUniqueOptions(correct, incorrectOptions, 4);
+              return {
+                text: `¿Cuál es el resultado de (${a}) × ${b}?`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 3. Orden de operaciones sin potencias (Nivel 2 - Tema 9)
+          {
+            generateQuestion: () => {
+              // Forma: a + b × c - d  (resultado de mult primero)
+              const a = Math.floor(Math.random() * 15) + 5;
+              const b = Math.floor(Math.random() * 6) + 2;
+              const c = Math.floor(Math.random() * 6) + 2;
+              const d = Math.floor(Math.random() * 8) + 1;
+              const correct = a + b * c - d;
+              const incorrectOptions = [
+                (a + b) * c - d, // izquierda a derecha sin jerarquía
+                a + b * (c - d),
+                a + (b * c - d) + 1,
+                correct + 1, correct - 1,
+                correct + 5, correct - 5,
+              ];
+              const options = generateUniqueOptions(correct, incorrectOptions, 4);
+              return {
+                text: `Calcula siguiendo el orden de operaciones: ${a} + ${b} × ${c} − ${d}`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 4. Razones simplificadas (Nivel 2 - Tema 11)
+          {
+            generateQuestion: () => {
+              const baseA = Math.floor(Math.random() * 4) + 2; // 2-5
+              const baseB = baseA + Math.floor(Math.random() * 4) + 1; // > baseA
+              const factor = [3, 4, 5, 6][Math.floor(Math.random() * 4)];
+              const a = baseA * factor;
+              const b = baseB * factor;
+              const correct = `${baseA}:${baseB}`;
+              const incorrectOptions = [
+                `${baseB}:${baseA}`, // invertida
+                `${a}:${b}`, // sin simplificar
+                `${baseA + 1}:${baseB}`,
+                `${baseA}:${baseB + 1}`,
+                `${a / 2}:${b / 2}`,
+              ];
+              const seen = new Set([correct]);
+              const valid = [];
+              for (const opt of incorrectOptions) {
+                if (!seen.has(opt)) {
+                  seen.add(opt);
+                  valid.push(opt);
+                }
+              }
+              const options = [correct, ...valid.slice(0, 3)];
+              return {
+                text: `En una clase hay ${a} estudiantes mujeres y ${b} estudiantes hombres. ¿Cuál es la razón simplificada de mujeres a hombres?`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 5. Proporcionalidad directa (Nivel 2 - Tema 13)
+          {
+            generateQuestion: () => {
+              const items1 = Math.floor(Math.random() * 4) + 3; // 3-6
+              const cost1 = items1 * (Math.floor(Math.random() * 3) + 2); // 2,3,4 por unidad
+              const items2 = items1 + Math.floor(Math.random() * 5) + 3;
+              const unitCost = cost1 / items1;
+              const correct = items2 * unitCost;
+              const incorrectOptions = [
+                correct + unitCost, correct - unitCost,
+                cost1 + items2,
+                items2 * 2,
+                correct + 1, correct - 1,
+                correct * 2,
+              ];
+              const options = generateUniqueOptions(correct, incorrectOptions, 4);
+              return {
+                text: `Si ${items1} kilos de manzanas cuestan $${cost1}, ¿cuánto costarán ${items2} kilos al mismo precio?`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 6. Calcular % de un número (Nivel 2 - Tema 17)
+          {
+            generateQuestion: () => {
+              const percents = [10, 15, 20, 25, 30, 40, 50];
+              const numbers = [80, 100, 120, 150, 200, 240];
+              const pct = percents[Math.floor(Math.random() * percents.length)];
+              const num = numbers[Math.floor(Math.random() * numbers.length)];
+              const correct = (pct / 100) * num;
+              const incorrectOptions = [
+                pct, // solo el porcentaje
+                num - correct, // restar en lugar de %
+                correct * 2, correct / 2,
+                correct + 5, correct - 5,
+                num - pct,
+              ];
+              const options = generateUniqueOptions(correct, incorrectOptions, 4);
+              return {
+                text: `¿Cuánto es el ${pct}% de ${num}?`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 7. Interés simple (Nivel 2 - Tema 19)
+          {
+            generateQuestion: () => {
+              const P = [1000, 2000, 3000, 5000][Math.floor(Math.random() * 4)];
+              const r = [3, 4, 5, 6, 8][Math.floor(Math.random() * 5)];
+              const t = Math.floor(Math.random() * 4) + 2; // 2-5 años
+              const correct = (P * r * t) / 100;
+              const incorrectOptions = [
+                P * r * t, // sin dividir entre 100
+                (P * r) / 100, // ignorar tiempo
+                P + correct, // total en lugar de interés
+                correct + P / 10,
+                correct - 50, correct + 50,
+              ];
+              const options = generateUniqueOptions(correct, incorrectOptions, 4);
+              return {
+                text: `Si depositas $${P} en una cuenta de ahorros con una tasa de interés simple del ${r}% anual durante ${t} años, ¿cuánto interés ganas?`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 8. Probabilidad simple (Nivel 2 - Tema 30)
+          {
+            generateQuestion: () => {
+              const scenarios = [
+                {
+                  setup: (r, b) =>
+                    `Una bolsa contiene ${r} bolas rojas y ${b} bolas azules. Si sacas una bola al azar, ¿cuál es la probabilidad de que sea roja?`,
+                  numerator: (r, b) => r,
+                  denominator: (r, b) => r + b,
+                },
+                {
+                  setup: (r, b) =>
+                    `En una caja hay ${r} caramelos de menta y ${b} de fresa. Si tomas uno al azar, ¿cuál es la probabilidad de que sea de menta?`,
+                  numerator: (r, b) => r,
+                  denominator: (r, b) => r + b,
+                },
+              ];
+              const sc = scenarios[Math.floor(Math.random() * scenarios.length)];
+              // Pares que dan fracción simplificable
+              const pairs = [
+                [3, 5], [2, 6], [4, 8], [5, 10], [3, 9], [4, 6], [6, 9], [2, 8],
+              ];
+              const [r, b] = pairs[Math.floor(Math.random() * pairs.length)];
+              const num = sc.numerator(r, b);
+              const den = sc.denominator(r, b);
+              // Simplificar
+              function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+              const g = gcd(num, den);
+              const correct = `${num / g}/${den / g}`;
+              const incorrectOptions = [
+                `${num}/${den}`, // sin simplificar (si difiere de correct)
+                `${b}/${r + b}`, // probabilidad del otro color
+                `${num}/${b}`, // razón en lugar de probabilidad
+                `${b}/${num}`,
+                `${num + 1}/${den}`,
+              ];
+              const seen = new Set([correct]);
+              const valid = [];
+              for (const opt of incorrectOptions) {
+                if (!seen.has(opt)) {
+                  seen.add(opt);
+                  valid.push(opt);
+                }
+              }
+              const options = [correct, ...valid.slice(0, 3)];
+              return {
+                text: sc.setup(r, b),
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+        ],
+        // ===== ABE 3 (8 preguntas): Álgebra introductoria, polinomios, geometría avanzada =====
+        abe3: [
+          // 1. Evaluar expresión algebraica (Nivel 3 - Tema 2)
+          {
+            generateQuestion: () => {
+              const a = Math.floor(Math.random() * 3) + 2; // 2-4
+              const b = Math.floor(Math.random() * 4) + 2; // 2-5
+              const c = Math.floor(Math.random() * 5) + 1; // 1-5
+              const x = Math.floor(Math.random() * 4) + 2; // 2-5
+              const correct = a * x * x + b * x - c;
+              const incorrectOptions = [
+                a * x + b * x - c, // a x en vez de a x²
+                a * x * x + b * x + c, // signo
+                (a + b) * x - c,
+                a * x * x - b * x - c,
+                correct + 1, correct - 1,
+                correct + x, correct - x,
+              ];
+              const options = generateUniqueOptions(correct, incorrectOptions, 4);
+              return {
+                text: `Evalúa la expresión ${a}x² + ${b}x − ${c} cuando x = ${x}.`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 2. Propiedades de exponentes - producto de potencias (Nivel 3 - Tema 5)
+          {
+            generateQuestion: () => {
+              const a = Math.floor(Math.random() * 4) + 2; // 2-5
+              const b = Math.floor(Math.random() * 5) + 2; // 2-6
+              const correctExp = a + b;
+              const correct = `x^${correctExp}`;
+              const incorrectOptions = [
+                `x^${a * b}`, // multiplicó exponentes
+                `x^${Math.abs(a - b)}`, // restó
+                `${a + b}x`, // confusión con coeficiente
+                `x^${correctExp + 1}`,
+                `x^${correctExp - 1}`,
+                `2x^${correctExp}`,
+              ];
+              const seen = new Set([correct]);
+              const valid = [];
+              for (const opt of incorrectOptions) {
+                if (!seen.has(opt)) {
+                  seen.add(opt);
+                  valid.push(opt);
+                }
+              }
+              const options = [correct, ...valid.slice(0, 3)];
+              return {
+                text: `Simplifica usando las propiedades de los exponentes: x^${a} · x^${b}`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 3. Notación científica (Nivel 3 - Tema 6)
+          {
+            generateQuestion: () => {
+              // Generar coeficiente y potencia de 10
+              const coefDigits = Math.floor(Math.random() * 8) + 2; // 2-9
+              const coefDecimal = Math.floor(Math.random() * 9) + 1; // 1-9
+              const coef = coefDigits + coefDecimal / 10;
+              const power = Math.floor(Math.random() * 3) + 3; // 3-5
+              const expanded = Math.round(coef * Math.pow(10, power));
+              const correct = `${coef.toFixed(1)} × 10^${power}`;
+              const incorrectOptions = [
+                `${coef.toFixed(1)} × 10^${power - 1}`,
+                `${coef.toFixed(1)} × 10^${power + 1}`,
+                `${(coef * 10).toFixed(1)} × 10^${power - 1}`,
+                `${(coef / 10).toFixed(2)} × 10^${power + 1}`,
+                `${expanded} × 10^${power}`,
+              ];
+              const seen = new Set([correct]);
+              const valid = [];
+              for (const opt of incorrectOptions) {
+                if (!seen.has(opt)) {
+                  seen.add(opt);
+                  valid.push(opt);
+                }
+              }
+              const options = [correct, ...valid.slice(0, 3)];
+              return {
+                text: `Escribe el número ${expanded.toLocaleString("es-ES")} en notación científica.`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 4. Raíz cuadrada (Nivel 3 - Tema 7)
+          {
+            generateQuestion: () => {
+              const n = Math.floor(Math.random() * 11) + 5; // 5-15
+              const square = n * n;
+              const correct = n;
+              const incorrectOptions = [
+                n + 1, n - 1, n + 2, n - 2,
+                square / 2, // confusión con la mitad
+                n * 2, // confusión con el doble
+                Math.floor(square / n) + 1,
+              ];
+              const options = generateUniqueOptions(correct, incorrectOptions, 4);
+              return {
+                text: `¿Cuál es el valor de √${square}?`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 5. Sumar polinomios (Nivel 3 - Tema 11)
+          {
+            generateQuestion: () => {
+              // (a1·x² + b1·x + c1) + (a2·x² − b2·x + c2)
+              // Rangos elegidos para asegurar polinomio resultante "bonito"
+              const a1 = Math.floor(Math.random() * 3) + 2; // 2-4
+              const a2 = Math.floor(Math.random() * 2) + 1; // 1-2
+              const b1 = Math.floor(Math.random() * 3) + 4; // 4-6
+              const b2 = Math.floor(Math.random() * 3) + 1; // 1-3
+              const c1 = Math.floor(Math.random() * 4) + 1; // 1-4
+              const c2 = Math.floor(Math.random() * 4) + 1; // 1-4
+              const aSum = a1 + a2;
+              const bSum = b1 - b2;  // siempre >= 1
+              const cSum = c1 + c2;
+
+              function fmtTerm(coef, varStr, isFirst) {
+                if (coef === 0) return "";
+                const sign = coef > 0 ? (isFirst ? "" : " + ") : " − ";
+                const absCoef = Math.abs(coef);
+                const coefStr = (absCoef === 1 && varStr !== "") ? "" : absCoef;
+                return sign + coefStr + varStr;
+              }
+              function fmtPoly(a, b, c) {
+                return fmtTerm(a, "x²", true) + fmtTerm(b, "x", false) + fmtTerm(c, "", false);
+              }
+
+              const correct = fmtPoly(aSum, bSum, cSum);
+              // Distractores construidos como errores comunes
+              const candidates = [
+                [a1 * a2, bSum, cSum],     // multiplicó coef de x²
+                [aSum, b1 + b2, cSum],     // sumó b ignorando signo
+                [aSum, bSum, c1 * c2],     // multiplicó constantes
+                [aSum + 1, bSum, cSum],    // error +1 en a
+                [aSum, bSum + 1, cSum],    // error +1 en b
+                [aSum, bSum, cSum + 1],    // error +1 en c
+                [aSum, bSum - 1, cSum],    // error -1 en b
+              ];
+
+              const seen = new Set([correct]);
+              const distractors = [];
+              for (const [aa, bb, cc] of candidates) {
+                if (aa <= 0 || bb < 0 || cc < 0) continue;
+                const s = fmtPoly(aa, bb, cc);
+                if (!seen.has(s)) {
+                  seen.add(s);
+                  distractors.push(s);
+                  if (distractors.length === 3) break;
+                }
+              }
+
+              const options = [correct, ...distractors];
+              return {
+                text: `Simplifica: (${fmtPoly(a1, b1, c1)}) + (${fmtPoly(a2, -b2, c2)})`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 6. Teorema de Pitágoras (Nivel 3 - Tema 21)
+          {
+            generateQuestion: () => {
+              const triples = [[3, 4, 5], [6, 8, 10], [5, 12, 13], [9, 12, 15], [8, 15, 17]];
+              const triangle = triples[Math.floor(Math.random() * triples.length)];
+              const a = triangle[0];
+              const b = triangle[1];
+              const correct = `${triangle[2]} cm`;
+              const incorrectOptions = [
+                `${a + b} cm`, // suma de catetos
+                `${triangle[2] + 1} cm`,
+                `${triangle[2] - 1} cm`,
+                `${Math.round((a + b) / 2)} cm`,
+                `${a * b} cm`,
+                `${a + b - 1} cm`,
+              ];
+              const seen = new Set([correct]);
+              const valid = [];
+              for (const opt of incorrectOptions) {
+                if (!seen.has(opt)) {
+                  seen.add(opt);
+                  valid.push(opt);
+                }
+              }
+              const options = [correct, ...valid.slice(0, 3)];
+              return {
+                text: `En un triángulo rectángulo, los catetos miden ${a} cm y ${b} cm. Aplicando el Teorema de Pitágoras, ¿cuánto mide la hipotenusa?`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 7. Área de círculo (Nivel 3 - Tema 24)
+          {
+            generateQuestion: () => {
+              const r = [3, 4, 5, 6, 7, 8][Math.floor(Math.random() * 6)];
+              const areaCoef = r * r;
+              const correct = `${areaCoef}π cm²`;
+              const incorrectOptions = [
+                `${2 * r}π cm²`, // diámetro confundido
+                `${r}π cm²`, // confusión con circunferencia
+                `${areaCoef * 2}π cm²`, // duplicado
+                `${areaCoef + r}π cm²`,
+                `${areaCoef - r}π cm²`,
+                `${r * r * r}π cm²`, // confusión con volumen
+                `${r + r}π cm²`,
+              ];
+              const seen = new Set([correct]);
+              const valid = [];
+              for (const opt of incorrectOptions) {
+                if (!seen.has(opt)) {
+                  seen.add(opt);
+                  valid.push(opt);
+                }
+              }
+              const options = [correct, ...valid.slice(0, 3)];
+              return {
+                text: `¿Cuál es el área de un círculo de radio ${r} cm? (Expresa la respuesta en términos de π)`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 8. Volumen de cilindro (Nivel 3 - Tema 29)
+          {
+            generateQuestion: () => {
+              const r = [2, 3, 4, 5][Math.floor(Math.random() * 4)];
+              const h = [4, 5, 6, 8, 10][Math.floor(Math.random() * 5)];
+              const volCoef = r * r * h;
+              const correct = `${volCoef}π cm³`;
+              const incorrectOptions = [
+                `${r * h}π cm³`, // sin elevar r al cuadrado
+                `${2 * r * h}π cm³`,
+                `${r * r}π cm³`, // confusión con área de la base
+                `${r * r * r * h}π cm³`,
+                `${volCoef + r}π cm³`,
+                `${volCoef - r}π cm³`,
+              ];
+              const seen = new Set([correct]);
+              const valid = [];
+              for (const opt of incorrectOptions) {
+                if (!seen.has(opt)) {
+                  seen.add(opt);
+                  valid.push(opt);
+                }
+              }
+              const options = [correct, ...valid.slice(0, 3)];
+              return {
+                text: `¿Cuál es el volumen de un cilindro con radio de ${r} cm y altura de ${h} cm? (Expresa la respuesta en términos de π)`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+        ],
+        // ===== ABE 4 (6 preguntas): Ecuaciones lineales avanzadas, sistemas, cuadráticas, funciones =====
+        abe4: [
+          // 1. Ecuación lineal con variables en ambos lados (Nivel 4 - Tema 4)
+          {
+            generateQuestion: () => {
+              const x = Math.floor(Math.random() * 6) + 2; // 2-7
+              const leftCoef = Math.floor(Math.random() * 3) + 5; // 5-7
+              const rightCoef = Math.floor(Math.random() * (leftCoef - 2)) + 2; // 2 a leftCoef-1
+              const leftConst = Math.floor(Math.random() * 8) + 1; // 1-8
+              const rightConst = leftConst + (leftCoef - rightCoef) * x;
+              const correct = x;
+              const incorrectOptions = [
+                x + 1, x - 1, x + 2, x - 2,
+                Math.floor(rightConst / leftCoef),
+                Math.floor((rightConst - leftConst) / leftCoef),
+                x * 2,
+              ];
+              const options = generateUniqueOptions(correct, incorrectOptions, 4);
+              return {
+                text: `Resuelve la ecuación para x: ${leftCoef}x + ${leftConst} = ${rightCoef}x + ${rightConst}`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 2. Pendiente entre dos puntos (Nivel 4 - Tema 9)
+          {
+            generateQuestion: () => {
+              const m = [-2, -1, 1, 2, 3, -3][Math.floor(Math.random() * 6)];
+              const x1 = Math.floor(Math.random() * 6) - 2; // -2 a 3
+              const y1 = Math.floor(Math.random() * 8) - 3; // -3 a 4
+              const dx = Math.floor(Math.random() * 3) + 1; // 1-3
+              const x2 = x1 + dx;
+              const y2 = y1 + m * dx;
+              const correct = m;
+              const incorrectOptions = [
+                -m, // signo equivocado
+                m + 1, m - 1,
+                m * 2, // doble
+                dx, // confundió Δx con la pendiente
+                y2 - y1, // solo Δy sin dividir
+                m + 2, m - 2,
+              ];
+              const options = generateUniqueOptions(correct, incorrectOptions, 4);
+              return {
+                text: `¿Cuál es la pendiente de la recta que pasa por los puntos (${x1}, ${y1}) y (${x2}, ${y2})?`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 3. Sistema de ecuaciones lineales (Nivel 4 - Tema 14)
+          {
+            generateQuestion: () => {
+              const x = Math.floor(Math.random() * 6) + 2; // 2-7
+              const y = Math.floor(Math.random() * 5) + 1; // 1-5
+              const sum = x + y;
+              const diff = x - y;
+              const correct = x;
+              const incorrectOptions = [
+                y, // valor de y en lugar de x
+                x + 1, x - 1,
+                sum, diff,
+                Math.floor(sum / 2),
+                Math.floor((sum + diff) / 2) + 1,
+              ];
+              const options = generateUniqueOptions(correct, incorrectOptions, 4);
+              return {
+                text: `Resuelve el sistema de ecuaciones y encuentra el valor de x: x + y = ${sum}, x − y = ${diff}`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 4. Resolver cuadrática por factorización (Nivel 4 - Tema 18)
+          {
+            generateQuestion: () => {
+              // (x - p)(x - q) = 0 → x = p, x = q
+              let p, q;
+              do {
+                p = Math.floor(Math.random() * 6) + 2; // 2-7
+                q = Math.floor(Math.random() * 6) + 2; // 2-7
+              } while (p === q);
+              const sumPQ = p + q;
+              const prodPQ = p * q;
+              // Mostrar como x² - (p+q)x + pq = 0
+              const correctSet = [p, q].sort((a, b) => a - b);
+              const correct = `x = ${correctSet[0]} o x = ${correctSet[1]}`;
+              const incorrectOptions = [
+                `x = ${-correctSet[0]} o x = ${-correctSet[1]}`, // signos invertidos
+                `x = ${sumPQ} o x = ${prodPQ}`,
+                `x = ${correctSet[0] + 1} o x = ${correctSet[1] + 1}`,
+                `x = ${correctSet[0]} o x = ${correctSet[1] + 1}`,
+                `x = ${correctSet[0] - 1} o x = ${correctSet[1] - 1}`,
+              ];
+              const seen = new Set([correct]);
+              const valid = [];
+              for (const opt of incorrectOptions) {
+                if (!seen.has(opt)) {
+                  seen.add(opt);
+                  valid.push(opt);
+                }
+              }
+              const options = [correct, ...valid.slice(0, 3)];
+              return {
+                text: `Resuelve la ecuación cuadrática por factorización: x² − ${sumPQ}x + ${prodPQ} = 0`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 5. Aplicación de ecuación cuadrática (Nivel 4 - Tema 21)
+          {
+            generateQuestion: () => {
+              // Producto de dos enteros consecutivos
+              const n = Math.floor(Math.random() * 8) + 7; // 7-14
+              const product = n * (n + 1);
+              const correct = n;
+              const incorrectOptions = [
+                n + 1, // el mayor
+                n - 1, n + 2,
+                Math.floor(Math.sqrt(product)),
+                Math.floor(product / 10),
+                n + n + 1, // suma
+                n * 2,
+              ];
+              const options = generateUniqueOptions(correct, incorrectOptions, 4);
+              return {
+                text: `El producto de dos números enteros positivos consecutivos es ${product}. ¿Cuál es el menor de los dos números?`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+          // 6. Función exponencial (Nivel 4 - Tema 27)
+          {
+            generateQuestion: () => {
+              const base = [2, 3, 5][Math.floor(Math.random() * 3)];
+              const x = Math.floor(Math.random() * 3) + 3; // 3-5
+              const correct = Math.pow(base, x);
+              const incorrectOptions = [
+                base * x, // multiplicó en lugar de exponenciar
+                base + x,
+                Math.pow(base, x - 1),
+                Math.pow(base, x + 1),
+                correct + base,
+                correct - base,
+                base * base,
+              ];
+              const options = generateUniqueOptions(correct, incorrectOptions, 4);
+              return {
+                text: `Si f(x) = ${base}^x, ¿cuál es el valor de f(${x})?`,
+                options: shuffleArray([...options]),
+                correct: correct,
+              };
+            },
+          },
+        ],
+      };
+
+      // Función auxiliar para generar opciones únicas
+      function generateUniqueOptions(correct, incorrectOptions, count = 4) {
+        const options = new Set([correct]);
+
+        for (let option of incorrectOptions) {
+          if (option !== correct && options.size < count) {
+            options.add(option);
+          }
+        }
+
+        const numCorrect =
+          typeof correct === "number" ? correct : parseFloat(correct);
+        if (!isNaN(numCorrect)) {
+          const variations = [
+            Math.round(numCorrect * 0.5),
+            Math.round(numCorrect * 0.8),
+            Math.round(numCorrect * 1.2),
+            Math.round(numCorrect * 1.5),
+            Math.round(numCorrect * 2),
+            Math.round(numCorrect + 5),
+            Math.round(numCorrect - 5),
+            Math.round(numCorrect + 10),
+            Math.round(numCorrect - 10),
+          ];
+
+          for (let variation of variations) {
+            if (
+              variation !== numCorrect &&
+              variation > 0 &&
+              options.size < count
+            ) {
+              const formattedVariation =
+                typeof correct === "string" && correct.includes(" ")
+                  ? `${variation}${correct.substring(correct.indexOf(" "))}`
+                  : variation;
+              options.add(formattedVariation);
+            }
+          }
+        }
+
+        return Array.from(options).slice(0, count);
+      }
+
+      // Función para generar preguntas
+      function generateQuestions() {
+        questions = [];
+
+        for (let i = 0; i < 8; i++) {
+          const questionData = questionTemplates.abe1[i].generateQuestion();
+          questions.push({ level: "ABE 1", ...questionData });
+        }
+
+        for (let i = 0; i < 8; i++) {
+          const questionData = questionTemplates.abe2[i].generateQuestion();
+          questions.push({ level: "ABE 2", ...questionData });
+        }
+
+        for (let i = 0; i < 8; i++) {
+          const questionData = questionTemplates.abe3[i].generateQuestion();
+          questions.push({ level: "ABE 3", ...questionData });
+        }
+
+        for (let i = 0; i < 6; i++) {
+          const questionData = questionTemplates.abe4[i].generateQuestion();
+          questions.push({ level: "ABE 4", ...questionData });
+        }
+      }
+
+      function shuffleArray(array) {
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+      }
+
+      // Función para iniciar la prueba
+      window.startTest = function () {
+        console.log("Función startTest() llamada");
+
+        const name = document.getElementById("studentName").value.trim();
+        const email = document.getElementById("studentEmail").value.trim();
+
+        if (!name || !email) {
+          showNotification(
+            "Por favor, completa tu nombre y correo electrónico antes de continuar.",
+            "warning"
+          );
+          return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          showNotification(
+            "Por favor, ingresa un correo electrónico válido.",
+            "warning"
+          );
+          return;
+        }
+
+        studentInfo = {
+          name: name,
+          email: email,
+          id: document.getElementById("studentId").value.trim(),
+          startTime: new Date().toISOString(),
+        };
+
+        generateQuestions();
+
+        document.getElementById("startScreen").style.display = "none";
+        document.getElementById("questionContainer").style.display = "block";
+
+        startTimer();
+        displayQuestion();
+
+        showNotification(
+          "¡Prueba iniciada! Tienes 30 minutos para completar las 30 preguntas. Recuerda que puedes marcar con 🚩 las preguntas que quieras revisar luego.",
+          "success",
+          5000
+        );
+      };
+
+      function displayQuestion() {
+        const question = questions[currentQuestion];
+
+        document.getElementById("questionNumber").textContent = `Pregunta ${
+          currentQuestion + 1
+        } de 30`;
+        document.getElementById(
+          "levelIndicator"
+        ).textContent = `Nivel ${question.level}`;
+        document.getElementById("questionText").textContent = question.text;
+
+        const optionsContainer = document.getElementById("optionsContainer");
+        optionsContainer.innerHTML = "";
+
+        question.options.forEach((option, index) => {
+          const optionDiv = document.createElement("div");
+          optionDiv.className = "option";
+          optionDiv.innerHTML = `
+            <input type="radio" name="answer" value="${option}" id="option${index}">
+            <label for="option${index}">${option}</label>
+          `;
+
+          optionDiv.addEventListener("click", () => {
+            document.getElementById(`option${index}`).checked = true;
+            document
+              .querySelectorAll(".option")
+              .forEach((opt) => opt.classList.remove("selected"));
+            optionDiv.classList.add("selected");
+
+            // Mostrar botón de finalizar en pregunta 30 solo después de seleccionar respuesta
+            // (solo aplica cuando NO estamos en modo revisión)
+            if (currentQuestion === 29 && reviewModeType === null) {
+              document.getElementById("finishBtn").classList.remove("hidden");
+            }
+          });
+
+          optionsContainer.appendChild(optionDiv);
+        });
+
+        if (answers[currentQuestion]) {
+          const savedAnswer = answers[currentQuestion];
+          const radioButtons = document.querySelectorAll(
+            'input[name="answer"]'
+          );
+          radioButtons.forEach((radio, index) => {
+            if (radio.value === savedAnswer) {
+              radio.checked = true;
+              radio.closest(".option").classList.add("selected");
+            }
+          });
+
+          if (currentQuestion === 29 && reviewModeType === null) {
+            document.getElementById("finishBtn").classList.remove("hidden");
+          }
+        }
+
+        // Actualizar UI de marcado y modo revisión
+        updateMarkButton();
+        updateMarkedCounter();
+        updateQuestionNumberStyle();
+        updateReviewBanner();
+
+        // Configurar botones de navegación según modo
+        configureNavigationButtons();
+
+        // Progress bar: en modo marcadas refleja avance dentro de las marcadas
+        let progress;
+        if (reviewModeType === "marked" && markedQuestionsList.length > 0) {
+          progress =
+            ((currentMarkedIndex + 1) / markedQuestionsList.length) * 100;
+        } else {
+          progress = ((currentQuestion + 1) / 30) * 100;
+        }
+        document.getElementById("progressBar").style.width = `${progress}%`;
+      }
+
+      function configureNavigationButtons() {
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+        const finishBtn = document.getElementById("finishBtn");
+
+        if (reviewModeType === "marked") {
+          // Modo: revisar solo marcadas
+          prevBtn.disabled = currentMarkedIndex === 0;
+
+          if (currentMarkedIndex >= markedQuestionsList.length - 1) {
+            // Última marcada
+            nextBtn.style.display = "none";
+          } else {
+            nextBtn.style.display = "block";
+            nextBtn.textContent = "Siguiente marcada";
+            nextBtn.className = "btn-nav btn-next";
+          }
+
+          // En modo marcadas, finalizar siempre disponible
+          finishBtn.classList.remove("hidden");
+        } else if (reviewModeType === "all") {
+          // Modo: revisar todas
+          prevBtn.disabled = currentQuestion === 0;
+
+          if (currentQuestion === 29) {
+            // En revisión "todas", al llegar al final se ofrece volver al diálogo
+            nextBtn.style.display = "block";
+            nextBtn.textContent = "Volver a opciones";
+            nextBtn.className = "btn-nav";
+          } else {
+            nextBtn.style.display = "block";
+            nextBtn.textContent = "Siguiente";
+            nextBtn.className = "btn-nav btn-next";
+          }
+
+          // Finalizar siempre disponible en modo revisión
+          finishBtn.classList.remove("hidden");
+        } else {
+          // Modo normal (primera pasada)
+          prevBtn.disabled = currentQuestion === 0;
+
+          if (currentQuestion === 29) {
+            nextBtn.style.display = "block";
+            nextBtn.textContent = "Revisar prueba";
+            nextBtn.className = "btn-nav";
+
+            // Mostrar finalizar solo si ya hay respuesta
+            if (answers[currentQuestion]) {
+              finishBtn.classList.remove("hidden");
+            } else {
+              finishBtn.classList.add("hidden");
+            }
+          } else {
+            nextBtn.style.display = "block";
+            nextBtn.textContent = "Siguiente";
+            nextBtn.className = "btn-nav btn-next";
+            finishBtn.classList.add("hidden");
+          }
+        }
+      }
+
+      window.nextQuestion = function () {
+        saveCurrentAnswer();
+
+        if (reviewModeType === "marked") {
+          // Navegar entre marcadas
+          if (currentMarkedIndex < markedQuestionsList.length - 1) {
+            currentMarkedIndex++;
+            currentQuestion = markedQuestionsList[currentMarkedIndex];
+            displayQuestion();
+          }
+          return;
+        }
+
+        if (reviewModeType === "all") {
+          // En revisión "todas"
+          if (currentQuestion === 29) {
+            // Volver al diálogo de opciones
+            showReviewOptionsDialog();
+            return;
+          }
+          currentQuestion++;
+          displayQuestion();
+          return;
+        }
+
+        // Modo normal (primera pasada)
+        if (currentQuestion === 29) {
+          // Mostrar diálogo con las 3 opciones
+          showReviewOptionsDialog();
+        } else if (currentQuestion < 29) {
+          currentQuestion++;
+          displayQuestion();
+        }
+      };
+
+      window.previousQuestion = function () {
+        saveCurrentAnswer();
+
+        if (reviewModeType === "marked") {
+          // Navegar entre marcadas hacia atrás
+          if (currentMarkedIndex > 0) {
+            currentMarkedIndex--;
+            currentQuestion = markedQuestionsList[currentMarkedIndex];
+            displayQuestion();
+          }
+          return;
+        }
+
+        // Modo normal o revisar todas
+        if (currentQuestion > 0) {
+          currentQuestion--;
+          displayQuestion();
+        }
+      };
+
+      function saveCurrentAnswer() {
+        const selectedAnswer = document.querySelector(
+          'input[name="answer"]:checked'
+        );
+        if (selectedAnswer) {
+          answers[currentQuestion] = selectedAnswer.value;
+        }
+      }
+
+      function startTimer() {
+        timerInterval = setInterval(() => {
+          timeLeft--;
+          updateTimerDisplay();
+
+          if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            showNotification(
+              "¡Tiempo agotado! La prueba se completará automáticamente.",
+              "warning",
+              3000
+            );
+            setTimeout(() => {
+              finishTest();
+            }, 3000);
+          }
+        }, 1000);
+      }
+
+      function updateTimerDisplay() {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        const timerElement = document.getElementById("timer");
+        timerElement.textContent = `Minutos restantes: ${minutes
+          .toString()
+          .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+
+        if (timeLeft <= 300) {
+          timerElement.classList.add("time-warning");
+          if (timeLeft === 300) {
+            showNotification(
+              "¡Atención! Solo quedan 5 minutos para terminar la prueba.",
+              "warning",
+              5000
+            );
+          }
+        }
+      }
+
+      window.finishTest = function () {
+        saveCurrentAnswer();
+
+        const unansweredQuestions = [];
+        for (let i = 0; i < 30; i++) {
+          if (!answers[i]) {
+            unansweredQuestions.push(i + 1);
+          }
+        }
+
+        // Construir mensaje con info de marcadas si las hay
+        const markedCount = markedForReview.size;
+        let extraInfo = "";
+        if (markedCount > 0) {
+          extraInfo = ` Tienes ${markedCount} pregunta${
+            markedCount === 1 ? "" : "s"
+          } marcada${markedCount === 1 ? "" : "s"} para revisión.`;
+        }
+
+        if (unansweredQuestions.length > 0) {
+          const message = `Tienes ${
+            unansweredQuestions.length
+          } pregunta(s) sin responder: ${unansweredQuestions.join(
+            ", "
+          )}.${extraInfo} ¿Estás seguro de que quieres finalizar la prueba?`;
+          showConfirmation(
+            "Preguntas sin responder",
+            message,
+            () => {
+              completeTest();
+            },
+            () => {
+              // Salir de cualquier modo revisión para ir a la sin responder
+              reviewModeType = null;
+              reviewMode = false;
+              currentQuestion = unansweredQuestions[0] - 1;
+              displayQuestion();
+            }
+          );
+        } else {
+          showConfirmation(
+            "Finalizar prueba",
+            `¿Estás seguro de que quieres finalizar la prueba?${extraInfo} Una vez completada no podrás hacer cambios.`,
+            () => {
+              completeTest();
+            }
+          );
+        }
+      };
+
+      function completeTest() {
+        saveCurrentAnswer();
+        clearInterval(timerInterval);
+
+        showNotification(
+          "🎉 ¡Prueba completada! Procesando resultados...",
+          "success",
+          3000
+        );
+
+        calculateResults();
+        displayResults();
+      }
+
+      function calculateResults() {
+        let score = 0;
+        let levelScores = { "ABE 1": 0, "ABE 2": 0, "ABE 3": 0, "ABE 4": 0 };
+        let levelTotals = { "ABE 1": 8, "ABE 2": 8, "ABE 3": 8, "ABE 4": 6 };
+
+        questions.forEach((question, index) => {
+          const userAnswer = answers[index];
+          const isCorrect = userAnswer == question.correct;
+
+          if (isCorrect) {
+            score++;
+            levelScores[question.level]++;
+          }
+        });
+
+        let nrsLevel = "ABE 1";
+        if (score >= 22) nrsLevel = "ABE 4";
+        else if (score >= 15) nrsLevel = "ABE 3";
+        else if (score >= 8) nrsLevel = "ABE 2";
+
+        studentInfo.results = {
+          totalScore: score,
+          totalQuestions: 30,
+          levelScores: levelScores,
+          levelTotals: levelTotals,
+          nrsLevel: nrsLevel,
+          percentage: Math.round((score / 30) * 100),
+        };
+      }
+
+      function displayResults() {
+        document.getElementById("questionContainer").style.display = "none";
+        document.getElementById("resultsScreen").style.display = "block";
+
+        prepareResultsForPrint();
+      }
+
+      function prepareResultsForPrint() {
+        const results = studentInfo.results;
+        const testDate = new Date().toLocaleDateString("es-ES", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        document.getElementById("testDate").textContent = testDate;
+
+        document.getElementById("studentInfoPrint").innerHTML = `
+          <div>
+            <h3>Información del Estudiante</h3>
+            <p><strong>Nombre:</strong> ${studentInfo.name}</p>
+            <p><strong>Correo electrónico:</strong> ${studentInfo.email}</p>
+            ${
+              studentInfo.id
+                ? `<p><strong>ID de estudiante:</strong> ${studentInfo.id}</p>`
+                : ""
+            }
+          </div>
+        `;
+
+        document.getElementById("scoreSummaryPrint").innerHTML = `
+          <div>
+            <h3>Resumen de Resultados</h3>
+            <div>
+              ${results.totalScore}/30 preguntas correctas (${results.percentage}%)
+            </div>
+            <div>
+              Nivel NRS Recomendado: ${results.nrsLevel}
+            </div>
+          </div>
+        `;
+
+        document.getElementById("levelBreakdownPrint").innerHTML = `
+          <div>
+            <h3>Desglose por Niveles</h3>
+            <div>
+              <div class="level-card">
+                <h4>ABE 1 (Básico)</h4>
+                <div>${results.levelScores["ABE 1"]}/${
+          results.levelTotals["ABE 1"]
+        } correctas</div>
+                <div>${Math.round(
+                  (results.levelScores["ABE 1"] /
+                    results.levelTotals["ABE 1"]) *
+                    100
+                )}%</div>
+              </div>
+              <div class="level-card">
+                <h4>ABE 2 (Intermedio Bajo)</h4>
+                <div>${results.levelScores["ABE 2"]}/${
+          results.levelTotals["ABE 2"]
+        } correctas</div>
+                <div>${Math.round(
+                  (results.levelScores["ABE 2"] /
+                    results.levelTotals["ABE 2"]) *
+                    100
+                )}%</div>
+              </div>
+              <div class="level-card">
+                <h4>ABE 3 (Intermedio Alto)</h4>
+                <div>${results.levelScores["ABE 3"]}/${
+          results.levelTotals["ABE 3"]
+        } correctas</div>
+                <div>${Math.round(
+                  (results.levelScores["ABE 3"] /
+                    results.levelTotals["ABE 3"]) *
+                    100
+                )}%</div>
+              </div>
+              <div class="level-card">
+                <h4>ABE 4 (Avanzado)</h4>
+                <div>${results.levelScores["ABE 4"]}/${
+          results.levelTotals["ABE 4"]
+        } correctas</div>
+                <div>${Math.round(
+                  (results.levelScores["ABE 4"] /
+                    results.levelTotals["ABE 4"]) *
+                    100
+                )}%</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Función para imprimir resultados
+      window.printResults = function () {
+        const printContent = document.getElementById("printContent");
+        printContent.style.display = "block";
+
+        const originalDisplay =
+          document.querySelector(".print-section").style.display;
+        document.querySelector(".print-section").style.display = "none";
+
+        window.print();
+
+        setTimeout(() => {
+          printContent.style.display = "none";
+          document.querySelector(".print-section").style.display =
+            originalDisplay;
+        }, 1000);
+
+        showNotification(
+          "📄 Si la impresión no se inició automáticamente, usa Ctrl+P (PC) o Cmd+P (Mac)",
+          "info",
+          5000
+        );
+      };
+
+      // Función para copiar resultados
+      window.copyResults = function () {
+        const results = studentInfo.results;
+        const testDate = new Date().toLocaleDateString("es-ES", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        const textResults = `
+RESULTADOS DE LA PRUEBA DE MATEMÁTICAS
+NRS Placement Test - Niveles ABE 1-4
+========================================
+
+INFORMACIÓN DEL ESTUDIANTE:
+• Nombre: ${studentInfo.name}
+• Correo electrónico: ${studentInfo.email}
+${studentInfo.id ? `• ID de estudiante: ${studentInfo.id}` : ""}
+• Fecha de la prueba: ${testDate}
+
+RESUMEN DE RESULTADOS:
+• Puntuación total: ${results.totalScore}/30 preguntas correctas (${
+          results.percentage
+        }%)
+• NIVEL NRS RECOMENDADO: ${results.nrsLevel}
+
+DESGLOSE POR NIVELES:
+• ABE 1 (Básico): ${results.levelScores["ABE 1"]}/${
+          results.levelTotals["ABE 1"]
+        } correctas (${Math.round(
+          (results.levelScores["ABE 1"] / results.levelTotals["ABE 1"]) * 100
+        )}%)
+• ABE 2 (Intermedio Bajo): ${results.levelScores["ABE 2"]}/${
+          results.levelTotals["ABE 2"]
+        } correctas (${Math.round(
+          (results.levelScores["ABE 2"] / results.levelTotals["ABE 2"]) * 100
+        )}%)
+• ABE 3 (Intermedio Alto): ${results.levelScores["ABE 3"]}/${
+          results.levelTotals["ABE 3"]
+        } correctas (${Math.round(
+          (results.levelScores["ABE 3"] / results.levelTotals["ABE 3"]) * 100
+        )}%)
+• ABE 4 (Avanzado): ${results.levelScores["ABE 4"]}/${
+          results.levelTotals["ABE 4"]
+        } correctas (${Math.round(
+          (results.levelScores["ABE 4"] / results.levelTotals["ABE 4"]) * 100
+        )}%)
+
+========================================
+Duración de la prueba: 30 minutos
+        `.trim();
+
+        navigator.clipboard
+          .writeText(textResults)
+          .then(() => {
+            showNotification(
+              "📋 ¡Resultados copiados al portapapeles! Puedes pegarlos en cualquier documento.",
+              "success",
+              5000
+            );
+          })
+          .catch(() => {
+            const textArea = document.createElement("textarea");
+            textArea.value = textResults;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+              document.execCommand("copy");
+              showNotification(
+                "📋 ¡Resultados copiados! Puedes pegarlos en cualquier documento.",
+                "success",
+                5000
+              );
+            } catch (err) {
+              showNotification(
+                "❌ No se pudo copiar automáticamente. Por favor, usa el botón de imprimir.",
+                "error",
+                5000
+              );
+            }
+            document.body.removeChild(textArea);
+          });
+      };
+    </script>
+  </body>
+  <footer>
+    <p
+      style="
+        text-align: center;
+        color: #fafafa;
+        text-shadow: #000;
+        padding-top: 15px;
+      "
+    >
+      Creada por Jose M. Fernandez con Claude Sonnet 4.5 basada en los NRS del
+      estado de Illinois
+    </p>
+  </footer>
+</html>
