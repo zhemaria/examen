@@ -1,1 +1,783 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Práctica GED Matemáticas - Primeras 5 Preguntas</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'Arial', sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        color: #2c3e50;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        text-align: center;
+        background: #2c3e50;
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      }
+
+      .header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .header p {
+        font-size: 1.2em;
+        opacity: 0.9;
+      }
+
+      .navigation {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 30px;
+        justify-content: center;
+      }
+
+      .nav-button {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 15px 25px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 1.1em;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+      }
+
+      .nav-button:hover {
+        background: #2980b9;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+      }
+
+      .nav-button.active {
+        background: #e74c3c;
+        box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+      }
+
+      .category-section {
+        display: none;
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        border-left: 5px solid #3498db;
+      }
+
+      .category-section.active {
+        display: block;
+        animation: fadeIn 0.5s ease-in;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .category-title {
+        color: #2c3e50;
+        font-size: 2em;
+        margin-bottom: 20px;
+        border-bottom: 3px solid #3498db;
+        padding-bottom: 10px;
+      }
+
+      .problem-container {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 20px;
+        border-left: 4px solid #27ae60;
+      }
+
+      .problem-text {
+        font-size: 1.2em;
+        margin-bottom: 20px;
+        color: #2c3e50;
+        font-weight: 500;
+      }
+
+      .controls {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        background: #27ae60;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: bold;
+        transition: all 0.3s ease;
+      }
+
+      .btn:hover {
+        background: #219a52;
+        transform: translateY(-1px);
+      }
+
+      .btn-secondary {
+        background: #f39c12;
+      }
+
+      .btn-secondary:hover {
+        background: #e67e22;
+      }
+
+      .btn-danger {
+        background: #e74c3c;
+      }
+
+      .btn-danger:hover {
+        background: #c0392b;
+      }
+
+      .answer-input {
+        padding: 12px;
+        border: 2px solid #bdc3c7;
+        border-radius: 8px;
+        font-size: 1.1em;
+        width: 200px;
+        margin-right: 15px;
+      }
+
+      .answer-input:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+      }
+
+      .feedback {
+        margin-top: 15px;
+        padding: 15px;
+        border-radius: 8px;
+        font-weight: bold;
+        display: none;
+      }
+
+      .feedback.correct {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .feedback.incorrect {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .solution {
+        background: #e3f2fd;
+        border: 1px solid #bbdefb;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 15px;
+        display: none;
+      }
+
+      .solution h4 {
+        color: #1976d2;
+        margin-bottom: 15px;
+      }
+
+      .math-expression {
+        background: #fff3cd;
+        padding: 10px;
+        border-radius: 5px;
+        font-family: 'Courier New', monospace;
+        margin: 10px 0;
+        border-left: 3px solid #ffc107;
+      }
+
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 2em;
+        }
+
+        .navigation {
+          flex-direction: column;
+        }
+
+        .nav-button {
+          width: 100%;
+        }
+
+        .controls {
+          flex-direction: column;
+        }
+
+        .answer-input {
+          width: 100%;
+          margin-right: 0;
+          margin-bottom: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🧮 Práctica GED Matemáticas</h1>
+        <p>
+          Problemas sin calculadora (5 primeras preguntas)
+          <br />
+          Creado por el prof. José M. Fernández con Claude Sonnet 4
+        </p>
+      </div>
+
+      <div class="navigation">
+        <button class="nav-button active" onclick="showCategory('aritmetica')">➕ Aritmética Básica</button>
+        <button class="nav-button" onclick="showCategory('geometria')">📐 Geometría</button>
+        <button class="nav-button" onclick="showCategory('algebra')">📊 Álgebra</button>
+        <button class="nav-button" onclick="showCategory('aplicacion')">🌟 Problemas de Aplicación</button>
+        <button class="nav-button" onclick="showCategory('fracciones')">🔢 Fracciones y Decimales</button>
+      </div>
+
+      <!-- Aritmética Básica -->
+      <div id="aritmetica" class="category-section active">
+        <h2 class="category-title">➕ Aritmética Básica</h2>
+
+        <div class="problem-container">
+          <div class="problem-text" id="aritmetica-problem">Cargando problema...</div>
+          <div class="controls">
+            <input type="text" id="aritmetica-answer" class="answer-input" placeholder="Tu respuesta" />
+            <button class="btn" onclick="checkAnswer('aritmetica')">Verificar</button>
+            <button class="btn btn-secondary" onclick="generateProblem('aritmetica')">Nuevo Problema</button>
+            <button class="btn btn-danger" onclick="showSolution('aritmetica')">Ver Solución</button>
+          </div>
+          <div id="aritmetica-feedback" class="feedback"></div>
+          <div id="aritmetica-solution" class="solution"></div>
+        </div>
+      </div>
+
+      <!-- Geometría -->
+      <div id="geometria" class="category-section">
+        <h2 class="category-title">📐 Geometría</h2>
+
+        <div class="problem-container">
+          <div class="problem-text" id="geometria-problem">Cargando problema...</div>
+          <div class="controls">
+            <input type="text" id="geometria-answer" class="answer-input" placeholder="Tu respuesta" />
+            <button class="btn" onclick="checkAnswer('geometria')">Verificar</button>
+            <button class="btn btn-secondary" onclick="generateProblem('geometria')">Nuevo Problema</button>
+            <button class="btn btn-danger" onclick="showSolution('geometria')">Ver Solución</button>
+          </div>
+          <div id="geometria-feedback" class="feedback"></div>
+          <div id="geometria-solution" class="solution"></div>
+        </div>
+      </div>
+
+      <!-- Álgebra -->
+      <div id="algebra" class="category-section">
+        <h2 class="category-title">📊 Álgebra</h2>
+
+        <div class="problem-container">
+          <div class="problem-text" id="algebra-problem">Cargando problema...</div>
+          <div class="controls">
+            <input type="text" id="algebra-answer" class="answer-input" placeholder="Tu respuesta" />
+            <button class="btn" onclick="checkAnswer('algebra')">Verificar</button>
+            <button class="btn btn-secondary" onclick="generateProblem('algebra')">Nuevo Problema</button>
+            <button class="btn btn-danger" onclick="showSolution('algebra')">Ver Solución</button>
+          </div>
+          <div id="algebra-feedback" class="feedback"></div>
+          <div id="algebra-solution" class="solution"></div>
+        </div>
+      </div>
+
+      <!-- Problemas de Aplicación -->
+      <div id="aplicacion" class="category-section">
+        <h2 class="category-title">🌟 Problemas de Aplicación</h2>
+
+        <div class="problem-container">
+          <div class="problem-text" id="aplicacion-problem">Cargando problema...</div>
+          <div class="controls">
+            <input type="text" id="aplicacion-answer" class="answer-input" placeholder="Tu respuesta" />
+            <button class="btn" onclick="checkAnswer('aplicacion')">Verificar</button>
+            <button class="btn btn-secondary" onclick="generateProblem('aplicacion')">Nuevo Problema</button>
+            <button class="btn btn-danger" onclick="showSolution('aplicacion')">Ver Solución</button>
+          </div>
+          <div id="aplicacion-feedback" class="feedback"></div>
+          <div id="aplicacion-solution" class="solution"></div>
+        </div>
+      </div>
+
+      <!-- Fracciones y Decimales -->
+      <div id="fracciones" class="category-section">
+        <h2 class="category-title">🔢 Fracciones y Decimales</h2>
+
+        <div class="problem-container">
+          <div class="problem-text" id="fracciones-problem">Cargando problema...</div>
+          <div class="controls">
+            <input type="text" id="fracciones-answer" class="answer-input" placeholder="Tu respuesta" />
+            <button class="btn" onclick="checkAnswer('fracciones')">Verificar</button>
+            <button class="btn btn-secondary" onclick="generateProblem('fracciones')">Nuevo Problema</button>
+            <button class="btn btn-danger" onclick="showSolution('fracciones')">Ver Solución</button>
+          </div>
+          <div id="fracciones-feedback" class="feedback"></div>
+          <div id="fracciones-solution" class="solution"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let currentProblems = {};
+
+      function showCategory(category) {
+        // Ocultar todas las secciones
+        const sections = document.querySelectorAll('.category-section');
+        sections.forEach(section => section.classList.remove('active'));
+
+        // Mostrar la sección seleccionada
+        document.getElementById(category).classList.add('active');
+
+        // Actualizar botones de navegación
+        const buttons = document.querySelectorAll('.nav-button');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        // Generar problema si no existe
+        if (!currentProblems[category]) {
+          generateProblem(category);
+        }
+      }
+
+      function generateProblem(category) {
+        let problem, answer, solution;
+
+        switch (category) {
+          case 'aritmetica':
+            const problems = [generateMCDProblem(), generateConversionProblem(), generateBasicOperation()];
+            const selected = problems[Math.floor(Math.random() * problems.length)];
+            problem = selected.problem;
+            answer = selected.answer;
+            solution = selected.solution;
+            break;
+
+          case 'geometria':
+            const geoProblems = [generateSquareAreaProblem(), generateRectangleProblem(), generatePerimeterProblem()];
+            const selectedGeo = geoProblems[Math.floor(Math.random() * geoProblems.length)];
+            problem = selectedGeo.problem;
+            answer = selectedGeo.answer;
+            solution = selectedGeo.solution;
+            break;
+
+          case 'algebra':
+            const algProblems = [generateUndefinedExpression(), generateLinearEquation(), generateDistanceProblem()];
+            const selectedAlg = algProblems[Math.floor(Math.random() * algProblems.length)];
+            problem = selectedAlg.problem;
+            answer = selectedAlg.answer;
+            solution = selectedAlg.solution;
+            break;
+
+          case 'aplicacion':
+            const appProblems = [generateBudgetProblem(), generateProbabilityProblem(), generateAverageProblem()];
+            const selectedApp = appProblems[Math.floor(Math.random() * appProblems.length)];
+            problem = selectedApp.problem;
+            answer = selectedApp.answer;
+            solution = selectedApp.solution;
+            break;
+
+          case 'fracciones':
+            const fracProblems = [generateFractionDivision(), generateDecimalMultiplication(), generateFractionComparison()];
+            const selectedFrac = fracProblems[Math.floor(Math.random() * fracProblems.length)];
+            problem = selectedFrac.problem;
+            answer = selectedFrac.answer;
+            solution = selectedFrac.solution;
+            break;
+        }
+
+        currentProblems[category] = {answer, solution};
+        document.getElementById(category + '-problem').innerHTML = problem;
+        document.getElementById(category + '-answer').value = '';
+        hideFeedback(category);
+      }
+
+      function generateMCDProblem() {
+        const a = Math.floor(Math.random() * 20) + 10;
+        const b = Math.floor(Math.random() * 20) + 10;
+        const mcd = gcd(a, b);
+
+        return {
+          problem: `Encuentra el máximo común divisor de ${a} y ${b}.`,
+          answer: mcd,
+          solution: `<h4>Solución:</h4>
+                    <p>Para encontrar el MCD de ${a} y ${b}, usamos el algoritmo de Euclides:</p>
+                    <div class="math-expression">
+                        Divisores de ${a}: ${getDivisors(a).join(', ')}<br>
+                        Divisores de ${b}: ${getDivisors(b).join(', ')}<br>
+                        MCD(${a}, ${b}) = ${mcd}
+                    </div>`
+        };
+      }
+
+      function generateConversionProblem() {
+        const litros = Math.floor(Math.random() * 15) + 5;
+        const ml = litros * 1000;
+
+        return {
+          problem: `Un laboratorio tiene ${litros} litros de una solución química. ¿Cuántos mililitros son en total?`,
+          answer: ml,
+          solution: `<h4>Solución:</h4>
+                    <p>Para convertir litros a mililitros:</p>
+                    <div class="math-expression">
+                        1 litro = 1,000 mililitros<br>
+                        ${litros} litros × 1,000 = ${ml} mililitros
+                    </div>`
+        };
+      }
+
+      function generateBasicOperation() {
+        const operations = [
+          () => {
+            const a = Math.floor(Math.random() * 100) + 10;
+            const b = Math.floor(Math.random() * 10) + 2;
+            return {
+              problem: `Calcula: √${a * a}`,
+              answer: a,
+              solution: `<h4>Solución:</h4>
+                            <div class="math-expression">√${a * a} = ${a}</div>`
+            };
+          },
+          () => {
+            const a = Math.floor(Math.random() * 50) + 20;
+            const b = Math.floor(Math.random() * 10) + 2;
+            const result = a * b;
+            return {
+              problem: `Calcula: ${a} × ${b}`,
+              answer: result,
+              solution: `<h4>Solución:</h4>
+                            <div class="math-expression">${a} × ${b} = ${result}</div>`
+            };
+          }
+        ];
+
+        return operations[Math.floor(Math.random() * operations.length)]();
+      }
+
+      function generateSquareAreaProblem() {
+        const area = [16, 25, 36, 49, 64, 81, 100, 121, 144, 169][Math.floor(Math.random() * 10)];
+        const side = Math.sqrt(area);
+
+        return {
+          problem: `Un cuadrado tiene un área de ${area} metros cuadrados. ¿Cuál es la longitud de cada lado?`,
+          answer: side,
+          solution: `<h4>Solución:</h4>
+                    <p>El área de un cuadrado es lado²:</p>
+                    <div class="math-expression">
+                        Área = lado²<br>
+                        ${area} = lado²<br>
+                        lado = √${area} = ${side} metros
+                    </div>`
+        };
+      }
+
+      function generateRectangleProblem() {
+        const lado1 = Math.floor(Math.random() * 8) + 5;
+        const lado2 = Math.floor(Math.random() * 8) + 5;
+        const area = lado1 * lado2;
+
+        return {
+          problem: `Un rectángulo tiene lados de ${lado1} metros y ${lado2} metros. ¿Cuál es su área?`,
+          answer: area,
+          solution: `<h4>Solución:</h4>
+                    <p>El área de un rectángulo es base × altura:</p>
+                    <div class="math-expression">
+                        Área = ${lado1} × ${lado2} = ${area} metros cuadrados
+                    </div>`
+        };
+      }
+
+      function generatePerimeterProblem() {
+        const lado = Math.floor(Math.random() * 10) + 5;
+        const perimeter = 4 * lado;
+
+        return {
+          problem: `Un cuadrado tiene lados de ${lado} centímetros. ¿Cuál es su perímetro?`,
+          answer: perimeter,
+          solution: `<h4>Solución:</h4>
+                    <p>El perímetro de un cuadrado es 4 × lado:</p>
+                    <div class="math-expression">
+                        Perímetro = 4 × ${lado} = ${perimeter} centímetros
+                    </div>`
+        };
+      }
+
+      function generateUndefinedExpression() {
+        const a = Math.floor(Math.random() * 5) + 2;
+        const b = Math.floor(Math.random() * 5) + 1;
+
+        return {
+          problem: `¿Para qué valor de x la expresión ${a}x/(${b} + x) es indefinida?`,
+          answer: -b,
+          solution: `<h4>Solución:</h4>
+                    <p>Una fracción es indefinida cuando el denominador es cero:</p>
+                    <div class="math-expression">
+                        ${b} + x = 0<br>
+                        x = -${b}
+                    </div>`
+        };
+      }
+
+      function generateLinearEquation() {
+        const a = Math.floor(Math.random() * 5) + 2;
+        const b = Math.floor(Math.random() * 10) + 5;
+        const c = Math.floor(Math.random() * 15) + 10;
+        const x = (c - b) / a;
+
+        return {
+          problem: `Resuelve para x: ${a}x + ${b} = ${c}`,
+          answer: x,
+          solution: `<h4>Solución:</h4>
+                    <div class="math-expression">
+                        ${a}x + ${b} = ${c}<br>
+                        ${a}x = ${c} - ${b}<br>
+                        ${a}x = ${c - b}<br>
+                        x = ${c - b}/${a} = ${x}
+                    </div>`
+        };
+      }
+
+      function generateDistanceProblem() {
+        const p1 = Math.floor(Math.random() * 10) + 1;
+        const p2 = Math.floor(Math.random() * 10) + 1;
+        const distance = Math.abs(p2 - p1);
+
+        return {
+          problem: `¿Cuál es la distancia entre los puntos ${p1} y ${p2} en una recta numérica?`,
+          answer: distance,
+          solution: `<h4>Solución:</h4>
+                    <p>La distancia entre dos puntos en una recta numérica es:</p>
+                    <div class="math-expression">
+                        Distancia = |${p2} - ${p1}| = |${p2 - p1}| = ${distance}
+                    </div>`
+        };
+      }
+
+      function generateBudgetProblem() {
+        const presupuesto = Math.floor(Math.random() * 500) + 1000;
+        const alquiler = Math.floor(Math.random() * 60) + 120;
+        const costoPersona = Math.floor(Math.random() * 5) + 20;
+        const graduados = Math.floor(Math.random() * 20) + 30;
+        const costoTotal = alquiler + costoPersona * graduados;
+        const necesita = costoTotal - presupuesto;
+
+        return {
+          problem: `María tiene $${presupuesto} para organizar una fiesta. El alquiler del local cuesta $${alquiler} y la comida cuesta $${costoPersona} por persona. Si hay ${graduados} graduados, ¿cuánto dinero adicional necesita?`,
+          answer: Math.max(0, necesita),
+          solution: `<h4>Solución:</h4>
+                    <div class="math-expression">
+                        Costo total = Alquiler + (Costo por persona × Número de personas)<br>
+                        Costo total = $${alquiler} + ($${costoPersona} × ${graduados})<br>
+                        Costo total = $${alquiler} + $${costoPersona * graduados} = $${costoTotal}<br>
+                        Dinero adicional = $${costoTotal} - $${presupuesto} = $${Math.max(0, necesita)}
+                    </div>`
+        };
+      }
+
+      function generateProbabilityProblem() {
+        const total = Math.floor(Math.random() * 10) + 12;
+        const defectuosos = Math.floor(Math.random() * 4) + 2;
+        const probability = defectuosos / total;
+
+        return {
+          problem: `En una caja hay ${total} productos, de los cuales ${defectuosos} están defectuosos. Si se selecciona uno al azar, ¿cuál es la probabilidad de que esté defectuoso? (Expresa como decimal)`,
+          answer: Math.round(probability * 1000) / 1000,
+          solution: `<h4>Solución:</h4>
+                    <div class="math-expression">
+                        Probabilidad = Casos favorables / Casos totales<br>
+                        Probabilidad = ${defectuosos}/${total} = ${Math.round(probability * 1000) / 1000}
+                    </div>`
+        };
+      }
+
+      function generateAverageProblem() {
+        const numbers = [];
+        for (let i = 0; i < 5; i++) {
+          numbers.push(Math.floor(Math.random() * 20) + 10);
+        }
+        const sum = numbers.reduce((a, b) => a + b, 0);
+        const average = sum / numbers.length;
+
+        return {
+          problem: `Calcula la media (promedio) de los siguientes números: ${numbers.join(', ')}`,
+          answer: average,
+          solution: `<h4>Solución:</h4>
+                    <div class="math-expression">
+                        Suma = ${numbers.join(' + ')} = ${sum}<br>
+                        Media = Suma ÷ Cantidad de números<br>
+                        Media = ${sum} ÷ ${numbers.length} = ${average}
+                    </div>`
+        };
+      }
+
+      function generateFractionDivision() {
+        const num1 = Math.floor(Math.random() * 8) + 1;
+        const den1 = Math.floor(Math.random() * 8) + 2;
+        const num2 = Math.floor(Math.random() * 8) + 1;
+        const den2 = Math.floor(Math.random() * 8) + 2;
+
+        // División de fracciones: (a/b) ÷ (c/d) = (a/b) × (d/c) = (a×d)/(b×c)
+        const resultNum = num1 * den2;
+        const resultDen = den1 * num2;
+        const gcdResult = gcd(resultNum, resultDen);
+        const simplifiedNum = resultNum / gcdResult;
+        const simplifiedDen = resultDen / gcdResult;
+
+        return {
+          problem: `Calcula: ${num1}/${den1} ÷ ${num2}/${den2} (simplifica el resultado)`,
+          answer: simplifiedDen === 1 ? simplifiedNum : `${simplifiedNum}/${simplifiedDen}`,
+          solution: `<h4>Solución:</h4>
+                    <p>Para dividir fracciones, multiplicamos por el recíproco:</p>
+                    <div class="math-expression">
+                        ${num1}/${den1} ÷ ${num2}/${den2} = ${num1}/${den1} × ${den2}/${num2}<br>
+                        = (${num1} × ${den2})/(${den1} × ${num2})<br>
+                        = ${resultNum}/${resultDen}<br>
+                        = ${simplifiedDen === 1 ? simplifiedNum : `${simplifiedNum}/${simplifiedDen}`}
+                    </div>`
+        };
+      }
+
+      function generateDecimalMultiplication() {
+        const a = (Math.floor(Math.random() * 900) + 100) / 100; // 1.00 - 9.99
+        const b = (Math.floor(Math.random() * 900) + 100) / 100; // 1.00 - 9.99
+        const result = Math.round(a * b * 100) / 100;
+
+        return {
+          problem: `Multiplica: ${a} × ${b}`,
+          answer: result,
+          solution: `<h4>Solución:</h4>
+                    <div class="math-expression">
+                        ${a} × ${b} = ${result}
+                    </div>`
+        };
+      }
+
+      function generateFractionComparison() {
+        const fractions = [];
+        // 1. Generamos un solo grupo de 4 fracciones aleatorias
+        for (let i = 0; i < 4; i++) {
+          const num = Math.floor(Math.random() * 10) + 1;
+          const den = Math.floor(Math.random() * 8) + 2;
+          fractions.push({num, den, decimal: num / den});
+        }
+
+        // 2. Guardamos el orden en el que se generaron (para mostrarlas en el problema) ANTES de ordenarlas
+        const originalOrder = fractions.map(f => `${f.num}/${f.den}`);
+
+        // 3. Ordenamos las fracciones de menor a mayor basándonos en su valor decimal
+        fractions.sort((a, b) => a.decimal - b.decimal);
+
+        // 4. Creamos el texto de la respuesta correcta
+        const sortedFractions = fractions.map(f => `${f.num}/${f.den}`).join(', ');
+
+        return {
+          problem: `Ordena estas fracciones de menor a mayor: ${originalOrder.join(', ')}`,
+          answer: sortedFractions,
+          solution: `<h4>Solución:</h4>
+                    <p>Convierte cada fracción a decimal para compararlas:</p>
+                    <div class="math-expression">
+                        Orden de menor a mayor: ${sortedFractions}
+                    </div>`
+        };
+      }
+
+      function checkAnswer(category) {
+        const userAnswer = document.getElementById(category + '-answer').value.trim();
+        const correctAnswer = currentProblems[category].answer;
+        const feedback = document.getElementById(category + '-feedback');
+
+        let isCorrect = false;
+
+        if (typeof correctAnswer === 'number') {
+          isCorrect = Math.abs(parseFloat(userAnswer) - correctAnswer) < 0.01;
+        } else {
+          isCorrect = userAnswer.toLowerCase() === correctAnswer.toString().toLowerCase();
+        }
+
+        feedback.style.display = 'block';
+        if (isCorrect) {
+          feedback.className = 'feedback correct';
+          feedback.innerHTML = '✅ ¡Correcto! Excelente trabajo.';
+        } else {
+          feedback.className = 'feedback incorrect';
+          feedback.innerHTML = `❌ Incorrecto. La respuesta correcta es: ${correctAnswer}`;
+        }
+      }
+
+      function showSolution(category) {
+        const solution = document.getElementById(category + '-solution');
+        solution.style.display = solution.style.display === 'block' ? 'none' : 'block';
+        solution.innerHTML = currentProblems[category].solution;
+      }
+
+      function hideFeedback(category) {
+        document.getElementById(category + '-feedback').style.display = 'none';
+        document.getElementById(category + '-solution').style.display = 'none';
+      }
+
+      // Funciones auxiliares
+      function gcd(a, b) {
+        while (b !== 0) {
+          let temp = b;
+          b = a % b;
+          a = temp;
+        }
+        return a;
+      }
+
+      function getDivisors(n) {
+        const divisors = [];
+        for (let i = 1; i <= n; i++) {
+          if (n % i === 0) {
+            divisors.push(i);
+          }
+        }
+        return divisors;
+      }
+
+      // Generar problemas iniciales
+      generateProblem('aritmetica');
+      generateProblem('geometria');
+      generateProblem('algebra');
+      generateProblem('aplicacion');
+      generateProblem('fracciones');
+    </script>
+  </body>
+</html>
 
