@@ -148,6 +148,45 @@
         .navigation { flex-wrap: wrap; justify-content: center; }
         .report-summary { grid-template-columns: repeat(2, 1fr); }
       }
+      /* ============================================================
+         ENVÍO DEL INFORME POR CORREO
+         ============================================================ */
+      .acciones-informe { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 20px; }
+      .btn-informe { border: 2px solid transparent; padding: 12px 22px; border-radius: 25px; cursor: pointer; font-size: 15px; font-weight: bold; font-family: inherit; transition: background 0.2s ease; }
+      .btn-informe:focus-visible { outline: 3px solid #5C3900; outline-offset: 3px; }
+      .btn-informe-primario { background: #0056b3; color: #ffffff; border-color: #003d80; }
+      .btn-informe-primario:hover:not(:disabled) { background: #003d80; }
+      .btn-informe-secundario { background: #495057; color: #ffffff; border-color: #343a40; }
+      .btn-informe-secundario:hover:not(:disabled) { background: #343a40; }
+      .btn-informe:disabled { opacity: 0.6; cursor: not-allowed; }
+
+      .email-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1100; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; padding: 16px; }
+      .email-modal-caja { background: #ffffff; border: 3px solid #0056b3; border-radius: 14px; padding: 26px; max-width: 540px; width: 100%; max-height: 92vh; overflow: auto; }
+      .email-modal-caja h2 { color: #0056b3; font-size: 22px; margin-bottom: 8px; }
+      .email-modal-caja p.intro { font-size: 15px; color: #333333; margin-bottom: 18px; line-height: 1.5; }
+
+      .campo-grupo { margin-bottom: 16px; }
+      .campo-grupo label { display: block; font-weight: bold; font-size: 15px; margin-bottom: 6px; color: #212529; }
+      .campo-grupo input { width: 100%; padding: 12px; font-size: 16px; font-family: inherit; border: 2px solid #6c757d; border-radius: 8px; }
+      .campo-grupo input:focus { outline: none; border-color: #0056b3; box-shadow: 0 0 0 3px rgba(0,86,179,0.25); }
+      .campo-grupo input[aria-invalid="true"] { border-color: #b02a37; }
+      .ayuda-campo { font-size: 13px; color: #555555; margin-top: 4px; }
+      .error-msg { color: #b02a37; font-weight: bold; font-size: 14px; margin-top: 6px; }
+      .error-msg:empty { display: none; }
+
+      .estado-envio { font-size: 15px; margin: 14px 0; border-radius: 8px; }
+      .estado-envio:not(:empty) { padding: 12px; border: 2px solid; }
+      .estado-cargando { background: #e7f5ff; border-color: #0056b3; color: #003d80; }
+      .estado-exito { background: #d4edda; border-color: #1e7e34; color: #155724; }
+      .estado-error { background: #f8d7da; border-color: #b02a37; color: #721c24; }
+      .aviso-config { display: none; background: #fff3cd; border: 2px solid #5C3900; color: #5C3900; padding: 12px; border-radius: 8px; font-size: 14px; margin-bottom: 16px; }
+
+      .email-modal-botones { display: flex; gap: 10px; flex-wrap: wrap; }
+      .separador-modal { border: 0; border-top: 2px solid #dee2e6; margin: 20px 0 16px; }
+      .alternativas-titulo { font-size: 14px; color: #333333; font-weight: bold; margin-bottom: 10px; }
+
+      @media print { .email-modal, .acciones-informe { display: none !important; } }
+
 @page {
   margin: 20mm;
 }
@@ -264,6 +303,57 @@
       <button class="prob-option" onclick="calcSelectProb('nCr')">2: nCr (Combinación)</button>
       <button class="prob-option" onclick="calcSelectProb('!')">3: ! (Factorial)</button>
     </div>
+
+    <!-- Ventana de envío del informe por correo -->
+    <div id="emailModal" class="email-modal" role="dialog" aria-modal="true"
+         aria-labelledby="emailModalTitulo" aria-describedby="emailModalDesc">
+      <div class="email-modal-caja">
+        <h2 id="emailModalTitulo">Enviar el informe por correo</h2>
+        <p class="intro" id="emailModalDesc">
+          Escribe tu correo electrónico y recibirás el informe completo: tu puntuación,
+          las preguntas que fallaste con su explicación y las páginas del libro que debes estudiar.
+        </p>
+
+        <p class="aviso-config" id="avisoConfig">
+          El envío automático todavía no está configurado en este sitio.
+          Mientras tanto, usa el botón <strong>Descargar el informe</strong>.
+        </p>
+
+        <div class="campo-grupo">
+          <label for="campoNombre">Tu nombre (opcional)</label>
+          <input type="text" id="campoNombre" autocomplete="name" placeholder="Nombre y apellido">
+        </div>
+
+        <div class="campo-grupo">
+          <label for="campoEmail">Tu correo electrónico (obligatorio)</label>
+          <input type="email" id="campoEmail" autocomplete="email" inputmode="email"
+                 required aria-required="true" aria-describedby="ayudaEmail errorEmail"
+                 placeholder="nombre@correo.com">
+          <p class="ayuda-campo" id="ayudaEmail">Ejemplo: maria.rodriguez@gmail.com</p>
+          <p class="error-msg" id="errorEmail" role="alert"></p>
+        </div>
+
+        <div class="estado-envio" id="estadoEnvio" role="status" aria-live="polite"></div>
+
+        <div class="email-modal-botones">
+          <button type="button" class="btn-informe btn-informe-primario" id="btnEnviarCorreo"
+                  onclick="enviarInformePorCorreo()">Enviar informe</button>
+          <button type="button" class="btn-informe btn-informe-secundario"
+                  onclick="cerrarModalEmail()">Cancelar</button>
+        </div>
+
+        <hr class="separador-modal">
+        <p class="alternativas-titulo">¿Prefieres otra opción? También puedes:</p>
+        <div class="email-modal-botones">
+          <button type="button" class="btn-informe btn-informe-secundario"
+                  onclick="descargarInforme()">Descargar el informe</button>
+          <button type="button" class="btn-informe btn-informe-secundario"
+                  onclick="copiarInforme()">Copiar el informe</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
     <script>
     // ===================================================
@@ -1340,6 +1430,7 @@
       else msg = "No te desanimes. Revisa las explicaciones y enfócate en los temas a reforzar. ¡La práctica es la clave!";
       document.getElementById("resultMessage").textContent = msg;
 
+      guardarDatosInforme(correctCount, totalQuestionsInSim - correctCount, skippedCount, percentage, incorrectQuestions, areaStats, 115 * 60 - timeLeft);
       generateErrorReport(correctCount, totalQuestionsInSim - correctCount, skippedCount, percentage, incorrectQuestions, areaStats);
     }
 
@@ -1347,7 +1438,7 @@
       const div = document.getElementById("errorReport");
       if (incorrectQuestions.length === 0) {
         div.style.display = "block";
-        div.innerHTML = `<div class="all-correct-message"><span class="trophy">🏆</span><h2>¡Felicitaciones! ¡Todas correctas!</h2><p>Has demostrado dominio completo.</p></div>`;
+        div.innerHTML = `<div class="all-correct-message"><span class="trophy" aria-hidden="true">🏆</span><h2>¡Felicitaciones! ¡Todas correctas!</h2><p>Has demostrado dominio completo.</p></div>` + botonesInforme();
         return;
       }
 
@@ -1392,14 +1483,13 @@
           <td style="font-size:12px">${p<100?s.pages:'✅'}</td></tr>`;
       });
 
-      html += `</tbody></table></div><div style="text-align:center;margin-top:20px">
-<button class="print-button" onclick="abrirYImprimir()">🖨️ Imprimir Informe</button></div>`;
+      html += `</tbody></table></div>` + botonesInforme();
       div.style.display = "block";
       div.innerHTML = html;
     }
 
     function restartExam() {
-      currentQuestion = 0; timeLeft = 115 * 60; answers = {};
+      currentQuestion = 0; timeLeft = 115 * 60; answers = {}; datosInforme = null;
       document.getElementById("resultsScreen").style.display = "none";
       document.getElementById("errorReport").style.display = "none";
       document.getElementById("startScreen").style.display = "block";
@@ -1465,52 +1555,430 @@
       };
     })();
     calcUpdateDisplay();
-function abrirYImprimir() {
-  const contenido = document.querySelector(".results-container").innerHTML;
+/* ============================================================
+       ENVÍO DEL INFORME POR CORREO — Bloque C
+       José M. Fernández — GEDparaHispanos
+       ============================================================ */
 
-  const ventana = window.open('', '', 'width=900,height=700');
+    // ---------- CONFIGURACIÓN (editar estas 4 líneas) ----------
+    const EMAILJS_PUBLIC_KEY  = "TU_PUBLIC_KEY";
+    const EMAILJS_SERVICE_ID  = "TU_SERVICE_ID";
+    const EMAILJS_TEMPLATE_ID = "TU_TEMPLATE_ID";
+    const CORREO_DOCENTE      = ""; // opcional: copia automática al instructor
 
-  ventana.document.write(`
-    <html>
-      <head>
-        <title>Informe GED Estudios Sociales</title>
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            padding: 30px;
-          }
-          table {
-            width: 100%;
-            border-collapse: collapse;
-          }
-          th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: left;
-          }
-          th {
-            background: #e74c3c;
-            color: white;
-          }
-          .score-banner {
-            text-align: center;
-            margin-bottom: 20px;
-          }
-        </style>
-      </head>
-      <body>
-        ${contenido}
-      </body>
-    </html>
-  `);
+    // ---------- ESTADO ----------
+    let datosInforme = null;      // se llena al terminar el examen
+    let nombreEstudiante = "";
+    let focoPrevio = null;
 
-  ventana.document.close();
+    function emailjsListo() {
+      return typeof emailjs !== "undefined" &&
+             EMAILJS_PUBLIC_KEY.indexOf("TU_") !== 0 &&
+             EMAILJS_SERVICE_ID.indexOf("TU_") !== 0 &&
+             EMAILJS_TEMPLATE_ID.indexOf("TU_") !== 0;
+    }
 
-  ventana.onload = function() {
-    ventana.focus();
-    ventana.print();
-  };
-}
+    (function iniciarEmailJS() {
+      if (typeof emailjs !== "undefined" && EMAILJS_PUBLIC_KEY.indexOf("TU_") !== 0) {
+        try { emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); }
+        catch (e) { console.warn("EmailJS no se pudo inicializar:", e); }
+      }
+    })();
+
+    // ---------- UTILIDADES ----------
+    function escaparHTML(s) {
+      return String(s === undefined || s === null ? "" : s).replace(/[&<>"']/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+      });
+    }
+
+    function quitarEtiquetas(s) {
+      return String(s === undefined || s === null ? "" : s)
+        .replace(/<[^>]*>/g, "")
+        .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+        .replace(/&nbsp;/g, " ").replace(/&pi;/g, "pi")
+        .replace(/\s+/g, " ").trim();
+    }
+
+    function formatearTiempo(seg) {
+      const m = Math.floor(seg / 60), s = seg % 60;
+      return m + " min " + String(s).padStart(2, "0") + " s";
+    }
+
+    function nombreArchivoSeguro(txt) {
+      return String(txt || "estudiante")
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-+|-+$/g, "").toLowerCase() || "estudiante";
+    }
+
+    // ---------- CAPTURA DE DATOS AL FINALIZAR ----------
+    // Se invoca desde endExam(). Guarda TODO el informe en memoria,
+    // de modo que el envío no dependa de leer el DOM.
+    function guardarDatosInforme(correctas, incorrectas, sinResponder, porcentaje, listaErrores, estadisticas, segundosUsados) {
+      datosInforme = {
+        fecha: new Date().toLocaleString("es-ES", { dateStyle: "long", timeStyle: "short" }),
+        tiempo: formatearTiempo(segundosUsados),
+        totalPreguntas: correctas + incorrectas,
+        correctas: correctas,
+        incorrectas: incorrectas,
+        sinResponder: sinResponder,
+        porcentaje: porcentaje,
+        errores: listaErrores.slice(),
+        estadisticas: estadisticas
+      };
+    }
+
+    // ---------- INFORME EN HTML (compatible con correo e impresión) ----------
+    // Usa tablas y estilos en línea: los clientes de correo ignoran
+    // flexbox, grid y variables CSS.
+    // compacto = true omite las explicaciones, para no exceder el limite
+    // de 50 KB por peticion que impone el servicio de correo.
+    function construirInformeHTML(compacto) {
+      const d = datosInforme;
+      if (!d) { return "<p>No hay un informe disponible todavía.</p>"; }
+
+      const nombre = escaparHTML(nombreEstudiante || "Estudiante");
+      const base = "font-family:Arial,Helvetica,sans-serif;color:#212529;font-size:14px;line-height:1.55;";
+      const tdCaja = "border:1px solid #adb5bd;padding:12px;text-align:center;background:#f8f9fa;";
+      const th = "background:#0056b3;color:#ffffff;padding:8px 10px;text-align:left;font-size:13px;border:1px solid #0056b3;";
+      const td = "padding:8px 10px;border:1px solid #adb5bd;font-size:13px;vertical-align:top;";
+
+      let h = '<div style="' + base + '">';
+      h += '<h1 style="font-size:20px;color:#0056b3;margin:0 0 6px;">Informe de resultados &mdash; Razonamiento matemático GED</h1>';
+      h += '<p style="margin:0 0 18px;color:#555555;font-size:13px;">Estudiante: <strong>' + nombre + '</strong><br>' +
+           'Fecha: ' + escaparHTML(d.fecha) + '<br>' +
+           'Tiempo utilizado: ' + escaparHTML(d.tiempo) + '</p>';
+
+      // Resumen
+      h += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:0 0 22px;"><tr>' +
+           '<td style="' + tdCaja + '"><span style="font-size:24px;font-weight:bold;color:#1e7e34;">' + d.correctas + '</span><br><span style="font-size:12px;color:#555555;">Correctas</span></td>' +
+           '<td style="' + tdCaja + '"><span style="font-size:24px;font-weight:bold;color:#b02a37;">' + d.incorrectas + '</span><br><span style="font-size:12px;color:#555555;">Incorrectas</span></td>' +
+           '<td style="' + tdCaja + '"><span style="font-size:24px;font-weight:bold;color:#555555;">' + d.sinResponder + '</span><br><span style="font-size:12px;color:#555555;">Sin responder</span></td>' +
+           '<td style="' + tdCaja + '"><span style="font-size:24px;font-weight:bold;color:#0056b3;">' + d.porcentaje + '%</span><br><span style="font-size:12px;color:#555555;">Puntuación</span></td>' +
+           '</tr></table>';
+
+      // Temas a reforzar
+      if (d.errores.length === 0) {
+        h += '<p style="padding:14px;border:2px solid #1e7e34;background:#d4edda;color:#155724;font-weight:bold;">' +
+             'Todas las respuestas fueron correctas. No hay temas pendientes de refuerzo.</p>';
+      } else {
+        const porTema = {};
+        d.errores.forEach(function (e) {
+          if (!porTema[e.topic]) { porTema[e.topic] = { paginas: e.bookPages, area: e.theme, preguntas: [] }; }
+          porTema[e.topic].preguntas.push(e);
+        });
+
+        h += '<h2 style="font-size:17px;color:#721c24;margin:0 0 10px;">Temas a reforzar</h2>';
+        h += '<p style="margin:0 0 14px;font-size:13px;color:#555555;">Libro de referencia: <em>Steck-Vaughn GED: Razonamiento matemático</em> (edición en español).</p>';
+
+        const temasOrdenados = Object.keys(porTema).sort(function (a, b) {
+          return porTema[b].preguntas.length - porTema[a].preguntas.length;
+        });
+
+        if (compacto) {
+          // Vista ligera: una sola tabla, sin estilos repetidos por celda.
+          // Mantiene número, pregunta, ambas respuestas y las páginas del libro.
+          h += '<table width="100%" cellpadding="6" cellspacing="0" border="1" ' +
+               'style="border-collapse:collapse;border-color:#adb5bd;font-size:13px;">';
+          h += '<caption style="text-align:left;color:#555;padding-bottom:6px;">Preguntas por revisar.</caption>';
+          h += '<thead style="background:#f8d7da;color:#721c24;"><tr>' +
+               '<th scope="col">N.&ordm;</th><th scope="col">Pregunta</th>' +
+               '<th scope="col">Tu respuesta</th><th scope="col">Correcta</th>' +
+               '<th scope="col">Estudiar</th></tr></thead><tbody>';
+          temasOrdenados.forEach(function (tema) {
+            porTema[tema].preguntas.forEach(function (p) {
+              h += '<tr><td align="center">' + p.number + '</td>' +
+                   '<td>' + escaparHTML(quitarEtiquetas(p.question)) + '</td>' +
+                   '<td>' + escaparHTML(quitarEtiquetas(p.userAnswer)) + '</td>' +
+                   '<td>' + escaparHTML(quitarEtiquetas(p.correctAnswer)) + '</td>' +
+                   '<td>' + escaparHTML(p.bookPages) + '</td></tr>';
+            });
+          });
+          h += '</tbody></table>';
+        } else {
+          // Vista completa: agrupada por tema y con la explicación de cada error.
+          temasOrdenados.forEach(function (tema) {
+            const g = porTema[tema];
+            const area = g.area === "algebra" ? "Álgebra" : "Cuantitativo";
+            h += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:0 0 16px;border:1px solid #adb5bd;">';
+            h += '<tr><td colspan="2" style="background:#f8d7da;color:#721c24;padding:10px 12px;font-weight:bold;font-size:14px;border-bottom:1px solid #adb5bd;">' +
+                 escaparHTML(area + " — " + tema) +
+                 ' (' + g.preguntas.length + (g.preguntas.length > 1 ? " errores" : " error") + ')' +
+                 '<br><span style="font-weight:normal;font-size:13px;">Estudiar: ' + escaparHTML(g.paginas) + '</span></td></tr>';
+            g.preguntas.forEach(function (p) {
+              h += '<tr>' +
+                   '<td style="' + td + 'width:34px;text-align:center;font-weight:bold;color:#b02a37;">' + p.number + '</td>' +
+                   '<td style="' + td + '"><strong>' + escaparHTML(quitarEtiquetas(p.question)) + '</strong><br>' +
+                   'Tu respuesta: <span style="color:#b02a37;font-weight:bold;">' + escaparHTML(quitarEtiquetas(p.userAnswer)) + '</span><br>' +
+                   'Respuesta correcta: <span style="color:#1e7e34;font-weight:bold;">' + escaparHTML(quitarEtiquetas(p.correctAnswer)) + '</span>' +
+                   '<br><span style="color:#555555;">Explicación: ' + escaparHTML(quitarEtiquetas(p.explanation)) + '</span>' +
+                   '</td></tr>';
+            });
+            h += '</table>';
+          });
+        }
+      }
+
+      // Rendimiento por tema
+      h += '<h2 style="font-size:17px;color:#0056b3;margin:22px 0 10px;">Rendimiento por tema</h2>';
+      h += '<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">';
+      h += '<caption style="text-align:left;font-size:13px;color:#555555;padding-bottom:6px;">Aciertos por tema y páginas de estudio recomendadas.</caption>';
+      h += '<thead><tr>' +
+           '<th scope="col" style="' + th + '">Tema</th>' +
+           '<th scope="col" style="' + th + '">Área</th>' +
+           '<th scope="col" style="' + th + '">Aciertos</th>' +
+           '<th scope="col" style="' + th + '">Rendimiento</th>' +
+           '<th scope="col" style="' + th + '">Estudiar</th>' +
+           '</tr></thead><tbody>';
+
+      Object.keys(d.estadisticas).sort(function (a, b) {
+        const sa = d.estadisticas[a], sb = d.estadisticas[b];
+        return (sa.correct / sa.total) - (sb.correct / sb.total);
+      }).forEach(function (tema) {
+        const s = d.estadisticas[tema];
+        const p = s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0;
+        const color = p >= 75 ? "#1e7e34" : (p >= 50 ? "#5C3900" : "#b02a37");
+        h += '<tr>' +
+             '<td style="' + td + '">' + escaparHTML(tema) + '</td>' +
+             '<td style="' + td + '">' + (s.theme === "algebra" ? "Álgebra" : "Cuantitativo") + '</td>' +
+             '<td style="' + td + 'text-align:center;">' + s.correct + " / " + s.total + '</td>' +
+             '<td style="' + td + 'color:' + color + ';font-weight:bold;">' + p + '%</td>' +
+             '<td style="' + td + '">' + (p < 100 ? escaparHTML(s.pages) : "Dominado") + '</td>' +
+             '</tr>';
+      });
+      h += '</tbody></table>';
+
+      if (compacto) {
+        h += '<p style="margin-top:18px;padding:12px;border:2px solid #5C3900;background:#fff3cd;color:#5C3900;font-size:13px;">' +
+             'Esta versión resumida omite las explicaciones porque el informe completo excedía el tamaño máximo de un correo. ' +
+             'Para verlas, usa el botón <strong>Descargar el informe</strong> en la página del examen.</p>';
+      }
+      h += '<p style="margin-top:24px;font-size:12px;color:#555555;border-top:1px solid #adb5bd;padding-top:10px;">' +
+           'Examen de práctica de razonamiento matemático GED &mdash; GEDparaHispanos.<br>' +
+           'José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College &mdash; City Colleges of Chicago.<br>' +
+           'Licencia CC BY-NC-SA 4.0.</p>';
+      h += '</div>';
+      return h;
+    }
+
+    // ---------- INFORME EN TEXTO PLANO (respaldo garantizado) ----------
+    function construirInformeTexto() {
+      const d = datosInforme;
+      if (!d) { return "No hay un informe disponible todavía."; }
+      const L = [];
+      L.push("INFORME DE RESULTADOS - RAZONAMIENTO MATEMATICO GED");
+      L.push("===================================================");
+      L.push("Estudiante: " + (nombreEstudiante || "Estudiante"));
+      L.push("Fecha: " + d.fecha);
+      L.push("Tiempo utilizado: " + d.tiempo);
+      L.push("");
+      L.push("Correctas: " + d.correctas + " / " + d.totalPreguntas);
+      L.push("Incorrectas: " + d.incorrectas);
+      L.push("Sin responder: " + d.sinResponder);
+      L.push("Puntuacion: " + d.porcentaje + "%");
+      L.push("");
+      L.push("TEMAS A REFORZAR");
+      L.push("----------------");
+      if (d.errores.length === 0) {
+        L.push("Ninguno. Todas las respuestas fueron correctas.");
+      } else {
+        d.errores.forEach(function (e) {
+          L.push("");
+          L.push("Pregunta " + e.number + " | " + e.topic + " | Estudiar: " + e.bookPages);
+          L.push("  " + quitarEtiquetas(e.question));
+          L.push("  Tu respuesta: " + quitarEtiquetas(e.userAnswer));
+          L.push("  Correcta: " + quitarEtiquetas(e.correctAnswer));
+          L.push("  Explicacion: " + quitarEtiquetas(e.explanation));
+        });
+      }
+      L.push("");
+      L.push("RENDIMIENTO POR TEMA");
+      L.push("--------------------");
+      Object.keys(d.estadisticas).forEach(function (tema) {
+        const s = d.estadisticas[tema];
+        const p = s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0;
+        L.push("- " + tema + ": " + s.correct + "/" + s.total + " (" + p + "%) | Estudiar: " + s.pages);
+      });
+      L.push("");
+      L.push("GEDparaHispanos - Jose M. Fernandez, Harry S. Truman College.");
+      return L.join("\n");
+    }
+
+    function construirDocumentoCompleto() {
+      return '<!DOCTYPE html>\n<html lang="es">\n<head>\n<meta charset="UTF-8">\n' +
+             '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
+             '<title>Informe GED — Razonamiento matemático</title>\n</head>\n' +
+             '<body style="margin:0;padding:24px;background:#ffffff;">\n' +
+             construirInformeHTML(false) + '\n</body>\n</html>';
+    }
+
+    // ---------- MODAL ACCESIBLE ----------
+    function abrirModalEmail() {
+      if (!datosInforme) { return; }
+      focoPrevio = document.activeElement;
+      const modal = document.getElementById("emailModal");
+      modal.style.display = "flex";
+      document.getElementById("errorEmail").textContent = "";
+      document.getElementById("estadoEnvio").textContent = "";
+      document.getElementById("estadoEnvio").className = "estado-envio";
+      const btn = document.getElementById("btnEnviarCorreo");
+      btn.disabled = false;
+      btn.textContent = "Enviar informe";
+      if (!emailjsListo()) {
+        document.getElementById("avisoConfig").style.display = "block";
+        btn.disabled = true;
+      }
+      setTimeout(function () { document.getElementById("campoNombre").focus(); }, 60);
+    }
+
+    function cerrarModalEmail() {
+      document.getElementById("emailModal").style.display = "none";
+      if (focoPrevio && typeof focoPrevio.focus === "function") { focoPrevio.focus(); }
+    }
+
+    document.addEventListener("keydown", function (e) {
+      const modal = document.getElementById("emailModal");
+      if (e.key === "Escape" && modal && modal.style.display === "flex") { cerrarModalEmail(); }
+    });
+
+    function correoValido(v) {
+      return /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(String(v).trim());
+    }
+
+    function mostrarEstado(texto, tipo) {
+      const el = document.getElementById("estadoEnvio");
+      el.textContent = texto;
+      el.className = "estado-envio" + (tipo ? " estado-" + tipo : "");
+    }
+
+    // ---------- ENVÍO ----------
+    function enviarInformePorCorreo() {
+      const campoEmail = document.getElementById("campoEmail");
+      const errorEl = document.getElementById("errorEmail");
+      const correo = campoEmail.value.trim();
+
+      nombreEstudiante = document.getElementById("campoNombre").value.trim();
+
+      if (!correoValido(correo)) {
+        errorEl.textContent = "Escribe un correo electrónico válido, por ejemplo: nombre@correo.com";
+        campoEmail.setAttribute("aria-invalid", "true");
+        campoEmail.focus();
+        return;
+      }
+      errorEl.textContent = "";
+      campoEmail.removeAttribute("aria-invalid");
+
+      if (!emailjsListo()) {
+        mostrarEstado("El envío por correo aún no está configurado. Usa el botón Descargar informe.", "error");
+        return;
+      }
+
+      const btn = document.getElementById("btnEnviarCorreo");
+      btn.disabled = true;
+      btn.textContent = "Enviando…";
+      mostrarEstado("Enviando el informe. Espera unos segundos, por favor.", "cargando");
+
+      let cuerpoHTML = construirInformeHTML(false);
+      let recortado = false;
+      if (cuerpoHTML.length > 40000) { cuerpoHTML = construirInformeHTML(true); recortado = true; }
+
+      const parametros = {
+        to_email: correo,
+        cc_email: CORREO_DOCENTE,
+        student_name: nombreEstudiante || "Estudiante",
+        subject: "Informe GED Matemáticas — " + (nombreEstudiante || "Estudiante") + " — " + datosInforme.porcentaje + "%",
+        score: datosInforme.porcentaje + "%",
+        correctas: String(datosInforme.correctas),
+        incorrectas: String(datosInforme.incorrectas),
+        sin_responder: String(datosInforme.sinResponder),
+        fecha: datosInforme.fecha,
+        report_html: cuerpoHTML,
+        report_text: construirInformeTexto()
+      };
+
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, parametros)
+        .then(function () {
+          mostrarEstado("Informe enviado a " + correo + ". Revisa también la carpeta de correo no deseado." +
+            (recortado ? " Por su tamaño se envió sin las explicaciones: descárgalo aquí si las necesitas." : ""), "exito");
+          btn.textContent = "Enviado";
+        })
+        .catch(function (err) {
+          console.error("Error de envío:", err);
+          mostrarEstado("No se pudo enviar el correo. Descarga el informe con el botón de abajo y envíalo como archivo adjunto.", "error");
+          btn.disabled = false;
+          btn.textContent = "Reintentar envío";
+        });
+    }
+
+    // ---------- DESCARGA (siempre funciona, sin internet) ----------
+    function descargarInforme() {
+      if (!datosInforme) { return; }
+      nombreEstudiante = document.getElementById("campoNombre") ?
+        document.getElementById("campoNombre").value.trim() : nombreEstudiante;
+      const blob = new Blob([construirDocumentoCompleto()], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "informe-ged-matematicas-" + nombreArchivoSeguro(nombreEstudiante) + ".html";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
+      if (document.getElementById("estadoEnvio")) {
+        mostrarEstado("Informe descargado. Búscalo en la carpeta de descargas y adjúntalo a un correo.", "exito");
+      }
+    }
+
+    // ---------- COPIAR (respaldo para quienes prefieren pegar) ----------
+    function copiarInforme() {
+      const texto = construirInformeTexto();
+      function respaldo() {
+        const ta = document.createElement("textarea");
+        ta.value = texto;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try { document.execCommand("copy"); mostrarEstado("Informe copiado. Ya puedes pegarlo donde lo necesites.", "exito"); }
+        catch (e) { mostrarEstado("Tu navegador no permite copiar automáticamente. Usa el botón Descargar informe.", "error"); }
+        document.body.removeChild(ta);
+      }
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(texto)
+          .then(function () { mostrarEstado("Informe copiado. Ya puedes pegarlo donde lo necesites.", "exito"); })
+          .catch(respaldo);
+      } else {
+        respaldo();
+      }
+    }
+
+    // ---------- IMPRESIÓN (corregida) ----------
+    function abrirYImprimir() {
+      if (!datosInforme) { return; }
+      const ventana = window.open("", "_blank", "width=900,height=700");
+      if (!ventana) {
+        alert("El navegador bloqueó la ventana de impresión. Permite las ventanas emergentes o usa el botón Descargar informe.");
+        return;
+      }
+      ventana.document.open();
+      ventana.document.write(construirDocumentoCompleto());
+      ventana.document.close();
+      ventana.focus();
+      setTimeout(function () { ventana.print(); }, 400);
+    }
+
+    // ---------- BOTONES DEL INFORME ----------
+    function botonesInforme() {
+      return '<div class="acciones-informe">' +
+        '<button type="button" class="btn-informe btn-informe-primario" onclick="abrirModalEmail()">' +
+        '<span aria-hidden="true">✉️</span> Enviar informe por correo</button>' +
+        '<button type="button" class="btn-informe btn-informe-secundario" onclick="descargarInforme()">' +
+        '<span aria-hidden="true">⬇️</span> Descargar informe</button>' +
+        '<button type="button" class="btn-informe btn-informe-secundario" onclick="abrirYImprimir()">' +
+        '<span aria-hidden="true">🖨️</span> Imprimir informe</button>' +
+        '</div>';
+    }
     </script>
   </body>
 </html>
