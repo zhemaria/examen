@@ -1561,10 +1561,10 @@
        ============================================================ */
 
     // ---------- CONFIGURACIÓN (editar estas 4 líneas) ----------
-    const EMAILJS_PUBLIC_KEY  = "TU_PUBLIC_KEY";
-    const EMAILJS_SERVICE_ID  = "TU_SERVICE_ID";
-    const EMAILJS_TEMPLATE_ID = "TU_TEMPLATE_ID";
-    const CORREO_DOCENTE      = ""; // opcional: copia automática al instructor
+    const EMAILJS_PUBLIC_KEY  = "toJewFtYhkZ804NAz";
+    const EMAILJS_SERVICE_ID  = "service_nuhjoni";
+    const EMAILJS_TEMPLATE_ID = "template_cuejyjn";
+    const CORREO_DOCENTE      = "jm481213@gmail.com"; // copia automática al instructor
 
     // ---------- ESTADO ----------
     let datosInforme = null;      // se llena al terminar el examen
@@ -1657,6 +1657,33 @@
            '<td style="' + tdCaja + '"><span style="font-size:24px;font-weight:bold;color:#0056b3;">' + d.porcentaje + '%</span><br><span style="font-size:12px;color:#555555;">Puntuación</span></td>' +
            '</tr></table>';
 
+      // Rendimiento por tema
+      h += '<h2 style="font-size:17px;color:#0056b3;margin:0 0 10px;">Diagnóstico por tema</h2>';
+      h += '<table width="100%" cellpadding="7" cellspacing="0" border="1" ' +
+           'style="border-collapse:collapse;border-color:#adb5bd;font-size:13px;">';
+      h += '<caption style="text-align:left;font-size:13px;color:#555555;padding-bottom:6px;">Aciertos por tema, ordenados de menor a mayor dominio. Las páginas remiten al Steck-Vaughn.</caption>';
+      h += '<thead style="background:#0056b3;color:#ffffff;"><tr>' +
+           '<th scope="col" align="left">Tema</th>' +
+           '<th scope="col" align="left">Área</th>' +
+           '<th scope="col" align="left">Aciertos</th>' +
+           '<th scope="col" align="left">Dominio</th>' +
+           '<th scope="col" align="left">Estudiar</th>' +
+           '</tr></thead><tbody>';
+
+      Object.keys(d.estadisticas).sort(function (a, b) {
+        const sa = d.estadisticas[a], sb = d.estadisticas[b];
+        return (sa.correct / sa.total) - (sb.correct / sb.total);
+      }).forEach(function (tema) {
+        const s = d.estadisticas[tema];
+        const p = s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0;
+        const color = p >= 75 ? "#1e7e34" : (p >= 50 ? "#5C3900" : "#b02a37");
+        h += '<tr><td>' + escaparHTML(tema) + '</td><td>' +
+             (s.theme === "algebra" ? "Álgebra" : "Cuantitativo") + '</td><td align="center">' +
+             s.correct + " / " + s.total + '</td><td style="color:' + color + '"><strong>' +
+             p + '%</strong></td><td>' + (p < 100 ? escaparHTML(s.pages) : "Dominado") + '</td></tr>';
+      });
+      h += '</tbody></table>';
+
       // Temas a reforzar
       if (d.errores.length === 0) {
         h += '<p style="padding:14px;border:2px solid #1e7e34;background:#d4edda;color:#155724;font-weight:bold;">' +
@@ -1668,7 +1695,7 @@
           porTema[e.topic].preguntas.push(e);
         });
 
-        h += '<h2 style="font-size:17px;color:#721c24;margin:0 0 10px;">Temas a reforzar</h2>';
+        h += '<h2 style="font-size:17px;color:#721c24;margin:26px 0 10px;">Detalle de las preguntas falladas</h2>';
         h += '<p style="margin:0 0 14px;font-size:13px;color:#555555;">Libro de referencia: <em>Steck-Vaughn GED: Razonamiento matemático</em> (edición en español).</p>';
 
         const temasOrdenados = Object.keys(porTema).sort(function (a, b) {
@@ -1700,53 +1727,23 @@
           temasOrdenados.forEach(function (tema) {
             const g = porTema[tema];
             const area = g.area === "algebra" ? "Álgebra" : "Cuantitativo";
-            h += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:0 0 16px;border:1px solid #adb5bd;">';
-            h += '<tr><td colspan="2" style="background:#f8d7da;color:#721c24;padding:10px 12px;font-weight:bold;font-size:14px;border-bottom:1px solid #adb5bd;">' +
+            h += '<table width="100%" cellpadding="8" cellspacing="0" border="1" ' +
+                 'style="border-collapse:collapse;border-color:#adb5bd;font-size:13px;margin:0 0 16px;">';
+            h += '<tr style="background:#f8d7da;color:#721c24;"><td colspan="2"><strong>' +
                  escaparHTML(area + " — " + tema) +
                  ' (' + g.preguntas.length + (g.preguntas.length > 1 ? " errores" : " error") + ')' +
-                 '<br><span style="font-weight:normal;font-size:13px;">Estudiar: ' + escaparHTML(g.paginas) + '</span></td></tr>';
+                 '</strong><br>Estudiar: ' + escaparHTML(g.paginas) + '</td></tr>';
             g.preguntas.forEach(function (p) {
-              h += '<tr>' +
-                   '<td style="' + td + 'width:34px;text-align:center;font-weight:bold;color:#b02a37;">' + p.number + '</td>' +
-                   '<td style="' + td + '"><strong>' + escaparHTML(quitarEtiquetas(p.question)) + '</strong><br>' +
-                   'Tu respuesta: <span style="color:#b02a37;font-weight:bold;">' + escaparHTML(quitarEtiquetas(p.userAnswer)) + '</span><br>' +
-                   'Respuesta correcta: <span style="color:#1e7e34;font-weight:bold;">' + escaparHTML(quitarEtiquetas(p.correctAnswer)) + '</span>' +
-                   '<br><span style="color:#555555;">Explicación: ' + escaparHTML(quitarEtiquetas(p.explanation)) + '</span>' +
-                   '</td></tr>';
+              h += '<tr><td align="center" width="34"><strong>' + p.number + '</strong></td><td><strong>' +
+                   escaparHTML(quitarEtiquetas(p.question)) + '</strong><br>Tu respuesta: <span style="color:#b02a37">' +
+                   escaparHTML(quitarEtiquetas(p.userAnswer)) + '</span> &nbsp;|&nbsp; Correcta: <span style="color:#1e7e34">' +
+                   escaparHTML(quitarEtiquetas(p.correctAnswer)) + '</span><br><span style="color:#555">' +
+                   escaparHTML(quitarEtiquetas(p.explanation)) + '</span></td></tr>';
             });
             h += '</table>';
           });
         }
       }
-
-      // Rendimiento por tema
-      h += '<h2 style="font-size:17px;color:#0056b3;margin:22px 0 10px;">Rendimiento por tema</h2>';
-      h += '<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">';
-      h += '<caption style="text-align:left;font-size:13px;color:#555555;padding-bottom:6px;">Aciertos por tema y páginas de estudio recomendadas.</caption>';
-      h += '<thead><tr>' +
-           '<th scope="col" style="' + th + '">Tema</th>' +
-           '<th scope="col" style="' + th + '">Área</th>' +
-           '<th scope="col" style="' + th + '">Aciertos</th>' +
-           '<th scope="col" style="' + th + '">Rendimiento</th>' +
-           '<th scope="col" style="' + th + '">Estudiar</th>' +
-           '</tr></thead><tbody>';
-
-      Object.keys(d.estadisticas).sort(function (a, b) {
-        const sa = d.estadisticas[a], sb = d.estadisticas[b];
-        return (sa.correct / sa.total) - (sb.correct / sb.total);
-      }).forEach(function (tema) {
-        const s = d.estadisticas[tema];
-        const p = s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0;
-        const color = p >= 75 ? "#1e7e34" : (p >= 50 ? "#5C3900" : "#b02a37");
-        h += '<tr>' +
-             '<td style="' + td + '">' + escaparHTML(tema) + '</td>' +
-             '<td style="' + td + '">' + (s.theme === "algebra" ? "Álgebra" : "Cuantitativo") + '</td>' +
-             '<td style="' + td + 'text-align:center;">' + s.correct + " / " + s.total + '</td>' +
-             '<td style="' + td + 'color:' + color + ';font-weight:bold;">' + p + '%</td>' +
-             '<td style="' + td + '">' + (p < 100 ? escaparHTML(s.pages) : "Dominado") + '</td>' +
-             '</tr>';
-      });
-      h += '</tbody></table>';
 
       if (compacto) {
         h += '<p style="margin-top:18px;padding:12px;border:2px solid #5C3900;background:#fff3cd;color:#5C3900;font-size:13px;">' +
@@ -1880,7 +1877,7 @@
 
       let cuerpoHTML = construirInformeHTML(false);
       let recortado = false;
-      if (cuerpoHTML.length > 40000) { cuerpoHTML = construirInformeHTML(true); recortado = true; }
+      if (cuerpoHTML.length > 45000) { cuerpoHTML = construirInformeHTML(true); recortado = true; }
 
       const parametros = {
         to_email: correo,
