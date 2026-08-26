@@ -1600,6 +1600,12 @@
         .replace(/\s+/g, " ").trim();
     }
 
+    function pesoEnBytes(obj) {
+      const txt = JSON.stringify(obj);
+      if (typeof TextEncoder !== "undefined") { return new TextEncoder().encode(txt).length; }
+      return unescape(encodeURIComponent(txt)).length;
+    }
+
     function formatearTiempo(seg) {
       const m = Math.floor(seg / 60), s = seg % 60;
       return m + " min " + String(s).padStart(2, "0") + " s";
@@ -1631,9 +1637,12 @@
     // ---------- INFORME EN HTML (compatible con correo e impresión) ----------
     // Usa tablas y estilos en línea: los clientes de correo ignoran
     // flexbox, grid y variables CSS.
-    // compacto = true omite las explicaciones, para no exceder el limite
-    // de 50 KB por peticion que impone el servicio de correo.
+    // nivel 0 = completo (con explicaciones)
+    // nivel 1 = compacto (tabla de errores, sin explicaciones)
+    // nivel 2 = minimo  (solo el diagnostico por tema)
+    // El servicio de correo limita el TOTAL de variables a 50 KB.
     function construirInformeHTML(compacto) {
+      const minimo = compacto >= 2;
       const d = datosInforme;
       if (!d) { return "<p>No hay un informe disponible todavía.</p>"; }
 
@@ -1702,7 +1711,11 @@
           return porTema[b].preguntas.length - porTema[a].preguntas.length;
         });
 
-        if (compacto) {
+        if (minimo) {
+          h += '<p style="padding:12px;border:2px solid #5C3900;background:#fff3cd;color:#5C3900;font-size:13px;">' +
+               'El detalle pregunta por pregunta no cabía en un correo. Está completo en el informe ' +
+               'que puedes descargar desde la página del examen, con el botón <strong>Descargar el informe</strong>.</p>';
+        } else if (compacto) {
           // Vista ligera: una sola tabla, sin estilos repetidos por celda.
           // Mantiene número, pregunta, ambas respuestas y las páginas del libro.
           h += '<table width="100%" cellpadding="6" cellspacing="0" border="1" ' +
@@ -1745,7 +1758,7 @@
         }
       }
 
-      if (compacto) {
+      if (compacto && !minimo) {
         h += '<p style="margin-top:18px;padding:12px;border:2px solid #5C3900;background:#fff3cd;color:#5C3900;font-size:13px;">' +
              'Esta versión resumida omite las explicaciones porque el informe completo excedía el tamaño máximo de un correo. ' +
              'Para verlas, usa el botón <strong>Descargar el informe</strong> en la página del examen.</p>';
@@ -1875,10 +1888,10 @@
       btn.textContent = "Enviando…";
       mostrarEstado("Enviando el informe. Espera unos segundos, por favor.", "cargando");
 
-      let cuerpoHTML = construirInformeHTML(false);
-      let recortado = false;
-      if (cuerpoHTML.length > 45000) { cuerpoHTML = construirInformeHTML(true); recortado = true; }
-
+      // El servicio rechaza con 413 si el TOTAL de variables supera 50 KB.
+      // Se mide en bytes UTF-8 (los acentos ocupan dos) y se baja de nivel
+      // hasta que quepa, dejando margen para la cabecera de la peticion.
+      const LIMITE_BYTES = 46000;
       const parametros = {
         to_email: correo,
         cc_email: CORREO_DOCENTE,
@@ -1889,9 +1902,17 @@
         incorrectas: String(datosInforme.incorrectas),
         sin_responder: String(datosInforme.sinResponder),
         fecha: datosInforme.fecha,
-        report_html: cuerpoHTML,
-        report_text: construirInformeTexto()
+        report_html: construirInformeHTML(0)
       };
+
+      let recortado = false;
+      if (pesoEnBytes(parametros) > LIMITE_BYTES) {
+        parametros.report_html = construirInformeHTML(1);
+        recortado = true;
+      }
+      if (pesoEnBytes(parametros) > LIMITE_BYTES) {
+        parametros.report_html = construirInformeHTML(2);
+      }
 
       emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, parametros)
         .then(function () {
