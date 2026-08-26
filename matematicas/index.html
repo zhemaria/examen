@@ -1901,7 +1901,18 @@
         })
         .catch(function (err) {
           console.error("Error de envío:", err);
-          mostrarEstado("No se pudo enviar el correo. Descarga el informe con el botón de abajo y envíalo como archivo adjunto.", "error");
+          // El detalle se muestra en pantalla: la consola no sirve a un estudiante.
+          let detalle = "";
+          if (err && err.status) { detalle = " [" + err.status + (err.text ? ": " + err.text : "") + "]"; }
+          else if (err && err.message) { detalle = " [" + err.message + "]"; }
+
+          if (location.protocol === "file:") {
+            mostrarEstado("El envío por correo no funciona al abrir el archivo desde el disco: " +
+              "hay que probarlo desde el sitio web publicado." + detalle, "error");
+          } else {
+            mostrarEstado("No se pudo enviar el correo." + detalle +
+              " Descarga el informe con el botón de abajo y envíalo como archivo adjunto.", "error");
+          }
           btn.disabled = false;
           btn.textContent = "Reintentar envío";
         });
