@@ -31,10 +31,13 @@
       .passage-text { line-height: 1.8; font-size: 16px; }
       .actual-question { font-size: 18px; font-weight: bold; color: #2c3e50; margin: 20px 0; padding: 15px; background: #fff5f5; border-left: 4px solid #e74c3c; border-radius: 5px; }
       .options { display: flex; flex-direction: column; gap: 12px; }
-      .option { background: #f8f9fa; border: 2px solid #bdc3c7; border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: flex-start; gap: 10px; }
+      .option { background: #f8f9fa; border: 2px solid #bdc3c7; border-radius: 10px; padding: 15px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: flex-start; gap: 10px; width: 100%; text-align: left; font: inherit; color: inherit; }
       .option:hover { background: #fff5f5; border-color: #e74c3c; transform: translateY(-2px); }
-      .option.correct { background: #d5e8d4; border-color: #27ae60; color: #155724; font-weight: bold; }
-      .option.incorrect { background: #f8d7da; border-color: #e74c3c; color: #721c24; font-weight: bold; }
+      /* Selección neutra: el examen no revela si la respuesta es correcta */
+      .option.selected { background: #eaf2fb; border-color: #2c3e50; box-shadow: inset 0 0 0 1px #2c3e50; }
+      .option.selected .option-letter { background: #2c3e50; border-color: #1b2733; }
+      .option:focus-visible, .dropdown:focus-visible, .nav-button:focus-visible,
+      .drag-item:focus-visible, .btn:focus-visible, .drop-zone:focus-visible { outline: 3px solid #1b2733; outline-offset: 2px; }
       .option-letter { background: #e74c3c; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #c0392b; flex-shrink: 0; }
       .dropdown { padding: 10px; border: 2px solid #bdc3c7; border-radius: 5px; font-size: 16px; background: white; width: 100%; }
       .dropdown:focus { outline: none; border-color: #e74c3c; }
@@ -57,7 +60,10 @@
       .drag-drop-container { display: flex; gap: 30px; margin: 20px 0; flex-wrap: wrap; }
       .drag-items { flex: 1; min-width: 300px; }
       .drop-zones { flex: 1; min-width: 300px; }
-      .drag-item { background: #fff5f5; border: 2px solid #e74c3c; border-radius: 8px; padding: 12px; margin: 8px 0; cursor: grab; transition: all 0.3s ease; user-select: none; font-weight: 500; }
+      .drag-item { background: #fff5f5; border: 2px solid #e74c3c; border-radius: 8px; padding: 12px; margin: 8px 0; cursor: grab; transition: all 0.3s ease; user-select: none; font-weight: 500; display: block; width: 100%; text-align: left; font-family: inherit; font-size: 15px; color: inherit; }
+      .drag-item.elegida { background: #fff3cd; border-color: #856404; box-shadow: inset 0 0 0 2px #856404; }
+      .ayuda-arrastre { font-size: 13px; color: #5a6268; margin-bottom: 10px; line-height: 1.5; }
+      .zone-desc { color: #5a6268; }
       .drag-item:hover { background: #d5f4e6; border-color: #27ae60; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
       .drag-item.dragging { opacity: 0.5; cursor: grabbing; }
       .drop-zone { background: #f8f9fa; border: 2px dashed #bdc3c7; border-radius: 8px; padding: 15px; margin: 8px 0; min-height: 60px; display: flex; align-items: center; transition: all 0.3s ease; }
@@ -104,8 +110,52 @@
       .perf-low { background: #e74c3c; }
       .all-correct-message { text-align: center; padding: 30px; font-size: 18px; color: #27ae60; }
       .all-correct-message .trophy { font-size: 64px; display: block; margin-bottom: 15px; }
-      .print-button { background: #6c757d; color: white; border: 2px solid #5a6268; padding: 10px 24px; border-radius: 25px; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.3s ease; margin-top: 15px; }
-      .print-button:hover { background: #5a6268; transform: translateY(-2px); }
+      /* ---------- Botones del informe ---------- */
+      .btn { font: inherit; font-weight: bold; border-radius: 25px; padding: 12px 24px; cursor: pointer; border: 2px solid; transition: all 0.3s ease; }
+      .btn-primario { background: #c0392b; color: #fff; border-color: #a93226; }
+      .btn-primario:hover:not(:disabled) { background: #a93226; transform: translateY(-2px); }
+      .btn-secundario { background: #fff; color: #2c3e50; border-color: #7f8c8d; }
+      .btn-secundario:hover { background: #ecf0f1; transform: translateY(-2px); }
+      .btn:disabled { background: #95a5a6; color: #fff; border-color: #7f8c8d; cursor: not-allowed; transform: none; }
+      .acciones { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 22px; }
+
+      /* ---------- Tablas del informe ---------- */
+      .tabla-datos { width: 100%; border-collapse: collapse; font-size: 14px; margin: 10px 0 26px; }
+      .tabla-datos caption { text-align: left; color: #6c757d; font-size: 13px; font-style: italic; padding-bottom: 8px; }
+      .tabla-datos th { background: #c0392b; color: #fff; padding: 10px 14px; text-align: left; font-size: 13px; }
+      .tabla-datos td { padding: 10px 14px; border-bottom: 1px solid #dee2e6; vertical-align: middle; }
+      .tabla-datos tr:nth-child(even) { background: #f8f9fa; }
+      .tabla-datos a { color: #0b5394; }
+      .report-section h3 { color: #c0392b; margin: 22px 0 4px; font-size: 18px; }
+      .plan-estudio { margin: 14px 0 0 22px; }
+      .plan-estudio li { margin-bottom: 10px; }
+      .todo-bien { color: #1e7e34; font-weight: bold; }
+      .bloque-error { border: 1px solid #dee2e6; border-left: 5px solid #e74c3c; border-radius: 6px; padding: 16px; margin-bottom: 14px; background: #fff; }
+      .bloque-error p { margin-bottom: 6px; line-height: 1.6; }
+      .bloque-error .meta { color: #6c757d; font-size: 13px; }
+      .bloque-error .enunciado { font-size: 15px; }
+      .bloque-error .tu { color: #b02a37; font-weight: bold; }
+      .bloque-error .buena { color: #1e7e34; font-weight: bold; }
+      .bloque-error .explicacion { color: #555; font-size: 14px; font-style: italic; }
+
+      /* ---------- Modales ---------- */
+      .modal { display: none; position: fixed; inset: 0; z-index: 1100; background: rgba(0,0,0,.6); align-items: center; justify-content: center; padding: 16px; }
+      .modal-caja { background: #fff; border: 2px solid #c0392b; border-radius: 14px; padding: 26px; max-width: 560px; width: 100%; max-height: 92vh; overflow: auto; }
+      .modal-caja h2 { color: #c0392b; }
+      .modal-caja label { display: block; font-weight: bold; margin: 14px 0 6px; }
+      .modal-caja input[type="text"], .modal-caja input[type="email"] { font: inherit; width: 100%; border: 2px solid #bdc3c7; border-radius: 8px; padding: 12px; }
+      .modal-caja input:focus { border-color: #c0392b; outline: none; }
+      .ayuda { font-size: 13px; color: #6c757d; margin-top: 4px; }
+      .error-msg { color: #b02a37; font-weight: bold; font-size: 15px; min-height: 22px; }
+      .estado-envio { font-weight: bold; margin: 14px 0; min-height: 24px; }
+      .estado-exito { color: #1e7e34; }
+      .estado-error { color: #b02a37; }
+      .estado-cargando { color: #0b5394; }
+      .aviso { padding: 12px; border: 2px solid #856404; background: #fff8e6; color: #5C3900; border-radius: 8px; margin-top: 14px; font-size: 14px; }
+      .aviso-titulo { display: block; font-weight: bold; margin-bottom: 4px; }
+      .modal-botones { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+
+      .solo-lectores { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
       @media (max-width: 768px) {
         .timer, .question-header, .navigation { flex-direction: column; gap: 15px; }
@@ -114,9 +164,12 @@
       }
       @media print {
         body { background: white; }
-        .navigation, .start-button, .nav-button, .print-button { display: none !important; }
+        .navigation, .start-button, .nav-button, .acciones, .modal { display: none !important; }
         .results, .report-section { box-shadow: none; border: 1px solid #ccc; }
         .container { max-width: 100%; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * { transition: none !important; animation: none !important; }
       }
 @page {
   margin: 20mm;
@@ -150,8 +203,14 @@
             <li>🧠 <strong>Niveles DOK:</strong> 20% DOK-1, 80% DOK-2/3</li>
           </ul>
           <p style="text-align:center;font-size:18px"><strong>🎯 Total:</strong> 95 minutos | <strong>❓ Preguntas: </strong>45</p>
-          <p style="margin-top:15px;padding:10px;background:#fff3cd;border-radius:8px;border-left:4px solid #f39c12;font-size:14px">
-            📚 Al finalizar recibirás un <strong>Informe de Errores y Guía de Estudio</strong> con las páginas del <em>Steck-Vaughn GED: Razonamiento a través de las Artes del Lenguaje</em> que debes repasar.
+          <p style="margin-top:15px;padding:12px;background:#fff3cd;border-radius:8px;border-left:4px solid #f39c12;font-size:14px">
+            🔒 <strong>Como en el examen oficial:</strong> mientras respondes no sabrás si aciertas o fallas.
+            Puedes cambiar tus respuestas todas las veces que quieras antes de entregar.
+          </p>
+          <p style="margin-top:12px;padding:12px;background:#eaf3fb;border-radius:8px;border-left:4px solid #2980b9;font-size:14px">
+            📚 Al terminar recibirás un <strong>informe de errores y plan de estudio</strong> con el enlace a
+            cada lección de <strong>GEDparaHispanos</strong> que debes repasar. Puedes recibirlo por correo,
+            descargarlo o imprimirlo.
           </p>
         </div>
         <button class="start-button" onclick="startExam()">Comenzar Sección 1</button>
@@ -184,7 +243,8 @@
               <div class="time-display" id="timer">35:00</div>
             </div>
           </div>
-          <div class="progress-container">
+          <div class="progress-container" role="progressbar" aria-label="Progreso del examen"
+               aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
             <div class="progress-bar" id="progressBar" style="width:0%"></div>
           </div>
         </div>
@@ -199,21 +259,86 @@
         </div>
       </div>
 
-      <div id="resultsScreen" style="display:none">
+      <div id="resultsScreen" style="display:none" tabindex="-1">
         <div class="results">
-          <h2>🎉 ¡Examen Completado!</h2>
-          <div class="score" id="finalScore">0%</div>
-          <p id="resultMessage">Has terminado el examen de Artes del Lenguaje del GED</p>
-          <div style="margin:20px 0;text-align:left">
-            <h3>📊 Desglose por áreas:</h3>
-            <div id="skillBreakdown"></div>
-          </div>
-          <button class="nav-button" onclick="restartExam()" style="margin-top:20px">🔄 Reiniciar Examen</button>
+          <h2>Informe de resultados — Artes del Lenguaje GED</h2>
+          <div class="score" id="finalScore">0 %</div>
+          <p id="resultMessage"></p>
+          <div class="report-summary" id="fichasResumen" style="margin-top:20px"></div>
         </div>
-        <div id="errorReport" class="report-section" style="display:none"></div>
+
+        <div id="cuerpoInforme"></div>
+
+        <div class="acciones">
+          <button class="btn btn-primario" onclick="abrirModalCorreo()">✉️ Enviar el informe por correo</button>
+          <button class="btn btn-secundario" onclick="descargarInforme()">⬇️ Descargar el informe</button>
+          <button class="btn btn-secundario" onclick="imprimirInforme()">🖨️ Imprimir el informe</button>
+          <button class="btn btn-secundario" onclick="restartExam()">🔄 Hacer otro examen</button>
+        </div>
+
+        <p style="text-align:center;color:#fff;font-size:14px;margin-top:26px;line-height:1.7">
+          Examen de práctica de Artes del Lenguaje del GED (secciones 1 y 3) —
+          <a href="https://www.gedparahispanos.com" target="_blank" rel="noopener" style="color:#fff">GEDparaHispanos</a>.<br />
+          José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago.<br />
+          <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" rel="license" style="color:#fff">Licencia CC BY-NC-SA 4.0</a>
+        </p>
       </div>
     </div>
 
+    <p class="solo-lectores" id="avisoLector" role="status" aria-live="polite"></p>
+
+    <!-- ══════════ MODAL: CONFIRMAR ENTREGA ══════════ -->
+    <div id="modalEntrega" class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloEntrega">
+      <div class="modal-caja">
+        <h2 id="tituloEntrega">¿Entregar el examen?</h2>
+        <p id="textoEntrega" style="margin-top:10px"></p>
+        <div class="modal-botones">
+          <button class="btn btn-primario" onclick="endExam('entrega')">Sí, entregar</button>
+          <button class="btn btn-secundario" onclick="cerrarModal('modalEntrega')">Volver al examen</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ MODAL: ENVÍO POR CORREO ══════════ -->
+    <div id="modalCorreo" class="modal" role="dialog" aria-modal="true"
+         aria-labelledby="tituloCorreo" aria-describedby="descCorreo">
+      <div class="modal-caja">
+        <h2 id="tituloCorreo">Enviar el informe por correo</h2>
+        <p id="descCorreo" style="margin-top:8px">
+          Escribe tu correo y recibirás el informe completo: tu puntuación, el diagnóstico por
+          destreza y por tema, y las lecciones de GEDparaHispanos que debes estudiar.
+          Tu instructor recibe una copia.
+        </p>
+
+        <label for="campoNombre">Tu nombre y apellido</label>
+        <input type="text" id="campoNombre" autocomplete="name" placeholder="María Rodríguez" />
+
+        <label for="campoCorreo">Tu correo electrónico (obligatorio)</label>
+        <input type="email" id="campoCorreo" autocomplete="email" inputmode="email"
+               required aria-required="true" aria-describedby="ayudaCorreo errorCorreo"
+               placeholder="nombre@correo.com" />
+        <p class="ayuda" id="ayudaCorreo">Ejemplo: maria.rodriguez@gmail.com</p>
+        <p class="error-msg" id="errorCorreo" role="alert"></p>
+
+        <div class="aviso" id="avisoConfig" style="display:none">
+          <span class="aviso-titulo">Envío no configurado</span>
+          Faltan las credenciales del servicio de correo. Usa el botón «Descargar el informe».
+        </div>
+
+        <p class="estado-envio" id="estadoEnvio" role="status" aria-live="polite"></p>
+
+        <div class="modal-botones">
+          <button class="btn btn-primario" id="btnEnviar" onclick="enviarInformePorCorreo()">Enviar el informe</button>
+          <button class="btn btn-secundario" onclick="cerrarModal('modalCorreo')">Cancelar</button>
+        </div>
+        <div class="modal-botones">
+          <button class="btn btn-secundario" onclick="descargarInforme()">Descargar el informe</button>
+          <button class="btn btn-secundario" onclick="copiarInforme()">Copiar el informe</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script>
     let currentQuestion = 0;
     let currentSection = 1;
@@ -226,7 +351,7 @@
       // ========== SECCIÓN 1 (18 PREGUNTAS) ==========
       {
         section:1, dok:1, skill:"reading", type:"multiple-choice",
-        topic:"Idea principal y detalles", bookPages:"págs. 2–3",
+        topic:"Determinar la idea principal y los detalles", bookPages:"págs. 2–3",
         passage:{ title:"Memorando de Oficina - Política de Vacaciones",
           text:`MEMORANDO\nPara: Todo el personal\nDe: Recursos Humanos\nFecha: 15 de marzo, 2024\nAsunto: Actualización de la política de vacaciones\n\nSe informa a todo el personal que a partir del 1 de abril de 2024, entrarán en vigor los siguientes cambios en la política de vacaciones:\n\n1. Los empleados de tiempo completo acumularán 1.5 días de vacaciones por mes trabajado.\n2. Los días de vacaciones deben solicitarse con al menos dos semanas de anticipación.\n3. No se pueden tomar más de 10 días consecutivos de vacaciones sin aprobación del supervisor.\n4. Los días de vacaciones no utilizados al final del año fiscal (31 de diciembre) se perderán.\n\nPara más información, contacte al departamento de Recursos Humanos en la extensión 2150.` },
         question:"Según el memorando, ¿cuántos días de vacaciones acumula un empleado de tiempo completo por mes?",
@@ -245,7 +370,7 @@
       },
       {
         section:1, dok:1, skill:"reading", type:"multiple-choice",
-        topic:"Idea principal y detalles", bookPages:"págs. 2–3",
+        topic:"Determinar la idea principal y los detalles", bookPages:"págs. 2–3",
         passage:{ title:"Receta - Ensalada de Frutas Tropicales",
           text:`ENSALADA DE FRUTAS TROPICALES\n\nIngredientes:\n- 2 mangos maduros, pelados y cortados en cubos\n- 1 piña fresca, sin cáscara y cortada en trozos\n- 3 kiwis, pelados y rebanados\n- 1 taza de fresas, sin hojas y cortadas por la mitad\n- 2 cucharadas de miel\n- Jugo de 1 limón\n- Hojas de menta para decorar\n\nInstrucciones:\n1. En un tazón grande, combine todos los frutos cortados.\n2. En un recipiente pequeño, mezcle la miel con el jugo de limón.\n3. Vierta la mezcla de miel y limón sobre las frutas.\n4. Revuelva suavemente para cubrir todas las frutas.\n5. Refrigere por al menos 30 minutos antes de servir.\n6. Decore con hojas de menta al momento de servir.\n\nRinde: 6 porciones\nTiempo de preparación: 20 minutos` },
         question:"¿Cuánto tiempo debe refrigerarse la ensalada antes de servir?",
@@ -423,7 +548,7 @@
       },
       {
         section:3, dok:2, skill:"reading", type:"multiple-choice",
-        topic:"Sacar conclusiones en textos de no ficción", bookPages:"págs. 20–21",
+        topic:"Sacar conclusiones", bookPages:"págs. 20–21",
         passage:{ title:"La Psicología del Color en el Marketing",
           text:"El color es una herramienta de comunicación no verbal poderosa. En el marketing y la construcción de marcas, la elección de una paleta de colores no es una decisión arbitraria; es una estrategia calculada para evocar emociones específicas y transmitir los valores de una marca. Las investigaciones demuestran que hasta el 90% de los juicios rápidos sobre productos pueden basarse solo en el color.\n\nPor ejemplo, el rojo se asocia comúnmente con la energía, la pasión y la urgencia. Es por eso que se utiliza a menudo en las ventas de liquidación y en la industria de la comida rápida para estimular el apetito y crear una sensación de inmediatez. Por el contrario, el azul inspira sentimientos de confianza, seguridad y serenidad. No es de extrañar que muchas instituciones financieras, compañías de tecnología y proveedores de atención médica lo incorporen en sus logotipos.\n\nEl verde, evocador de la naturaleza y la tranquilidad, es la elección obvia para las marcas que quieren ser percibidas como orgánicas, saludables o ecológicas. El amarillo, optimista y juvenil, se usa para captar la atención de los compradores en los escaparates. Sin embargo, el impacto del color puede variar significativamente entre culturas. Mientras que el blanco simboliza la pureza y las bodas en las culturas occidentales, en muchas culturas orientales se asocia con el luto. Por lo tanto, una estrategia de color global exitosa debe ser culturalmente sensible." },
         question:"Según el autor, ¿por qué un banco podría elegir el color azul para su marca?",
@@ -696,6 +821,123 @@
     // ====================================================
     // FUNCIONES DEL EXAMEN
     // ====================================================
+    /* ════════════════════════════════════════════════════════════
+       CONFIGURACIÓN — es lo único que hay que tocar para adaptar
+       este examen a otra materia.
+       ════════════════════════════════════════════════════════════ */
+    const CONFIG = {
+      materia: "Artes del Lenguaje",
+      // Servicio de correo — las mismas credenciales de los cuatro exámenes
+      emailjsPublicKey: "toJewFtYhkZ804NAz",
+      emailjsServiceId: "service_nuhjoni",
+      emailjsTemplateId: "template_cuejyjn",
+      correoDocente: "jm481213@gmail.com"
+    };
+
+    /* ─────────── CATÁLOGO DE LECCIONES DE GEDparaHispanos ───────────
+       Cada tema del examen apunta a la lección que el estudiante debe
+       estudiar si lo falla. Sustituye las páginas del libro impreso.
+       ──────────────────────────────────────────────────────────────── */
+    const SITIO = "https://www.gedparahispanos.com";
+    const RLA = SITIO + "/artes-del-lenguaje";
+
+    const RUTAS = {
+      "com-elementos":    { t: "Elementos para comprender",          u: RLA + "/comprensión-de-textos/elementos-para-comprender" },
+      "com-practica":     { t: "Práctica de comprensión",            u: RLA + "/comprensión-de-textos/práctica-de-comprensión" },
+      "com-ejercicios":   { t: "Ejercicios de comprensión lectora",  u: RLA + "/comprensión-de-textos/ejercicios-de-comprensión-lectora" },
+      "com-inferencia":   { t: "Inferencia lectora",                 u: RLA + "/comprensión-de-textos/inferencia-lectora" },
+      "com-vocabulario":  { t: "Vocabulario en contexto",            u: RLA + "/comprensión-de-textos/vocabulario-en-contexto" },
+      "com-analisis":     { t: "Análisis de textos",                 u: RLA + "/comprensión-de-textos/análisis-de-textos" },
+      "red-proposito":    { t: "Propósito y persuasión",             u: RLA + "/redacción-de-textos/propósito-y-persuasión" },
+      "red-comparar":     { t: "Práctica: comparar textos",          u: RLA + "/redacción-de-textos/practica-comparar-textos" },
+      "red-puntos":       { t: "Identificación de puntos clave",     u: RLA + "/redacción-de-textos/práctica-identificación-de-puntos-claves" },
+      "red-analisis":     { t: "Práctica: análisis de textos",       u: RLA + "/redacción-de-textos/práctica-análisis-de-textos" },
+      "red-argumentos":   { t: "Comparar argumentos",                u: RLA + "/redacción-de-textos/comparar-argumentos" },
+      "red-parrafo":      { t: "Redacción de 1 párrafo",             u: RLA + "/redacción-de-textos/redacción-de-1-párrafo" },
+      "red-transicion":   { t: "Frases de transición",               u: RLA + "/redacción-de-textos/frases-de-transición" },
+      "edi-elementos":    { t: "Elementos de edición",               u: RLA + "/edición-de-textos/elementos-de-edición" },
+      "edi-oracion":      { t: "Ejercicios: la oración",             u: RLA + "/edición-de-textos/ejercicios-la-oración" },
+      "edi-subordinadas": { t: "Ejercicios: oraciones subordinadas", u: RLA + "/edición-de-textos/ejercicios-oraciones-subordinadas" },
+      "edi-ortografia":   { t: "Ejercicios de ortografía",           u: RLA + "/edición-de-textos/ejercicios-ortografía" },
+      "edi-gramatica":    { t: "Ejercicios de gramática",            u: RLA + "/edición-de-textos/ejercicios-de-gramática" },
+      "edi-puntuacion":   { t: "Ejercicios de puntuación",           u: RLA + "/edición-de-textos/ejercicios-de-puntuación" }
+    };
+
+    // Tema del examen → lección de refuerzo
+    const TEMA_RUTA = {
+      "Determinar la idea principal y los detalles":   "com-elementos",
+      "Determinar la secuencia de eventos":            "com-elementos",
+      "Comparar y contrastar en la no ficción":        "red-comparar",
+      "Hacer inferencias en la no ficción":            "com-inferencia",
+      "Sacar conclusiones":                            "com-inferencia",
+      "Identificar el tema":                           "com-analisis",
+      "Analizar los personajes":                       "com-analisis",
+      "Analizar el estilo y el tono":                  "com-analisis",
+      "Interpretar el lenguaje figurado":              "com-vocabulario",
+      "Connotaciones y selección de palabras":         "com-vocabulario",
+      "Determinar el propósito del autor":             "red-proposito",
+      "Afirmaciones en textos persuasivos":            "red-proposito",
+      "Analizar los elementos de la persuasión":       "red-proposito",
+      "Analizar la estructura de los argumentos":      "red-analisis",
+      "Comparar y contrastar argumentos":              "red-argumentos",
+      "Identificar la evidencia incorrecta o inválida":"red-puntos",
+      "Clasificar evidencia como válida o inválida":   "red-puntos",
+      "Organización de párrafos":                      "red-parrafo",
+      "Tiempos verbales simples":                      "edi-gramatica",
+      "Concordancia entre sujeto y verbo":             "edi-gramatica",
+      "Pronombres personales y posesivos":             "edi-gramatica",
+      "Modificadores mal colocados":                   "edi-oracion",
+      "Conjunciones para combinar oraciones":          "edi-subordinadas",
+      "Comas con cláusulas dependientes":              "edi-puntuacion",
+      "Puntuación: dos puntos y punto y coma":         "edi-puntuacion",
+      "Comillas y puntuación de diálogo":              "edi-puntuacion",
+      "Convenciones y puntuación (apóstrofos)":        "edi-ortografia"
+    };
+
+    // Lección general asociada a cada destreza
+    const RUTA_DESTREZA = { reading: "com-elementos", language: "edi-elementos", argument: "red-argumentos" };
+    const DESTREZAS = {
+      reading:  "Comprensión de lectura",
+      language: "Gramática y lenguaje",
+      argument: "Análisis de argumentos"
+    };
+    const ICONOS = { reading: "📖", language: "✏️", argument: "🎯" };
+
+    /* ─────────── ESTADO ─────────── */
+    let segundosUsados = 0;
+    let ordenBarajado = {};     // mantiene fijo el orden de las piezas de cada arrastre
+    let piezaElegida = null;    // alternativa por clic al arrastrar y soltar
+    let datosInforme = null;
+    let nombreEstudiante = "";
+
+    /* ─────────── UTILIDADES ─────────── */
+    function escapar(s) {
+      return String(s === undefined || s === null ? "" : s)
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    }
+
+    function rutaDe(clave) {
+      return RUTAS[clave] || { t: "Artes del Lenguaje", u: RLA };
+    }
+
+    function rutaDelTema(tema) {
+      return rutaDe(TEMA_RUTA[tema]);
+    }
+
+    function nombreArchivoSeguro(t) {
+      const s = String(t || "estudiante").trim().toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+      return s || "estudiante";
+    }
+
+    function anunciar(texto) {
+      const el = document.getElementById("avisoLector");
+      if (el) el.textContent = texto;
+    }
+
+    /* ─────────── CONTROL DEL EXAMEN ─────────── */
     function startExam() {
       document.getElementById("startScreen").style.display = "none";
       document.getElementById("examInterface").style.display = "block";
@@ -721,13 +963,14 @@
       clearInterval(timer);
       timer = setInterval(() => {
         timeLeft--;
+        segundosUsados++;
         updateTimerDisplay();
         if (timeLeft <= 0) {
           timeLeft = 0;
           updateTimerDisplay();
           clearInterval(timer);
           if (currentSection === 1) showBreak();
-          else endExam();
+          else endExam("tiempo");
         }
       }, 1000);
     }
@@ -739,52 +982,58 @@
     }
 
     function updateTimerDisplay() {
-      const m = Math.floor(timeLeft/60), s = timeLeft%60;
-      document.getElementById("timer").textContent = `${m}:${s.toString().padStart(2,"0")}`;
+      const m = Math.floor(timeLeft / 60), s = timeLeft % 60;
+      document.getElementById("timer").textContent = `${m}:${s.toString().padStart(2, "0")}`;
     }
 
-    function loadQuestion(index) {
+    /* ─────────── PRESENTACIÓN DE LAS PREGUNTAS ─────────── */
+    function loadQuestion(index, sinDesplazar) {
       if (index >= questions.length || index < 0) { endExam(); return; }
       currentQuestion = index;
+      piezaElegida = null;
       const q = questions[index];
 
       let progressPercent, navText;
       if (currentSection === 1) {
-        progressPercent = ((index+1)/18)*100;
-        navText = `Pregunta ${index+1} de 18`;
+        progressPercent = ((index + 1) / 18) * 100;
+        navText = `Pregunta ${index + 1} de 18`;
       } else {
         const qInSec = index - 18 + 1;
-        progressPercent = (qInSec/27)*100;
+        progressPercent = (qInSec / 27) * 100;
         navText = `Pregunta ${qInSec} de 27`;
       }
-      document.getElementById("progressBar").style.width = `${progressPercent}%`;
+      const barra = document.getElementById("progressBar");
+      barra.style.width = `${progressPercent}%`;
+      barra.parentElement.setAttribute("aria-valuenow", Math.round(progressPercent));
       document.getElementById("progressText").textContent = navText;
 
-      const skillNames = {reading:"Comprensión de Lectura", language:"Gramática y Lenguaje", argument:"Análisis de Argumentos"};
       let html = `<div class="question-header">
         <div class="question-number">${navText}</div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <div class="dok-badge dok-${q.dok}">DOK ${q.dok}</div>
-          <div class="skill-badge ${q.skill}">${skillNames[q.skill]}</div>
+          <div class="skill-badge ${q.skill}">${DESTREZAS[q.skill]}</div>
         </div></div>`;
 
       if (q.context) html += `<div class="grammar-context">${q.context}</div>`;
-      if (q.passage) html += `<div class="passage-panel"><div class="passage-title">📖 ${q.passage.title}</div><div class="passage-text">${q.passage.text}</div></div>`;
-      if (q.question) html += `<div class="actual-question">${q.question}</div>`;
+      if (q.passage) html += `<div class="passage-panel" tabindex="0" role="region" aria-label="Pasaje de lectura"><div class="passage-title">📖 ${q.passage.title}</div><div class="passage-text">${q.passage.text}</div></div>`;
+      if (q.question) html += `<div class="actual-question" id="enunciado-${index}">${q.question}</div>`;
 
       if (q.type === "multiple-choice") {
-        html += '<div class="options">';
-        q.options.forEach((opt,i) => {
-          html += `<div class="option" id="opt-${i}" onclick="selectOption(${index},${i})"><div class="option-letter">${String.fromCharCode(65+i)}</div><span>${opt}</span></div>`;
+        html += `<div class="options" role="group" aria-labelledby="enunciado-${index}">`;
+        q.options.forEach((opt, i) => {
+          html += `<button type="button" class="option" id="opt-${i}" aria-pressed="false" onclick="selectOption(${index},${i})">
+            <span class="option-letter" aria-hidden="true">${String.fromCharCode(65 + i)}</span>
+            <span>${opt}</span></button>`;
         });
         html += '</div>';
       } else if (q.type === "dropdown") {
         const parts = q.question.split("__________");
         html = html.replace(q.question, '');
-        html += parts[0];
-        html += `<select class="dropdown" onchange="saveDropdownAnswer(${index},this.value)"><option value="">Seleccione...</option>`;
+        html += `<div class="actual-question" id="enunciado-${index}">${parts[0]}
+          <select class="dropdown" aria-label="Selecciona la opción que completa la oración" onchange="saveDropdownAnswer(${index},this.value)">
+          <option value="">Seleccione…</option>`;
         q.options.forEach(opt => { html += `<option value="${opt}">${opt}</option>`; });
-        html += `</select>${parts[1]||''}`;
+        html += `</select>${parts[1] || ''}</div>`;
       } else if (q.type === "drag-drop") {
         html += renderDragDrop(q, index);
       }
@@ -792,353 +1041,784 @@
       document.getElementById("questionCard").innerHTML = html;
       if (q.type === "drag-drop") setupDragAndDrop(index);
 
-      const isFirstSec = (currentSection===1&&index===0)||(currentSection===3&&index===18);
-      const isLastSec = (currentSection===1&&index===17)||(currentSection===3&&index===44);
+      const isFirstSec = (currentSection === 1 && index === 0) || (currentSection === 3 && index === 18);
+      const isLastSec = (currentSection === 1 && index === 17) || (currentSection === 3 && index === 44);
       document.getElementById("prevBtn").disabled = isFirstSec;
-      document.getElementById("nextBtn").textContent = isLastSec ? (currentSection===1?"Finalizar Sección 1 ➡️":"Finalizar Examen ➡️") : "Siguiente ➡️";
+      document.getElementById("nextBtn").textContent = isLastSec
+        ? (currentSection === 1 ? "Finalizar Sección 1 ➡️" : "Finalizar Examen ➡️")
+        : "Siguiente ➡️";
 
       if (answers[index] !== undefined) restoreAnswer(q, index);
+      if (!sinDesplazar) window.scrollTo(0, 0);
     }
 
+    /* ─────────── ARRASTRAR Y SOLTAR ─────────── */
     function renderDragDrop(q, index) {
-      let html = `<div class="drag-drop-container"><div class="drag-items"><h4 style="color:#e74c3c;margin-bottom:15px">📋 Elementos para organizar:</h4><div id="dragItems-${index}">`;
-      const shuffled = [...q.dragItems].sort(()=>Math.random()-0.5);
-      shuffled.forEach(item => {
-        html += `<div class="drag-item" draggable="true" data-item-id="${item.id}" data-correct="${item.correct}" data-qidx="${index}">${item.text}</div>`;
+      if (!ordenBarajado[index]) {
+        ordenBarajado[index] = [...q.dragItems].sort(() => Math.random() - 0.5).map(it => it.id);
+      }
+      const colocado = (answers[index] && answers[index].colocado) ? answers[index].colocado : {};
+      const usados = Object.values(colocado);
+
+      let html = `<div class="drag-drop-container">
+        <div class="drag-items"><h4 style="color:#e74c3c;margin-bottom:15px">📋 Elementos para organizar:</h4>
+        <p class="ayuda-arrastre">Arrástralos con el ratón o, si prefieres, pulsa un elemento y después la zona donde quieres colocarlo.</p>
+        <div id="dragItems-${index}">`;
+      ordenBarajado[index].forEach(id => {
+        if (usados.indexOf(id) !== -1) return;
+        const it = q.dragItems.find(x => x.id === id);
+        html += piezaHTML(it, index);
       });
       html += `</div></div><div class="drop-zones"><h4 style="color:#e74c3c;margin-bottom:15px">🎯 Zonas de destino:</h4><div id="dropZones-${index}">`;
-      q.dropZones.forEach((zone,i) => {
-        html += `<div class="drop-zone" data-zone="${i}" data-qidx="${index}"><span class="zone-label">${zone.label}</span><span>${zone.description}</span></div>`;
+      q.dropZones.forEach((zone, i) => {
+        html += `<div class="drop-zone" data-zone="${i}" data-qidx="${index}" onclick="colocarPieza(${index},${i})">
+          <span class="zone-label">${zone.label}</span><span class="zone-desc">${zone.description}</span>`;
+        if (colocado[i] !== undefined) {
+          const it = q.dragItems.find(x => x.id === colocado[i]);
+          if (it) html += piezaHTML(it, index);
+        }
+        html += `</div>`;
       });
       html += `</div></div></div>`;
       return html;
     }
 
+    function piezaHTML(it, index) {
+      return `<button type="button" class="drag-item" draggable="true" data-item-id="${it.id}" data-qidx="${index}"
+        onclick="event.stopPropagation();elegirPieza(${index},'${it.id}')">${it.text}</button>`;
+    }
+
     function setupDragAndDrop(qIndex) {
-      const dragItems = document.querySelectorAll(`#dragItems-${qIndex} .drag-item`);
-      const dropZones = document.querySelectorAll(`#dropZones-${qIndex} .drop-zone`);
-      let draggedItem = null;
-      dragItems.forEach(item => {
-        item.addEventListener("dragstart", e => { draggedItem = item; setTimeout(()=>item.style.display="none",0); });
-        item.addEventListener("dragend", () => { setTimeout(()=>{if(draggedItem){draggedItem.style.display="block";draggedItem=null;}},0); });
+      let arrastrada = null;
+      document.querySelectorAll(`#questionCard .drag-item`).forEach(item => {
+        item.addEventListener("dragstart", () => { arrastrada = item; item.classList.add("dragging"); });
+        item.addEventListener("dragend", () => { item.classList.remove("dragging"); arrastrada = null; });
       });
-      dropZones.forEach(zone => {
+      document.querySelectorAll(`#dropZones-${qIndex} .drop-zone`).forEach(zone => {
         zone.addEventListener("dragover", e => e.preventDefault());
         zone.addEventListener("dragenter", e => { e.preventDefault(); zone.classList.add("drag-over"); });
         zone.addEventListener("dragleave", () => zone.classList.remove("drag-over"));
         zone.addEventListener("drop", e => {
           e.preventDefault();
           zone.classList.remove("drag-over");
-          if (zone.querySelector(".drag-item")) return;
-          zone.appendChild(draggedItem);
-          const qi = parseInt(draggedItem.dataset.qidx);
-          if (!answers[qi]) answers[qi] = {dropped:{}, type:"drag-drop", isCorrect:false};
-          const zoneIdx = parseInt(zone.dataset.zone);
-          const correctIdx = parseInt(draggedItem.dataset.correct);
-          answers[qi].dropped[zoneIdx] = (zoneIdx === correctIdx);
-          // Check if all correct
-          const q = questions[qi];
-          const allDropped = Object.keys(answers[qi].dropped).length === q.dragItems.length;
-          if (allDropped) {
-            answers[qi].isCorrect = Object.values(answers[qi].dropped).every(v=>v);
-          }
+          if (!arrastrada) return;
+          asignar(qIndex, parseInt(zone.dataset.zone), arrastrada.dataset.itemId);
         });
       });
     }
 
-    function selectOption(qIndex, optIndex) {
-      if (answers[qIndex] !== undefined) return;
-      const q = questions[qIndex];
-      const isCorrect = optIndex === q.correct;
-      answers[qIndex] = {value:optIndex, isCorrect:isCorrect, type:"multiple-choice"};
-      document.querySelectorAll(".option").forEach((opt,i) => {
-        opt.style.pointerEvents = "none";
-        if (i === q.correct) opt.classList.add("correct");
-        else if (i === optIndex && !isCorrect) opt.classList.add("incorrect");
+    function elegirPieza(qIndex, idPieza) {
+      const colocado = (answers[qIndex] && answers[qIndex].colocado) || {};
+      // Si la pieza ya está en una zona, al pulsarla se retira
+      const zonaActual = Object.keys(colocado).find(z => colocado[z] === idPieza);
+      if (zonaActual !== undefined) {
+        delete answers[qIndex].colocado[zonaActual];
+        recalcularArrastre(qIndex);
+        loadQuestion(qIndex, true);
+        anunciar("Elemento retirado de la zona.");
+        return;
+      }
+      piezaElegida = idPieza;
+      document.querySelectorAll("#questionCard .drag-item").forEach(el => {
+        el.classList.toggle("elegida", el.dataset.itemId === idPieza);
       });
+      anunciar("Elemento seleccionado. Ahora pulsa la zona de destino.");
+    }
+
+    function colocarPieza(qIndex, idxZona) {
+      if (!piezaElegida) return;
+      asignar(qIndex, idxZona, piezaElegida);
+      piezaElegida = null;
+    }
+
+    function asignar(qIndex, idxZona, idPieza) {
+      if (!answers[qIndex] || answers[qIndex].type !== "drag-drop") {
+        answers[qIndex] = { type: "drag-drop", colocado: {} };
+      }
+      const colocado = answers[qIndex].colocado;
+      // Una pieza solo puede estar en una zona; una zona solo admite una pieza
+      Object.keys(colocado).forEach(z => { if (colocado[z] === idPieza) delete colocado[z]; });
+      colocado[idxZona] = idPieza;
+      recalcularArrastre(qIndex);
+      loadQuestion(qIndex, true);
+      anunciar("Elemento colocado.");
+    }
+
+    function recalcularArrastre(qIndex) {
+      const q = questions[qIndex];
+      const colocado = answers[qIndex].colocado;
+      const completo = Object.keys(colocado).length === q.dragItems.length;
+      answers[qIndex].isCorrect = completo && q.dragItems.every(it => colocado[it.correct] === it.id);
+      answers[qIndex].completo = completo;
+    }
+
+    /* ─────────── REGISTRO DE RESPUESTAS (sin retroalimentación) ─────────── */
+    function selectOption(qIndex, optIndex) {
+      const q = questions[qIndex];
+      answers[qIndex] = { value: optIndex, isCorrect: optIndex === q.correct, type: "multiple-choice" };
+      document.querySelectorAll("#questionCard .option").forEach((opt, i) => {
+        const elegida = (i === optIndex);
+        opt.classList.toggle("selected", elegida);
+        opt.setAttribute("aria-pressed", elegida ? "true" : "false");
+      });
+      anunciar("Opción " + String.fromCharCode(65 + optIndex) + " seleccionada. Puedes cambiarla si lo deseas.");
     }
 
     function saveDropdownAnswer(qIndex, value) {
-      if (!value) return;
       const q = questions[qIndex];
-      const isCorrect = value === q.correct;
-      answers[qIndex] = {value:value, isCorrect:isCorrect, type:"dropdown"};
-      const dd = document.querySelector(".dropdown");
-      if (dd) dd.style.border = isCorrect ? "2px solid #27ae60" : "2px solid #e74c3c";
+      if (!value) { delete answers[qIndex]; return; }
+      answers[qIndex] = { value: value, isCorrect: value === q.correct, type: "dropdown" };
+      anunciar("Respuesta registrada.");
     }
 
     function restoreAnswer(q, index) {
       const ans = answers[index];
       if (!ans) return;
       if (q.type === "multiple-choice") {
-        document.querySelectorAll(".option").forEach((opt,i) => {
-          opt.style.pointerEvents = "none";
-          if (i === q.correct) opt.classList.add("correct");
-          else if (i === ans.value && !ans.isCorrect) opt.classList.add("incorrect");
+        document.querySelectorAll("#questionCard .option").forEach((opt, i) => {
+          const elegida = (i === ans.value);
+          opt.classList.toggle("selected", elegida);
+          opt.setAttribute("aria-pressed", elegida ? "true" : "false");
         });
       } else if (q.type === "dropdown") {
-        const dd = document.querySelector(".dropdown");
-        if (dd && ans.value) {
-          dd.value = ans.value;
-          dd.style.border = ans.isCorrect ? "2px solid #27ae60" : "2px solid #e74c3c";
-        }
+        const dd = document.querySelector("#questionCard .dropdown");
+        if (dd && ans.value) dd.value = ans.value;
       }
+      // El arrastre se restaura en renderDragDrop
     }
 
+    /* ─────────── NAVEGACIÓN ─────────── */
     function previousQuestion() {
-      if (currentSection===1&&currentQuestion>0) loadQuestion(currentQuestion-1);
-      else if (currentSection===3&&currentQuestion>18) loadQuestion(currentQuestion-1);
+      if (currentSection === 1 && currentQuestion > 0) loadQuestion(currentQuestion - 1);
+      else if (currentSection === 3 && currentQuestion > 18) loadQuestion(currentQuestion - 1);
     }
 
     function nextQuestion() {
-      if (questions[currentQuestion] && questions[currentQuestion].type==="drag-drop") {
-        const ans = answers[currentQuestion];
-        if (!ans || Object.keys(ans.dropped||{}).length < questions[currentQuestion].dragItems.length) {
-          alert("Por favor, arrastra todos los elementos a las zonas de destino antes de continuar.");
-          return;
-        }
-      }
-      if (currentSection===1) {
-        if (currentQuestion<17) loadQuestion(currentQuestion+1);
+      if (currentSection === 1) {
+        if (currentQuestion < 17) loadQuestion(currentQuestion + 1);
         else showBreak();
       } else {
-        if (currentQuestion<44) loadQuestion(currentQuestion+1);
-        else endExam();
+        if (currentQuestion < 44) loadQuestion(currentQuestion + 1);
+        else confirmarEntrega();
       }
     }
 
-    // ====================================================
-    // FIN DEL EXAMEN E INFORME
-    // ====================================================
-    function getUserAnswerText(q, ans) {
-      if (!ans || ans.value === undefined) return "(sin respuesta)";
-      if (q.type === "multiple-choice") return q.options[ans.value] || "N/A";
-      if (q.type === "dropdown") return ans.value;
-      if (q.type === "drag-drop") return "(orden incorrecto)";
+    function confirmarEntrega() {
+      let sinResponder = 0;
+      questions.forEach((q, i) => { if (!respondida(i)) sinResponder++; });
+      document.getElementById("textoEntrega").textContent = sinResponder === 0
+        ? "Respondiste las 45 preguntas. Una vez entregado el examen no podrás cambiar tus respuestas."
+        : "Te quedan " + sinResponder + " pregunta(s) sin responder. Una vez entregado el examen no podrás cambiar tus respuestas.";
+      abrirModal("modalEntrega");
+    }
+
+    function respondida(i) {
+      const a = answers[i];
+      if (!a) return false;
+      if (a.type === "drag-drop") return a.completo === true;
+      return a.value !== undefined && a.value !== "";
+    }
+
+    /* ─────────── TEXTO DE LAS RESPUESTAS ─────────── */
+    function textoRespuestaEstudiante(q, ans) {
+      if (!ans) return "(sin respuesta)";
+      if (q.type === "multiple-choice") return ans.value !== undefined ? q.options[ans.value] : "(sin respuesta)";
+      if (q.type === "dropdown") return ans.value || "(sin respuesta)";
+      if (q.type === "drag-drop") {
+        const colocado = ans.colocado || {};
+        if (Object.keys(colocado).length === 0) return "(sin respuesta)";
+        return q.dropZones.map((z, i) => {
+          const it = q.dragItems.find(x => x.id === colocado[i]);
+          return (i + 1) + ") " + (it ? recortar(it.text) : "—");
+        }).join("  ");
+      }
       return "(sin respuesta)";
     }
 
-    function getCorrectText(q) {
+    function textoRespuestaCorrecta(q) {
       if (q.type === "multiple-choice") return q.options[q.correct];
       if (q.type === "dropdown") return q.correct;
       if (q.type === "drag-drop") {
-        const ordered = [...q.dragItems].sort((a,b)=>a.correct-b.correct);
-        return ordered.map(it=>it.text.substring(0,40)+"...").join(" → ");
+        return [...q.dragItems].sort((a, b) => a.correct - b.correct)
+          .map((it, i) => (i + 1) + ") " + recortar(it.text)).join("  ");
       }
       return String(q.correct);
     }
 
-    function endExam() {
-      clearInterval(timer);
-      let correctCount = 0, skippedCount = 0;
-      let incorrectQuestions = [], areaStats = {};
-      let skillScores = {reading:{c:0,t:0}, language:{c:0,t:0}, argument:{c:0,t:0}};
-
-      questions.forEach((q, index) => {
-        if (!areaStats[q.topic]) areaStats[q.topic] = {total:0,correct:0,incorrect:0,pages:q.bookPages,skill:q.skill};
-        areaStats[q.topic].total++;
-        if (q.skill) skillScores[q.skill].t++;
-
-        const ans = answers[index];
-        let isCorrect = false;
-
-        if (!ans || ans.value === undefined && q.type !== "drag-drop") {
-          skippedCount++;
-          areaStats[q.topic].incorrect++;
-          incorrectQuestions.push({
-            number:index+1, question:q.question||"(ver pasaje)", topic:q.topic,
-            bookPages:q.bookPages, skill:q.skill,
-            userAnswer:"(sin respuesta)", correctAnswer:getCorrectText(q), explanation:q.explanation
-          });
-          return;
-        }
-
-        if (q.type === "drag-drop") {
-          if (ans && ans.dropped) {
-            const allCorrect = Object.keys(ans.dropped).length===q.dragItems.length &&
-              Object.values(ans.dropped).every(v=>v);
-            isCorrect = allCorrect;
-          }
-        } else {
-          isCorrect = ans.isCorrect;
-        }
-
-        if (isCorrect) {
-          correctCount++;
-          areaStats[q.topic].correct++;
-          if (q.skill) skillScores[q.skill].c++;
-        } else {
-          areaStats[q.topic].incorrect++;
-          incorrectQuestions.push({
-            number:index+1, question:q.question||"(ver pasaje)", topic:q.topic,
-            bookPages:q.bookPages, skill:q.skill,
-            userAnswer:getUserAnswerText(q,ans), correctAnswer:getCorrectText(q), explanation:q.explanation
-          });
-        }
-      });
-
-      const answeredCount = questions.length - skippedCount;
-      const percentage = Math.round((correctCount/questions.length)*100);
-
-      document.getElementById("examInterface").style.display = "none";
-      document.getElementById("resultsScreen").style.display = "block";
-      document.getElementById("finalScore").textContent = `${percentage}%`;
-
-      const skillNames2 = {reading:"Comprensión de Lectura", language:"Gramática y Lenguaje", argument:"Análisis de Argumentos"};
-      const skillIcons = {reading:"📖", language:"✏️", argument:"🎯"};
-      let breakdown = '<div style="text-align:left;margin:15px 0">';
-      ["reading","language","argument"].forEach(sk => {
-        const s = skillScores[sk];
-        const p = s.t>0 ? Math.round((s.c/s.t)*100) : 0;
-        breakdown += `<p><strong>${skillIcons[sk]} ${skillNames2[sk]}:</strong> ${s.c}/${s.t} (${p}%)</p>`;
-      });
-      breakdown += `<p style="margin-top:10px"><strong>Preguntas respondidas:</strong> ${answeredCount} de ${questions.length} | <strong>Sin responder:</strong> ${skippedCount}</p>`;
-      breakdown += '</div>';
-      document.getElementById("skillBreakdown").innerHTML = breakdown;
-
-      let msg;
-      if (percentage>=85) msg="¡Excelente! Demuestras sólidas habilidades en comprensión lectora y análisis. Estás muy bien preparado para el GED de Artes del Lenguaje.";
-      else if (percentage>=70) msg="Buen trabajo. Tu comprensión lectora es sólida. Continúa practicando análisis de argumentos y gramática contextual.";
-      else if (percentage>=55) msg="Progreso notable. Enfócate en la práctica de análisis de textos complejos y la identificación de argumentos en los pasajes.";
-      else msg="Necesitas más práctica. Concéntrate en técnicas de comprensión lectora, análisis de pasajes y gramática en contexto. ¡No te rindas!";
-      document.getElementById("resultMessage").textContent = msg;
-
-      generateErrorReport(correctCount, incorrectQuestions.length, skippedCount, percentage, incorrectQuestions, areaStats, skillScores);
+    function recortar(t, largo) {
+      const s = String(t), n = largo || 45;
+      return s.length > n ? s.substring(0, n) + "…" : s;
     }
 
-    function generateErrorReport(correctCount, incorrectCount, skippedCount, percentage, incorrectQuestions, areaStats, skillScores) {
-      const div = document.getElementById("errorReport");
-      if (incorrectQuestions.length === 0) {
-        div.style.display = "block";
-        div.innerHTML = `<div class="all-correct-message"><span class="trophy">🏆</span><h2>¡Felicitaciones! ¡Todas correctas!</h2><p>Has demostrado dominio completo de las Artes del Lenguaje GED.</p></div>`;
+    /* ─────────── FIN DEL EXAMEN ─────────── */
+    function endExam(motivo) {
+      clearInterval(timer);
+      cerrarModal("modalEntrega");
+      examStarted = false;
+
+      let correctas = 0, sinResponder = 0;
+      const porTema = {}, porDestreza = {}, porDok = {}, errores = [];
+
+      questions.forEach((q, index) => {
+        const ans = answers[index];
+        const contestada = respondida(index);
+        const acierto = contestada && ans.isCorrect === true;
+
+        if (!porTema[q.topic]) porTema[q.topic] = { total: 0, correctas: 0, skill: q.skill };
+        porTema[q.topic].total++;
+
+        if (!porDestreza[q.skill]) porDestreza[q.skill] = { total: 0, correctas: 0 };
+        porDestreza[q.skill].total++;
+
+        const claveDok = "DOK " + q.dok;
+        if (!porDok[claveDok]) porDok[claveDok] = { total: 0, correctas: 0 };
+        porDok[claveDok].total++;
+
+        if (acierto) {
+          correctas++;
+          porTema[q.topic].correctas++;
+          porDestreza[q.skill].correctas++;
+          porDok[claveDok].correctas++;
+        } else {
+          if (!contestada) sinResponder++;
+          errores.push({
+            numero: index + 1,
+            tema: q.topic,
+            dok: q.dok,
+            skill: q.skill,
+            enunciado: q.question || "(ver el pasaje)",
+            tuya: textoRespuestaEstudiante(q, ans),
+            buena: textoRespuestaCorrecta(q),
+            explicacion: q.explanation || ""
+          });
+        }
+      });
+
+      const total = questions.length;
+      const incorrectas = total - correctas - sinResponder;
+      const minutos = Math.round(segundosUsados / 60);
+
+      datosInforme = {
+        fecha: new Date().toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" }),
+        tiempo: minutos + " minutos",
+        total: total,
+        correctas: correctas,
+        incorrectas: incorrectas,
+        sinResponder: sinResponder,
+        porcentaje: Math.round((correctas / total) * 100),
+        cierrePorTiempo: motivo === "tiempo",
+        porTema: porTema,
+        porDestreza: porDestreza,
+        porDok: porDok,
+        errores: errores
+      };
+
+      mostrarInforme();
+    }
+
+    function bandaResultado(p) {
+      if (p >= 85) return "Excelente. Demuestras un dominio sólido de la comprensión lectora y el análisis: estás bien preparado para el examen oficial.";
+      if (p >= 70) return "Buen trabajo. Tu comprensión lectora es sólida; refuerza el análisis de argumentos y la gramática en contexto.";
+      if (p >= 55) return "Estás en el límite. Aprobar es posible, pero sin margen: dedica tiempo a las lecciones que aparecen abajo.";
+      return "Todavía no estás listo para el examen oficial. Empieza por las lecciones del plan de estudio antes de intentarlo.";
+    }
+
+    /* ─────────── INFORME EN PANTALLA ─────────── */
+    function tablaPorClave(mapa, titulo, subtitulo, nombrador, enlazador) {
+      const claves = Object.keys(mapa).sort((a, b) =>
+        (mapa[a].correctas / mapa[a].total) - (mapa[b].correctas / mapa[b].total));
+      let h = `<h3>${titulo}</h3><table class="tabla-datos"><caption>${subtitulo}</caption><thead><tr>
+        <th scope="col">Área</th><th scope="col">Aciertos</th><th scope="col">Dominio</th><th scope="col">Nivel</th>`;
+      h += enlazador ? `<th scope="col">Estudiar</th>` : "";
+      h += `</tr></thead><tbody>`;
+      claves.forEach(k => {
+        const s = mapa[k];
+        const p = Math.round((s.correctas / s.total) * 100);
+        const cls = p >= 75 ? "perf-high" : (p >= 50 ? "perf-mid" : "perf-low");
+        h += `<tr><td>${escapar(nombrador(k))}</td><td>${s.correctas} / ${s.total}</td>
+          <td><div class="perf-bar"><div class="perf-fill ${cls}" style="width:${p}%"></div></div></td>
+          <td><strong>${p} %</strong></td>`;
+        if (enlazador) {
+          const r = enlazador(k);
+          h += `<td>${p === 100 ? "Dominado" : `<a href="${r.u}" target="_blank" rel="noopener">${escapar(r.t)}</a>`}</td>`;
+        }
+        h += `</tr>`;
+      });
+      return h + `</tbody></table>`;
+    }
+
+    function mostrarInforme() {
+      const d = datosInforme;
+      document.getElementById("examInterface").style.display = "none";
+      document.getElementById("breakScreen").style.display = "none";
+      document.getElementById("resultsScreen").style.display = "block";
+
+      document.getElementById("finalScore").textContent = d.porcentaje + " %";
+      document.getElementById("resultMessage").textContent =
+        (d.cierrePorTiempo ? "Se agotó el tiempo. " : "") + bandaResultado(d.porcentaje);
+
+      document.getElementById("fichasResumen").innerHTML =
+        `<div class="summary-card summary-correct"><span class="card-value">${d.correctas}</span><span class="card-label">Correctas</span></div>
+         <div class="summary-card summary-incorrect"><span class="card-value">${d.incorrectas}</span><span class="card-label">Incorrectas</span></div>
+         <div class="summary-card summary-skipped"><span class="card-value">${d.sinResponder}</span><span class="card-label">Sin responder</span></div>
+         <div class="summary-card summary-score"><span class="card-value">${d.porcentaje}%</span><span class="card-label">Puntuación</span></div>`;
+
+      let h = `<div class="report-section"><h2>📊 Diagnóstico</h2>
+        <p class="report-subtitle">El porcentaje es una guía de estudio, no el puntaje oficial: el GED usa una escala de 100 a 200 puntos y pondera cada pregunta según su dificultad.</p>`;
+
+      h += tablaPorClave(d.porDestreza, "Por destreza",
+        "Las destrezas aparecen ordenadas de menor a mayor dominio.",
+        k => DESTREZAS[k], k => rutaDe(RUTA_DESTREZA[k]));
+
+      h += tablaPorClave(d.porDok, "Por nivel de exigencia (DOK)",
+        "DOK 1 es recordar; DOK 2, aplicar y comparar; DOK 3, razonar con evidencia.",
+        k => k, null);
+
+      h += tablaPorClave(d.porTema, "Por tema",
+        "Cada enlace abre la lección de GEDparaHispanos que corresponde.",
+        k => k, k => rutaDelTema(k));
+      h += `</div>`;
+
+      // Plan de estudio: los temas más flojos primero
+      const flojos = Object.keys(d.porTema)
+        .filter(k => d.porTema[k].correctas < d.porTema[k].total)
+        .sort((a, b) => (d.porTema[a].correctas / d.porTema[a].total) -
+                        (d.porTema[b].correctas / d.porTema[b].total));
+
+      h += `<div class="report-section"><h2>📕 Tu plan de estudio</h2>`;
+      if (flojos.length === 0) {
+        h += `<p class="todo-bien">No hay temas pendientes: respondiste bien todas las preguntas.</p>`;
+      } else {
+        h += `<p>Empieza por arriba. Cada enlace abre la lección de GEDparaHispanos que corresponde.</p><ol class="plan-estudio">`;
+        flojos.forEach(k => {
+          const s = d.porTema[k], r = rutaDelTema(k);
+          h += `<li><strong>${escapar(k)}</strong> (${s.correctas} de ${s.total}) —
+            <a href="${r.u}" target="_blank" rel="noopener">${escapar(r.t)}</a></li>`;
+        });
+        h += `</ol>`;
+      }
+      h += `</div>`;
+
+      // Detalle de cada pregunta fallada, con la explicación que no vio durante el examen
+      h += `<div class="report-section"><h2>❌ Las preguntas que fallaste</h2>`;
+      if (d.errores.length === 0) {
+        h += `<div class="all-correct-message"><span class="trophy">🏆</span>
+          <strong>Ninguna. ¡Enhorabuena!</strong></div>`;
+      } else {
+        d.errores.forEach(e => {
+          const r = rutaDelTema(e.tema);
+          h += `<div class="bloque-error">
+            <p><strong>Pregunta ${e.numero} — ${escapar(e.tema)}</strong>
+              <span class="meta"> · DOK ${e.dok} · ${ICONOS[e.skill]} ${DESTREZAS[e.skill]}</span></p>
+            <p class="enunciado">${escapar(e.enunciado)}</p>
+            <p>Tu respuesta: <span class="tu">${escapar(e.tuya)}</span></p>
+            <p>Respuesta correcta: <span class="buena">${escapar(e.buena)}</span></p>
+            <p class="explicacion">💡 ${escapar(e.explicacion)}</p>
+            <p>Estudiar: <a href="${r.u}" target="_blank" rel="noopener">${escapar(r.t)}</a></p>
+          </div>`;
+        });
+      }
+      h += `</div>`;
+
+      document.getElementById("cuerpoInforme").innerHTML = h;
+      const pantalla = document.getElementById("resultsScreen");
+      pantalla.focus();
+      window.scrollTo(0, 0);
+    }
+
+    /* ─────────── INFORME PARA CORREO E IMPRESIÓN ───────────
+       Los clientes de correo ignoran flexbox, grid y variables CSS:
+       este informe usa tablas y estilos en línea.
+       El nivel reduce el tamaño para no exceder el límite del
+       servicio de envío:
+         0 = completo
+         1 = sin las explicaciones de cada error
+         2 = los errores pasan a lista compacta, sin tabla
+         3 = se omite el detalle de los errores
+       ──────────────────────────────────────────────────────── */
+    const LIMITE_CORREO = 45000;
+
+    function construirInformeHTML(nivel) {
+      nivel = nivel || 0;
+      const d = datosInforme;
+      if (!d) return "<p>Todavía no hay un informe disponible.</p>";
+
+      const base = "font-family:Arial,Helvetica,sans-serif;color:#212529;font-size:14px;line-height:1.55;";
+      const caja = "border:1px solid #adb5bd;padding:12px;text-align:center;background:#f8f9fa;";
+      const td = "padding:8px 10px;border:1px solid #adb5bd;font-size:13px;vertical-align:top;";
+
+      let h = '<div style="' + base + '">';
+      h += '<h1 style="font-size:20px;color:#c0392b;margin:0 0 6px;">Informe de resultados &mdash; Artes del Lenguaje GED</h1>';
+      h += '<p style="margin:0 0 18px;color:#555555;font-size:13px;">Estudiante: <strong>' +
+           escapar(nombreEstudiante || "Estudiante") + '</strong><br>Fecha: ' + escapar(d.fecha) +
+           '<br>Tiempo utilizado: ' + escapar(d.tiempo) + '</p>';
+
+      h += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:0 0 18px;"><tr>' +
+           '<td style="' + caja + '"><span style="font-size:24px;font-weight:bold;color:#1e7e34;">' + d.correctas + '</span><br><span style="font-size:12px;color:#555;">Correctas</span></td>' +
+           '<td style="' + caja + '"><span style="font-size:24px;font-weight:bold;color:#b02a37;">' + d.incorrectas + '</span><br><span style="font-size:12px;color:#555;">Incorrectas</span></td>' +
+           '<td style="' + caja + '"><span style="font-size:24px;font-weight:bold;color:#555;">' + d.sinResponder + '</span><br><span style="font-size:12px;color:#555;">Sin responder</span></td>' +
+           '<td style="' + caja + '"><span style="font-size:24px;font-weight:bold;color:#c0392b;">' + d.porcentaje + '%</span><br><span style="font-size:12px;color:#555;">Puntuación</span></td>' +
+           '</tr></table>';
+
+      h += '<p style="padding:12px;border:2px solid #5C3900;background:#fff8e6;color:#5C3900;font-size:13px;">' +
+           escapar(bandaResultado(d.porcentaje)) + ' El porcentaje es una guía de estudio, no el puntaje oficial del GED.</p>';
+
+      function tabla(mapa, titulo, nombrador, enlazador) {
+        const claves = Object.keys(mapa).sort((a, b) =>
+          (mapa[a].correctas / mapa[a].total) - (mapa[b].correctas / mapa[b].total));
+        let t = '<h2 style="font-size:17px;color:#c0392b;margin:22px 0 8px;">' + titulo + '</h2>';
+        t += '<table width="100%" cellpadding="7" cellspacing="0" border="1" style="border-collapse:collapse;border-color:#adb5bd;font-size:13px;">';
+        t += '<thead style="background:#c0392b;color:#ffffff;"><tr><th scope="col" align="left">Área</th>' +
+             '<th scope="col" align="left">Aciertos</th><th scope="col" align="left">Nivel</th>' +
+             (enlazador ? '<th scope="col" align="left">Estudiar</th>' : '') + '</tr></thead><tbody>';
+        claves.forEach(k => {
+          const s = mapa[k], p = Math.round((s.correctas / s.total) * 100);
+          const color = p >= 75 ? "#1e7e34" : (p >= 50 ? "#5C3900" : "#b02a37");
+          t += '<tr><td style="' + td + '">' + escapar(nombrador(k)) + '</td><td style="' + td + '">' +
+               s.correctas + " / " + s.total + '</td><td style="' + td + 'color:' + color + '"><strong>' + p + '%</strong></td>';
+          if (enlazador) {
+            const r = enlazador(k);
+            t += '<td style="' + td + '">' + (p === 100 ? "Dominado" :
+                 '<a href="' + r.u + '">' + escapar(r.t) + '</a>') + '</td>';
+          }
+          t += '</tr>';
+        });
+        return t + '</tbody></table>';
+      }
+
+      h += tabla(d.porDestreza, "Por destreza", k => DESTREZAS[k], k => rutaDe(RUTA_DESTREZA[k]));
+      h += tabla(d.porDok, "Por nivel de exigencia (DOK)", k => k, null);
+      h += tabla(d.porTema, "Por tema", k => k, k => rutaDelTema(k));
+
+      const flojos = Object.keys(d.porTema)
+        .filter(k => d.porTema[k].correctas < d.porTema[k].total)
+        .sort((a, b) => (d.porTema[a].correctas / d.porTema[a].total) -
+                        (d.porTema[b].correctas / d.porTema[b].total));
+
+      h += '<h2 style="font-size:17px;color:#c0392b;margin:22px 0 8px;">Tu plan de estudio</h2>';
+      if (flojos.length === 0) {
+        h += '<p style="padding:12px;border:2px solid #1e7e34;background:#d4edda;color:#155724;font-weight:bold;">' +
+             'No hay temas pendientes: respondiste bien todas las preguntas.</p>';
+      } else {
+        h += '<ol style="margin:0 0 16px 20px;">';
+        flojos.forEach(k => {
+          const s = d.porTema[k], r = rutaDelTema(k);
+          h += '<li style="margin-bottom:6px;"><strong>' + escapar(k) + '</strong> (' + s.correctas + ' de ' +
+               s.total + ') &mdash; <a href="' + r.u + '">' + escapar(r.t) + '</a></li>';
+        });
+        h += '</ol>';
+      }
+
+      if (d.errores.length > 0 && nivel < 3) {
+        h += '<h2 style="font-size:17px;color:#721c24;margin:22px 0 8px;">Las preguntas que fallaste</h2>';
+        if (nivel >= 2) {
+          // Lista compacta: ahorra los estilos en línea de cada celda de la tabla
+          d.errores.forEach(e => {
+            const r = rutaDelTema(e.tema);
+            h += '<p style="margin:0 0 10px;font-size:13px;border-left:3px solid #b02a37;padding-left:8px;">' +
+                 '<strong>' + e.numero + '. ' + escapar(recortar(e.enunciado, 160)) + '</strong><br>' +
+                 'Tu respuesta: <span style="color:#b02a37;">' + escapar(recortar(e.tuya, 90)) + '</span><br>' +
+                 'Correcta: <span style="color:#1e7e34;">' + escapar(recortar(e.buena, 90)) + '</span><br>' +
+                 'Estudiar: <a href="' + r.u + '">' + escapar(r.t) + '</a></p>';
+          });
+        } else {
+          h += '<table width="100%" cellpadding="7" cellspacing="0" border="1" style="border-collapse:collapse;border-color:#adb5bd;font-size:13px;">';
+          h += '<thead style="background:#f8d7da;color:#721c24;"><tr><th scope="col">N.&ordm;</th><th scope="col" align="left">Pregunta</th>' +
+               '<th scope="col" align="left">Tu respuesta</th><th scope="col" align="left">Correcta</th>' +
+               '<th scope="col" align="left">Estudiar</th></tr></thead><tbody>';
+          d.errores.forEach(e => {
+            const r = rutaDelTema(e.tema);
+            h += '<tr><td style="' + td + '" align="center">' + e.numero + '</td>' +
+                 '<td style="' + td + '"><strong>' + escapar(e.enunciado) + '</strong>' +
+                 (nivel >= 1 ? "" : '<br><span style="color:#555;">' + escapar(e.explicacion) + '</span>') + '</td>' +
+                 '<td style="' + td + 'color:#b02a37;">' + escapar(e.tuya) + '</td>' +
+                 '<td style="' + td + 'color:#1e7e34;">' + escapar(e.buena) + '</td>' +
+                 '<td style="' + td + '"><a href="' + r.u + '">' + escapar(r.t) + '</a></td></tr>';
+          });
+          h += '</tbody></table>';
+        }
+      }
+
+      if (nivel >= 1) {
+        h += '<p style="margin-top:16px;padding:12px;border:2px solid #5C3900;background:#fff8e6;color:#5C3900;font-size:13px;">' +
+             'Esta es una versión resumida: el informe completo excedía el tamaño máximo de un correo, así que se omitieron ' +
+             (nivel >= 3 ? 'el detalle de las preguntas falladas y sus explicaciones. '
+                         : 'las explicaciones de cada error. ') +
+             'Para verlo entero, usa el botón <strong>Descargar el informe</strong> en la página del examen.</p>';
+      }
+
+      h += '<p style="margin-top:24px;font-size:12px;color:#555;border-top:1px solid #adb5bd;padding-top:10px;">' +
+           'Examen de práctica de Artes del Lenguaje del GED (secciones 1 y 3) &mdash; ' +
+           '<a href="' + SITIO + '">GEDparaHispanos</a>.<br>' +
+           'José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College &mdash; City Colleges of Chicago.<br>' +
+           'Licencia CC BY-NC-SA 4.0.</p></div>';
+      return h;
+    }
+
+    function construirInformeTexto(nivel) {
+      nivel = nivel || 0;
+      const d = datosInforme;
+      if (!d) return "Todavia no hay un informe disponible.";
+      const L = [];
+      L.push("INFORME DE RESULTADOS - ARTES DEL LENGUAJE GED");
+      L.push("==============================================");
+      L.push("Estudiante: " + (nombreEstudiante || "Estudiante"));
+      L.push("Fecha: " + d.fecha);
+      L.push("Tiempo utilizado: " + d.tiempo);
+      L.push("");
+      L.push("Correctas: " + d.correctas + " / " + d.total);
+      L.push("Incorrectas: " + d.incorrectas);
+      L.push("Sin responder: " + d.sinResponder);
+      L.push("Puntuacion: " + d.porcentaje + "%");
+      L.push("");
+      L.push("POR DESTREZA");
+      Object.keys(d.porDestreza).forEach(k => {
+        const s = d.porDestreza[k];
+        L.push("- " + DESTREZAS[k] + ": " + s.correctas + "/" + s.total + " | Estudiar: " + rutaDe(RUTA_DESTREZA[k]).u);
+      });
+      L.push("");
+      L.push("POR NIVEL DOK");
+      Object.keys(d.porDok).forEach(k => {
+        const s = d.porDok[k];
+        L.push("- " + k + ": " + s.correctas + "/" + s.total);
+      });
+      L.push("");
+      L.push("PLAN DE ESTUDIO");
+      const flojos = Object.keys(d.porTema).filter(k => d.porTema[k].correctas < d.porTema[k].total);
+      if (flojos.length === 0) L.push("Ninguno. Todas las respuestas fueron correctas.");
+      else flojos.forEach(k => {
+        const s = d.porTema[k];
+        L.push("- " + k + " (" + s.correctas + "/" + s.total + ") -> " + rutaDelTema(k).u);
+      });
+      L.push("");
+      L.push("PREGUNTAS FALLADAS");
+      if (d.errores.length === 0) L.push("Ninguna.");
+      else if (nivel >= 2) {
+        L.push("Fallaste " + d.errores.length + " preguntas: " + d.errores.map(e => e.numero).join(", ") + ".");
+        L.push("El detalle completo esta en la version HTML de este correo y en el informe descargable.");
+      } else d.errores.forEach(e => {
+        L.push("");
+        L.push("Pregunta " + e.numero + " | " + e.tema + " | DOK " + e.dok);
+        L.push("  " + e.enunciado);
+        L.push("  Tu respuesta: " + e.tuya);
+        L.push("  Correcta: " + e.buena);
+        if (nivel < 1) L.push("  Explicacion: " + e.explicacion);
+        L.push("  Estudiar: " + rutaDelTema(e.tema).u);
+      });
+      L.push("");
+      L.push("GEDparaHispanos - Jose M. Fernandez, Harry S. Truman College.");
+      return L.join("\n");
+    }
+
+    function construirDocumentoCompleto() {
+      return '<!DOCTYPE html>\n<html lang="es">\n<head>\n<meta charset="UTF-8">\n' +
+        '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
+        '<title>Informe GED &mdash; Artes del Lenguaje</title>\n</head>\n' +
+        '<body style="margin:0;padding:24px;background:#ffffff;">\n' +
+        construirInformeHTML(0) + '\n</body>\n</html>';
+    }
+
+    /* ─────────── ENVÍO POR CORREO ─────────── */
+    function emailjsListo() {
+      return typeof emailjs !== "undefined" &&
+        CONFIG.emailjsPublicKey.indexOf("TU_") !== 0 &&
+        CONFIG.emailjsServiceId.indexOf("TU_") !== 0 &&
+        CONFIG.emailjsTemplateId.indexOf("TU_") !== 0;
+    }
+
+    (function iniciarEmailJS() {
+      if (typeof emailjs !== "undefined" && CONFIG.emailjsPublicKey.indexOf("TU_") !== 0) {
+        try { emailjs.init({ publicKey: CONFIG.emailjsPublicKey }); }
+        catch (e) { console.warn("EmailJS no se pudo inicializar:", e); }
+      }
+    })();
+
+    function abrirModal(id) {
+      const m = document.getElementById(id);
+      if (m) m.style.display = "flex";
+    }
+
+    function cerrarModal(id) {
+      const m = document.getElementById(id);
+      if (m) m.style.display = "none";
+    }
+
+    function abrirModalCorreo() {
+      if (!datosInforme) return;
+      document.getElementById("errorCorreo").textContent = "";
+      mostrarEstado("", "");
+      const btn = document.getElementById("btnEnviar");
+      btn.disabled = false;
+      btn.textContent = "Enviar el informe";
+      if (!emailjsListo()) {
+        document.getElementById("avisoConfig").style.display = "block";
+        btn.disabled = true;
+      }
+      abrirModal("modalCorreo");
+      document.getElementById("campoNombre").focus();
+    }
+
+    function correoValido(v) {
+      return /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(String(v).trim());
+    }
+
+    function mostrarEstado(texto, tipo) {
+      const el = document.getElementById("estadoEnvio");
+      if (!el) return;
+      el.textContent = texto;
+      el.className = "estado-envio" + (tipo ? " estado-" + tipo : "");
+    }
+
+    function enviarInformePorCorreo() {
+      const campo = document.getElementById("campoCorreo");
+      const errorEl = document.getElementById("errorCorreo");
+      const correo = campo.value.trim();
+      nombreEstudiante = document.getElementById("campoNombre").value.trim();
+
+      if (!correoValido(correo)) {
+        errorEl.textContent = "Escribe un correo electrónico válido, por ejemplo: nombre@correo.com";
+        campo.setAttribute("aria-invalid", "true");
+        campo.focus();
+        return;
+      }
+      errorEl.textContent = "";
+      campo.removeAttribute("aria-invalid");
+
+      if (!emailjsListo()) {
+        mostrarEstado("El envío por correo no está configurado. Usa el botón «Descargar el informe».", "error");
         return;
       }
 
-      let errorsByTopic = {};
-      incorrectQuestions.forEach(iq => {
-        if (!errorsByTopic[iq.topic]) errorsByTopic[iq.topic] = {pages:iq.bookPages, skill:iq.skill, questions:[]};
-        errorsByTopic[iq.topic].questions.push(iq);
-      });
+      const btn = document.getElementById("btnEnviar");
+      btn.disabled = true;
+      btn.textContent = "Enviando…";
+      mostrarEstado("Enviando el informe. Espera unos segundos, por favor.", "cargando");
 
-      const skillLabels = {reading:"📖 Comprensión de Lectura", language:"✏️ Gramática y Lenguaje", argument:"🎯 Análisis de Argumentos"};
+      // Se reduce el informe por niveles hasta que quepa en el límite del servicio
+      let nivel = 0, cuerpo, texto;
+      while (true) {
+        cuerpo = construirInformeHTML(nivel);
+        texto = construirInformeTexto(nivel);
+        if (cuerpo.length + texto.length <= LIMITE_CORREO || nivel >= 3) break;
+        nivel++;
+      }
+      const recortado = nivel > 0;
 
-      let html = `<h2>📋 Informe de Errores y Guía de Estudio</h2>
-        <p class="report-subtitle">Libro: <strong>Steck-Vaughn GED: Razonamiento a través de las Artes del Lenguaje</strong></p>
-        <div class="report-summary">
-          <div class="summary-card summary-correct"><span class="card-value">${correctCount}</span><span class="card-label">✅ Correctas</span></div>
-          <div class="summary-card summary-incorrect"><span class="card-value">${incorrectCount}</span><span class="card-label">❌ Incorrectas</span></div>
-          <div class="summary-card summary-skipped"><span class="card-value">${skippedCount}</span><span class="card-label">⏭️ Sin responder</span></div>
-          <div class="summary-card summary-score"><span class="card-value">${percentage}%</span><span class="card-label">📊 Puntuación</span></div>
-        </div>
-        <h3 style="margin-bottom:15px;color:#c0392b">📕 Temas a Reforzar</h3>`;
+      const parametros = {
+        to_email: correo,
+        cc_email: CONFIG.correoDocente,
+        student_name: nombreEstudiante || "Estudiante",
+        subject: "Informe GED " + CONFIG.materia + " — " + (nombreEstudiante || "Estudiante") + " — " + datosInforme.porcentaje + "%",
+        score: datosInforme.porcentaje + "%",
+        correctas: String(datosInforme.correctas),
+        incorrectas: String(datosInforme.incorrectas),
+        sin_responder: String(datosInforme.sinResponder),
+        fecha: datosInforme.fecha,
+        report_html: cuerpo,
+        report_text: texto
+      };
 
-      Object.entries(errorsByTopic).sort((a,b)=>b[1].questions.length-a[1].questions.length).forEach(([topic, data]) => {
-        const skLabel = skillLabels[data.skill] || topic;
-        html += `<div class="error-topic-group">
-          <div class="error-topic-header skill-${data.skill}">
-            <span>${skLabel} — ${topic} (${data.questions.length} error${data.questions.length>1?'es':''})</span>
-            <span class="page-ref">📖 ${data.pages}</span>
-          </div>`;
-        data.questions.forEach(q => {
-          html += `<div class="error-question-item">
-            <div class="error-q-number">${q.number}</div>
-            <div class="error-q-detail"><strong>${q.question}</strong><br>
-            Tu respuesta: <span class="error-user-answer">${q.userAnswer}</span> | 
-            Correcta: <span class="error-correct-answer">${q.correctAnswer}</span><br>
-            <em style="font-size:13px;color:#555">💡 ${q.explanation}</em></div>
-          </div>`;
+      emailjs.send(CONFIG.emailjsServiceId, CONFIG.emailjsTemplateId, parametros)
+        .then(function () {
+          mostrarEstado("Informe enviado a " + correo + ". Revisa también la carpeta de correo no deseado." +
+            (recortado ? " Por su tamaño se envió sin las explicaciones: descárgalo aquí si las necesitas." : ""), "exito");
+          btn.textContent = "Enviado";
+        })
+        .catch(function (err) {
+          console.error("Error de envío:", err);
+          let detalle = "";
+          if (err && err.status) detalle = " [" + err.status + (err.text ? ": " + err.text : "") + "]";
+          else if (err && err.message) detalle = " [" + err.message + "]";
+
+          if (location.protocol === "file:") {
+            mostrarEstado("El envío por correo no funciona al abrir el archivo desde el disco: " +
+              "hay que probarlo desde el sitio web publicado." + detalle, "error");
+          } else {
+            mostrarEstado("No se pudo enviar el correo." + detalle +
+              " Descarga el informe con el botón de abajo y envíalo como archivo adjunto.", "error");
+          }
+          btn.disabled = false;
+          btn.textContent = "Reintentar el envío";
         });
-        html += `</div>`;
-      });
-
-      // Area summary table
-      html += `<div class="area-summary"><h3 style="margin-bottom:15px;color:#c0392b">📊 Rendimiento por Tema</h3>
-        <table><thead><tr>
-          <th>Tema</th><th>Área</th><th style="text-align:center">✅</th><th style="text-align:center">Total</th><th>Rendimiento</th><th>Estudiar en</th>
-        </tr></thead><tbody>`;
-      Object.entries(areaStats).sort((a,b)=>(a[1].correct/a[1].total)-(b[1].correct/b[1].total)).forEach(([topic, s]) => {
-        const p = s.total>0 ? Math.round((s.correct/s.total)*100) : 0;
-        const cls = p>=75?"perf-high":p>=50?"perf-mid":"perf-low";
-        const skLabel = (skillLabels[s.skill]||s.skill).replace(/^[^\s]+\s/,'');
-        html += `<tr><td>${topic}</td><td>${skLabel}</td>
-          <td style="text-align:center">${s.correct}</td><td style="text-align:center">${s.total}</td>
-          <td><div class="perf-bar"><div class="perf-fill ${cls}" style="width:${p}%"></div></div><span style="font-size:12px;color:#6c757d">${p}%</span></td>
-          <td style="font-size:12px">${p<100?s.pages:'✅ Dominado'}</td></tr>`;
-      });
-      html += `</tbody></table></div>
-        <div style="text-align:center;margin-top:20px">
-          <button class="print-button" onclick="abrirYImprimir()">🖨️ Imprimir Informe</button>
-        </div>`;
-
-      div.style.display = "block";
-      div.innerHTML = html;
     }
 
+    /* ─────────── DESCARGAR, COPIAR, IMPRIMIR ─────────── */
+    function descargarInforme() {
+      if (!datosInforme) return;
+      const campo = document.getElementById("campoNombre");
+      if (campo) nombreEstudiante = campo.value.trim() || nombreEstudiante;
+      const blob = new Blob([construirDocumentoCompleto()], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "informe-ged-lenguaje-" + nombreArchivoSeguro(nombreEstudiante) + ".html";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 3000);
+      mostrarEstado("Informe descargado. Búscalo en tu carpeta de descargas.", "exito");
+    }
+
+    function copiarInforme() {
+      const texto = construirInformeTexto();
+      function respaldo() {
+        const ta = document.createElement("textarea");
+        ta.value = texto;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        try { document.execCommand("copy"); mostrarEstado("Informe copiado. Ya puedes pegarlo donde lo necesites.", "exito"); }
+        catch (e) { mostrarEstado("Tu navegador no permite copiar automáticamente. Usa «Descargar el informe».", "error"); }
+        document.body.removeChild(ta);
+      }
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(texto)
+          .then(() => mostrarEstado("Informe copiado. Ya puedes pegarlo donde lo necesites.", "exito"))
+          .catch(respaldo);
+      } else respaldo();
+    }
+
+    function imprimirInforme() {
+      if (!datosInforme) return;
+      const v = window.open("", "_blank", "width=900,height=700");
+      if (!v) {
+        alert("El navegador bloqueó la ventana de impresión. Permite las ventanas emergentes o usa «Descargar el informe».");
+        return;
+      }
+      v.document.open();
+      v.document.write(construirDocumentoCompleto());
+      v.document.close();
+      v.focus();
+      setTimeout(() => v.print(), 400);
+    }
+
+    /* ─────────── REINICIO ─────────── */
     function restartExam() {
-      currentQuestion = 0; currentSection = 1; answers = {}; examStarted = false; clearInterval(timer);
+      currentQuestion = 0; currentSection = 1; answers = {}; examStarted = false;
+      segundosUsados = 0; ordenBarajado = {}; piezaElegida = null; datosInforme = null;
+      clearInterval(timer);
       document.getElementById("resultsScreen").style.display = "none";
-      document.getElementById("errorReport").style.display = "none";
+      document.getElementById("cuerpoInforme").innerHTML = "";
       document.getElementById("startScreen").style.display = "block";
       document.getElementById("sectionInfo").textContent = "Sección 1: Comprensión y gramática (35 min)";
       document.getElementById("sectionIndicator").textContent = "Sección 1";
       document.getElementById("timer").textContent = "35:00";
       document.getElementById("progressBar").style.width = "0%";
+      window.scrollTo(0, 0);
     }
 
-    document.addEventListener("DOMContentLoaded", function() {
-      document.addEventListener("keydown", function(e) {
+    /* ─────────── TECLADO ─────────── */
+    document.addEventListener("DOMContentLoaded", function () {
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") { cerrarModal("modalCorreo"); cerrarModal("modalEntrega"); return; }
         if (!examStarted) return;
-        if (e.key==="ArrowLeft" && !document.getElementById("prevBtn").disabled) previousQuestion();
-        else if (e.key==="ArrowRight") nextQuestion();
+        const enCampo = /^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement.tagName);
+        if (enCampo) return;
+        if (e.key === "ArrowLeft" && !document.getElementById("prevBtn").disabled) previousQuestion();
+        else if (e.key === "ArrowRight") nextQuestion();
       });
     });
-
-function abrirYImprimir() {
-  const contenido = document.querySelector(".results-container").innerHTML;
-
-  const ventana = window.open('', '', 'width=900,height=700');
-
-  ventana.document.write(`
-    <html>
-      <head>
-        <title>Informe GED Estudios Sociales</title>
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            padding: 30px;
-          }
-          table {
-            width: 100%;
-            border-collapse: collapse;
-          }
-          th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: left;
-          }
-          th {
-            background: #e74c3c;
-            color: white;
-          }
-          .score-banner {
-            text-align: center;
-            margin-bottom: 20px;
-          }
-        </style>
-      </head>
-      <body>
-        ${contenido}
-      </body>
-    </html>
-  `);
-
-  ventana.document.close();
-
-  ventana.onload = function() {
-    ventana.focus();
-    ventana.print();
-  };
-}
 
     </script>
   </body>
