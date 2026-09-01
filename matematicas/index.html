@@ -166,6 +166,7 @@
       .email-modal-caja p.intro { font-size: 15px; color: #333333; margin-bottom: 18px; line-height: 1.5; }
 
       .campo-grupo { margin-bottom: 16px; }
+      .campo-inicio { max-width: 420px; margin: 0 auto 20px; text-align: left; }
       .campo-grupo label { display: block; font-weight: bold; font-size: 15px; margin-bottom: 6px; color: #212529; }
       .campo-grupo input { width: 100%; padding: 12px; font-size: 16px; font-family: inherit; border: 2px solid #6c757d; border-radius: 8px; }
       .campo-grupo input:focus { outline: none; border-color: #0056b3; box-shadow: 0 0 0 3px rgba(0,86,179,0.25); }
@@ -173,6 +174,8 @@
       .ayuda-campo { font-size: 13px; color: #555555; margin-top: 4px; }
       .error-msg { color: #b02a37; font-weight: bold; font-size: 14px; margin-top: 6px; }
       .error-msg:empty { display: none; }
+      .aviso-copia { font-size: 14px; color: #495057; margin-top: 10px; }
+      .aviso-copia:empty { display: none; }
 
       .estado-envio { font-size: 15px; margin: 14px 0; border-radius: 8px; }
       .estado-envio:not(:empty) { padding: 12px; border: 2px solid; }
@@ -218,6 +221,13 @@
             <li><strong>🔀 Aleatorio:</strong> Las preguntas y los valores numéricos cambian en cada intento</li>
           </ul>
                  </div>
+        <div class="campo-grupo campo-inicio">
+          <label for="campoNombreInicio">Escribe tu nombre y apellido para comenzar</label>
+          <input type="text" id="campoNombreInicio" autocomplete="name" required aria-required="true"
+                 aria-describedby="ayudaNombreInicio errorNombreInicio" placeholder="Nombre y apellido">
+          <p class="ayuda-campo" id="ayudaNombreInicio">Tu profesor recibe tu resultado al terminar, para poder orientarte.</p>
+          <p class="error-msg" id="errorNombreInicio" role="alert"></p>
+        </div>
         <button class="start-button" onclick="startExam()">Comenzar Examen</button>
       </div>
 
@@ -246,6 +256,7 @@
           <h2>🎉 ¡Examen Completado!</h2>
           <div class="score" id="finalScore">0%</div>
           <p id="resultMessage"></p>
+          <p class="aviso-copia" id="avisoCopiaDocente" role="status" aria-live="polite"></p>
           <button class="nav-button" onclick="restartExam()" style="margin-top: 20px">🔄 Reiniciar Examen</button>
         </div>
         <div id="errorReport" class="report-section" style="display: none"></div>
@@ -1278,6 +1289,18 @@
     // FUNCIONES DEL EXAMEN
     // ===================================================
     function startExam() {
+      const campo = document.getElementById("campoNombreInicio");
+      const errorEl = document.getElementById("errorNombreInicio");
+      const valor = campo ? campo.value.trim().replace(/\s+/g, " ") : "";
+      if (valor.length < 3) {
+        if (errorEl) { errorEl.textContent = "Escribe tu nombre y apellido para comenzar el examen."; }
+        if (campo) { campo.setAttribute("aria-invalid", "true"); campo.focus(); }
+        return;
+      }
+      if (errorEl) { errorEl.textContent = ""; }
+      if (campo) { campo.removeAttribute("aria-invalid"); }
+      nombreEstudiante = valor;
+
       questions = generateExam();
       document.getElementById("startScreen").style.display = "none";
       document.getElementById("examInterface").style.display = "block";
@@ -1432,6 +1455,7 @@
 
       guardarDatosInforme(correctCount, totalQuestionsInSim - correctCount, skippedCount, percentage, incorrectQuestions, areaStats, 115 * 60 - timeLeft);
       generateErrorReport(correctCount, totalQuestionsInSim - correctCount, skippedCount, percentage, incorrectQuestions, areaStats);
+      enviarCopiaDocente(0);
     }
 
     function generateErrorReport(correctCount, incorrectCount, skippedCount, percentage, incorrectQuestions, areaStats) {
@@ -1490,6 +1514,9 @@
 
     function restartExam() {
       currentQuestion = 0; timeLeft = 115 * 60; answers = {}; datosInforme = null;
+      copiaDocenteEnviada = false;
+      const avisoCopia = document.getElementById("avisoCopiaDocente");
+      if (avisoCopia) { avisoCopia.textContent = ""; }
       document.getElementById("resultsScreen").style.display = "none";
       document.getElementById("errorReport").style.display = "none";
       document.getElementById("startScreen").style.display = "block";
@@ -1566,9 +1593,18 @@
     const EMAILJS_TEMPLATE_ID = "template_cuejyjn";
     const CORREO_DOCENTE      = "jm481213@gmail.com"; // copia automática al instructor
 
+    // Copia automática al docente en cuanto termina el examen, sin que el
+    // alumno tenga que hacer nada. Si la plantilla del servicio exigiera un
+    // Cc no vacío, poner CC_EN_COPIA_DOCENTE = CORREO_DOCENTE.
+    const ENVIO_AUTOMATICO_DOCENTE = true;
+    const CC_EN_COPIA_DOCENTE      = "";
+    const CLAVE_PENDIENTES         = "ged_mat_envios_pendientes";
+    const MAX_PENDIENTES           = 12;
+
     // ---------- ESTADO ----------
     let datosInforme = null;      // se llena al terminar el examen
     let nombreEstudiante = "";
+    let copiaDocenteEnviada = false;
     let focoPrevio = null;
 
     function emailjsListo() {
@@ -1822,6 +1858,116 @@
              construirInformeHTML(false) + '\n</body>\n</html>';
     }
 
+    // ---------- PARÁMETROS DEL CORREO ----------
+    // El servicio rechaza con 413 si el TOTAL de variables supera 50 KB.
+    // Se mide en bytes UTF-8 (los acentos ocupan dos) y se baja de nivel
+    // hasta que quepa, dejando margen para la cabecera de la peticion.
+    function construirParametros(destino, copia, nombre, marca) {
+      const LIMITE_BYTES = 46000;
+      const quien = nombre || "Estudiante";
+      const parametros = {
+        to_email: destino,
+        cc_email: copia,
+        student_name: quien,
+        subject: (marca ? marca + " " : "") + "Informe GED Matemáticas — " + quien + " — " + datosInforme.porcentaje + "%",
+        score: datosInforme.porcentaje + "%",
+        correctas: String(datosInforme.correctas),
+        incorrectas: String(datosInforme.incorrectas),
+        sin_responder: String(datosInforme.sinResponder),
+        fecha: datosInforme.fecha,
+        report_html: construirInformeHTML(0)
+      };
+      let recortado = false;
+      if (pesoEnBytes(parametros) > LIMITE_BYTES) {
+        parametros.report_html = construirInformeHTML(1);
+        recortado = true;
+      }
+      if (pesoEnBytes(parametros) > LIMITE_BYTES) {
+        parametros.report_html = construirInformeHTML(2);
+      }
+      return { parametros: parametros, recortado: recortado };
+    }
+
+    // ---------- COLA DE ENVÍOS PENDIENTES ----------
+    // Si al terminar no hay conexión o el servicio no responde, la copia del
+    // docente queda guardada en el navegador y se reintenta al abrir la página.
+    function leerPendientes() {
+      try {
+        const crudo = window.localStorage.getItem(CLAVE_PENDIENTES);
+        const lista = crudo ? JSON.parse(crudo) : [];
+        return Array.isArray(lista) ? lista : [];
+      } catch (e) { return []; }
+    }
+
+    function escribirPendientes(lista) {
+      try { window.localStorage.setItem(CLAVE_PENDIENTES, JSON.stringify(lista.slice(-MAX_PENDIENTES))); }
+      catch (e) { /* modo privado o almacenamiento lleno: se pierde, no se rompe */ }
+    }
+
+    function guardarPendiente(parametros) {
+      const lista = leerPendientes();
+      lista.push({ id: Date.now() + "-" + Math.random().toString(36).slice(2, 8), parametros: parametros });
+      escribirPendientes(lista);
+    }
+
+    function reintentarPendientes() {
+      const lista = leerPendientes();
+      if (!lista.length || !emailjsListo() || !navigator.onLine) { return; }
+      const quedan = [];
+      let restantes = lista.length;
+      lista.forEach(function (item) {
+        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, item.parametros)
+          .catch(function () { quedan.push(item); })
+          .then(function () {
+            restantes--;
+            if (restantes === 0) { escribirPendientes(quedan); }
+          });
+      });
+    }
+
+    window.addEventListener("online", reintentarPendientes);
+    window.addEventListener("load", function () { setTimeout(reintentarPendientes, 3000); });
+
+    // ---------- COPIA AUTOMÁTICA AL DOCENTE ----------
+    // Se dispara desde endExam(). No pide nada al alumno y nunca le muestra
+    // un error técnico: si falla, el informe queda en cola para reintentarlo.
+    function enviarCopiaDocente(intento) {
+      if (!ENVIO_AUTOMATICO_DOCENTE || !datosInforme || copiaDocenteEnviada) { return; }
+      intento = intento || 0;
+
+      // El script del servicio puede tardar en cargar: se espera hasta ~16 s.
+      if (!emailjsListo()) {
+        if (intento < 8) { setTimeout(function () { enviarCopiaDocente(intento + 1); }, 2000); }
+        else { avisarCopiaDocente(false); }
+        return;
+      }
+
+      copiaDocenteEnviada = true;
+      const armado = construirParametros(CORREO_DOCENTE, CC_EN_COPIA_DOCENTE, nombreEstudiante, "[Automático]");
+
+      if (!navigator.onLine) {
+        guardarPendiente(armado.parametros);
+        avisarCopiaDocente(false);
+        return;
+      }
+
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, armado.parametros)
+        .then(function () { avisarCopiaDocente(true); })
+        .catch(function (err) {
+          console.warn("No se pudo enviar la copia al docente, queda en cola:", err);
+          guardarPendiente(armado.parametros);
+          avisarCopiaDocente(false);
+        });
+    }
+
+    function avisarCopiaDocente(enviada) {
+      const el = document.getElementById("avisoCopiaDocente");
+      if (!el) { return; }
+      el.textContent = enviada
+        ? "Tu resultado se envió a tu profesor."
+        : "Tu resultado se enviará a tu profesor en cuanto haya conexión. Puedes descargar tu informe abajo.";
+    }
+
     // ---------- MODAL ACCESIBLE ----------
     function abrirModalEmail() {
       if (!datosInforme) { return; }
@@ -1838,7 +1984,11 @@
         document.getElementById("avisoConfig").style.display = "block";
         btn.disabled = true;
       }
-      setTimeout(function () { document.getElementById("campoNombre").focus(); }, 60);
+      const campoNombre = document.getElementById("campoNombre");
+      if (campoNombre && !campoNombre.value.trim() && nombreEstudiante) {
+        campoNombre.value = nombreEstudiante;
+      }
+      setTimeout(function () { document.getElementById("campoEmail").focus(); }, 60);
     }
 
     function cerrarModalEmail() {
@@ -1867,7 +2017,8 @@
       const errorEl = document.getElementById("errorEmail");
       const correo = campoEmail.value.trim();
 
-      nombreEstudiante = document.getElementById("campoNombre").value.trim();
+      const nombreModal = document.getElementById("campoNombre").value.trim();
+      if (nombreModal) { nombreEstudiante = nombreModal; }
 
       if (!correoValido(correo)) {
         errorEl.textContent = "Escribe un correo electrónico válido, por ejemplo: nombre@correo.com";
@@ -1888,31 +2039,11 @@
       btn.textContent = "Enviando…";
       mostrarEstado("Enviando el informe. Espera unos segundos, por favor.", "cargando");
 
-      // El servicio rechaza con 413 si el TOTAL de variables supera 50 KB.
-      // Se mide en bytes UTF-8 (los acentos ocupan dos) y se baja de nivel
-      // hasta que quepa, dejando margen para la cabecera de la peticion.
-      const LIMITE_BYTES = 46000;
-      const parametros = {
-        to_email: correo,
-        cc_email: CORREO_DOCENTE,
-        student_name: nombreEstudiante || "Estudiante",
-        subject: "Informe GED Matemáticas — " + (nombreEstudiante || "Estudiante") + " — " + datosInforme.porcentaje + "%",
-        score: datosInforme.porcentaje + "%",
-        correctas: String(datosInforme.correctas),
-        incorrectas: String(datosInforme.incorrectas),
-        sin_responder: String(datosInforme.sinResponder),
-        fecha: datosInforme.fecha,
-        report_html: construirInformeHTML(0)
-      };
-
-      let recortado = false;
-      if (pesoEnBytes(parametros) > LIMITE_BYTES) {
-        parametros.report_html = construirInformeHTML(1);
-        recortado = true;
-      }
-      if (pesoEnBytes(parametros) > LIMITE_BYTES) {
-        parametros.report_html = construirInformeHTML(2);
-      }
+      // La copia del docente ya salió automáticamente al terminar el examen,
+      // así que este envío va solo al alumno.
+      const armado = construirParametros(correo, "", nombreEstudiante, "");
+      const parametros = armado.parametros;
+      const recortado = armado.recortado;
 
       emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, parametros)
         .then(function () {
@@ -1942,8 +2073,10 @@
     // ---------- DESCARGA (siempre funciona, sin internet) ----------
     function descargarInforme() {
       if (!datosInforme) { return; }
-      nombreEstudiante = document.getElementById("campoNombre") ?
-        document.getElementById("campoNombre").value.trim() : nombreEstudiante;
+      const campoNombreDesc = document.getElementById("campoNombre");
+      if (campoNombreDesc && campoNombreDesc.value.trim()) {
+        nombreEstudiante = campoNombreDesc.value.trim();
+      }
       const blob = new Blob([construirDocumentoCompleto()], { type: "text/html;charset=utf-8" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
