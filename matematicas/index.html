@@ -1486,7 +1486,7 @@
         const icon = data.theme === "algebra" ? "🔵 Álgebra" : "🟢 Cuantitativo";
         html += `<div class="error-topic-group"><div class="error-topic-header">
           <span>${icon} — ${topic} (${data.questions.length} error${data.questions.length>1?'es':''})</span>
-          <span class="page-ref">📖 ${data.pages}</span></div>`;
+          <span class="page-ref">📚 ${recursoHTML(topic, data.pages)}</span></div>`;
         data.questions.forEach(q => {
           html += `<div class="error-question-item"><div class="error-q-number">${q.number}</div>
             <div class="error-q-detail"><strong>${q.question}</strong><br>
@@ -1504,7 +1504,7 @@
         html += `<tr><td>${topic}</td><td>${s.theme==="algebra"?"Álgebra":"Cuantitativo"}</td>
           <td style="text-align:center">${s.correct}</td><td style="text-align:center">${s.total}</td>
           <td><div class="perf-bar"><div class="perf-fill ${cls}" style="width:${p}%"></div></div><span style="font-size:12px;color:#6c757d">${p}%</span></td>
-          <td style="font-size:12px">${p<100?s.pages:'✅'}</td></tr>`;
+          <td style="font-size:12px">${p<100?recursoHTML(topic, s.pages):'✅'}</td></tr>`;
       });
 
       html += `</tbody></table></div>` + botonesInforme();
@@ -1653,6 +1653,70 @@
         .replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-+|-+$/g, "").toLowerCase() || "estudiante";
     }
 
+    // ================= RECURSOS DE GEDPARAHISPANOS =================
+    // Cada tema del examen apunta a un material gratuito del sitio, en lugar
+    // de a las páginas del Steck-Vaughn (la mayoría de los alumnos no tiene
+    // el libro). Para cambiar un enlace basta con editar su línea.
+    // Si un tema no aparece aquí, el informe vuelve a mostrar las páginas.
+    const BASE_INT  = "https://zhemaria.github.io/interactivos/";
+    const BASE_MATH = "https://zhemaria.github.io/math/";
+
+    const RECURSOS = {
+      "Suma de fracciones y denominador común":              [BASE_INT + "fraccion_operacion/",     "Operaciones con fracciones"],
+      "Factores y máximo común divisor":                     [BASE_MATH + "fast_mcm_mcd/",          "MCD y mcm"],
+      "Recta numérica y orden de números":                   [BASE_INT + "recta_enteros/",          "La recta numérica"],
+      "Valor absoluto":                                      [BASE_MATH + "valor_absoluto/",        "Valor absoluto"],
+      "Distancia y valor absoluto":                          [BASE_INT + "distancia/",              "Distancia en la recta"],
+      "Exponentes y raíces cuadradas":                       [BASE_INT + "potencia/",               "Potencias y raíces"],
+      "Reglas de los exponentes":                            [BASE_INT + "exponentes_multiples/",   "Leyes de los exponentes"],
+      "Propiedad distributiva y expresiones algebraicas":    [BASE_INT + "propiedad_distributiva/", "Propiedad distributiva"],
+      "Evaluación de expresiones algebraicas (sustitución)": [BASE_INT + "variables_expresiones/",  "Variables y expresiones"],
+      "Traducir frases verbales a expresiones algebraicas":  [BASE_MATH + "fast_len_alg/",          "Lenguaje algebraico"],
+      "Ecuaciones lineales con una variable":                [BASE_INT + "ecuaciones_transposicion/", "Resolver ecuaciones"],
+      "Ecuaciones lineales y pares ordenados":               [BASE_INT + "ecuacion_lineal/",        "La ecuación lineal"],
+      "Pendiente de una línea":                              [BASE_INT + "ecuacion_pto_pendiente/", "Pendiente de una recta"],
+      "Forma pendiente-intersección (y = mx + b)":           [BASE_INT + "ecuacion_pte_intecepto/", "Pendiente e intercepto"],
+      "Interpretación de gráficas lineales y tasa de cambio":[BASE_MATH + "fast_graficas/",         "Leer gráficas"],
+      "Sistema de ecuaciones lineales con dos variables":    [BASE_MATH + "fast_sistemas/",         "Sistemas de ecuaciones"],
+      "Desigualdades lineales":                              [BASE_MATH + "fast_desigualdad/",      "Desigualdades"],
+      "Factorización de expresiones cuadráticas (método FOIL)": [BASE_MATH + "fast_factorizar/",    "Factorizar"],
+      "Ecuación cuadrática y vértice de una parábola":       [BASE_INT + "funcion_analisis_cuad/",  "La función cuadrática"],
+      "Funciones cuadráticas (evaluación)":                  [BASE_MATH + "evaluacion_funcion/",    "Evaluar funciones"],
+      "Composición de funciones":                            [BASE_MATH + "caja_funcion/",          "Evaluar funciones paso a paso"],
+      "Media, mediana y moda":                               [BASE_MATH + "fast_estadistica/",      "Media, mediana y moda"],
+      "Mediana de un conjunto de datos":                     [BASE_MATH + "fast_estadistica/",      "Media, mediana y moda"],
+      "Probabilidad simple":                                 [BASE_MATH + "fast_probabilidad/",     "Probabilidad"],
+      "Porcentajes y descuentos":                            [BASE_MATH + "fast_porcentaje/",       "Porcentajes"],
+      "Porcentaje de aumento":                               [BASE_MATH + "fast_porcentaje/",       "Porcentajes"],
+      "Interés simple":                                      [BASE_MATH + "fast_porciento/",       "Porcentajes y proporciones"],
+      "Razones y proporciones":                              [BASE_INT + "proporcionalidad/",       "Proporcionalidad"],
+      "Proporciones y escala":                               [BASE_MATH + "proporciones/",          "Proporciones y escala"],
+      "Teorema de Pitágoras":                                [BASE_INT + "teorema_pitagoras/",      "Teorema de Pitágoras"],
+      "Área de figuras planas compuestas":                   [BASE_INT + "fig_compuesta/",          "Figuras compuestas"],
+      // PENDIENTE: "Área del trapecio" y "Circunferencia de un círculo" se quedan sin
+      // interactivo. math/area/ solo genera triángulo, cuadrado y rectángulo;
+      // figuras_planas/ y fig_geometricas/ son vocabulario, no fórmulas.
+      // Mientras tanto el informe muestra las páginas del libro para esos dos temas.
+      "Área de superficie de un cubo":                       [BASE_MATH + "fast_geo_3D/",           "Cuerpos geométricos"],
+      "Área de superficie de un prisma rectangular":         [BASE_MATH + "fast_geo_3D/",           "Cuerpos geométricos"],
+      "Volumen de un cilindro":                              [BASE_MATH + "fast_geo_3D/",           "Cuerpos geométricos"],
+      "Volumen de una esfera":                               [BASE_MATH + "fast_geo_3D/",           "Cuerpos geométricos"]
+    };
+
+    // Enlace listo para el informe. Si el tema no está en el mapa, se
+    // devuelven las páginas del libro para no dejar al alumno sin referencia.
+    function recursoHTML(tema, paginasLibro) {
+      const r = RECURSOS[tema];
+      if (!r) { return escaparHTML(paginasLibro || ""); }
+      return '<a href="' + r[0] + '" target="_blank" rel="noopener" style="color:#0056b3;">' +
+             escaparHTML(r[1]) + '</a>';
+    }
+
+    function recursoTexto(tema, paginasLibro) {
+      const r = RECURSOS[tema];
+      return r ? (r[1] + " — " + r[0]) : (paginasLibro || "");
+    }
+
     // ---------- CAPTURA DE DATOS AL FINALIZAR ----------
     // Se invoca desde endExam(). Guarda TODO el informe en memoria,
     // de modo que el envío no dependa de leer el DOM.
@@ -1706,7 +1770,7 @@
       h += '<h2 style="font-size:17px;color:#0056b3;margin:0 0 10px;">Diagnóstico por tema</h2>';
       h += '<table width="100%" cellpadding="7" cellspacing="0" border="1" ' +
            'style="border-collapse:collapse;border-color:#adb5bd;font-size:13px;">';
-      h += '<caption style="text-align:left;font-size:13px;color:#555555;padding-bottom:6px;">Aciertos por tema, ordenados de menor a mayor dominio. Las páginas remiten al Steck-Vaughn.</caption>';
+      h += '<caption style="text-align:left;font-size:13px;color:#555555;padding-bottom:6px;">Aciertos por tema, ordenados de menor a mayor dominio. Cada tema enlaza con material gratuito de GEDparaHispanos.</caption>';
       h += '<thead style="background:#0056b3;color:#ffffff;"><tr>' +
            '<th scope="col" align="left">Tema</th>' +
            '<th scope="col" align="left">Área</th>' +
@@ -1725,7 +1789,7 @@
         h += '<tr><td>' + escaparHTML(tema) + '</td><td>' +
              (s.theme === "algebra" ? "Álgebra" : "Cuantitativo") + '</td><td align="center">' +
              s.correct + " / " + s.total + '</td><td style="color:' + color + '"><strong>' +
-             p + '%</strong></td><td>' + (p < 100 ? escaparHTML(s.pages) : "Dominado") + '</td></tr>';
+             p + '%</strong></td><td>' + (p < 100 ? recursoHTML(tema, s.pages) : "Dominado") + '</td></tr>';
       });
       h += '</tbody></table>';
 
@@ -1741,7 +1805,7 @@
         });
 
         h += '<h2 style="font-size:17px;color:#721c24;margin:26px 0 10px;">Detalle de las preguntas falladas</h2>';
-        h += '<p style="margin:0 0 14px;font-size:13px;color:#555555;">Libro de referencia: <em>Steck-Vaughn GED: Razonamiento matemático</em> (edición en español).</p>';
+        h += '<p style="margin:0 0 14px;font-size:13px;color:#555555;">Cada tema enlaza con un material gratuito de GEDparaHispanos para repasarlo.</p>';
 
         const temasOrdenados = Object.keys(porTema).sort(function (a, b) {
           return porTema[b].preguntas.length - porTema[a].preguntas.length;
@@ -1767,7 +1831,7 @@
                    '<td>' + escaparHTML(quitarEtiquetas(p.question)) + '</td>' +
                    '<td>' + escaparHTML(quitarEtiquetas(p.userAnswer)) + '</td>' +
                    '<td>' + escaparHTML(quitarEtiquetas(p.correctAnswer)) + '</td>' +
-                   '<td>' + escaparHTML(p.bookPages) + '</td></tr>';
+                   '<td>' + recursoHTML(p.topic, p.bookPages) + '</td></tr>';
             });
           });
           h += '</tbody></table>';
@@ -1781,7 +1845,7 @@
             h += '<tr style="background:#f8d7da;color:#721c24;"><td colspan="2"><strong>' +
                  escaparHTML(area + " — " + tema) +
                  ' (' + g.preguntas.length + (g.preguntas.length > 1 ? " errores" : " error") + ')' +
-                 '</strong><br>Estudiar: ' + escaparHTML(g.paginas) + '</td></tr>';
+                 '</strong><br>Estudiar: ' + recursoHTML(tema, g.paginas) + '</td></tr>';
             g.preguntas.forEach(function (p) {
               h += '<tr><td align="center" width="34"><strong>' + p.number + '</strong></td><td><strong>' +
                    escaparHTML(quitarEtiquetas(p.question)) + '</strong><br>Tu respuesta: <span style="color:#b02a37">' +
@@ -1830,7 +1894,7 @@
       } else {
         d.errores.forEach(function (e) {
           L.push("");
-          L.push("Pregunta " + e.number + " | " + e.topic + " | Estudiar: " + e.bookPages);
+          L.push("Pregunta " + e.number + " | " + e.topic + " | Estudiar: " + recursoTexto(e.topic, e.bookPages));
           L.push("  " + quitarEtiquetas(e.question));
           L.push("  Tu respuesta: " + quitarEtiquetas(e.userAnswer));
           L.push("  Correcta: " + quitarEtiquetas(e.correctAnswer));
@@ -1843,7 +1907,7 @@
       Object.keys(d.estadisticas).forEach(function (tema) {
         const s = d.estadisticas[tema];
         const p = s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0;
-        L.push("- " + tema + ": " + s.correct + "/" + s.total + " (" + p + "%) | Estudiar: " + s.pages);
+        L.push("- " + tema + ": " + s.correct + "/" + s.total + " (" + p + "%) | Estudiar: " + recursoTexto(tema, s.pages));
       });
       L.push("");
       L.push("GEDparaHispanos - Jose M. Fernandez, Harry S. Truman College.");
@@ -1858,11 +1922,114 @@
              construirInformeHTML(false) + '\n</body>\n</html>';
     }
 
+    // ================= INFORME PARA EL DOCENTE =================
+    // Distinto del que recibe el alumno: sin enlaces ni explicaciones, y con
+    // un bloque de datos delimitado que una herramienta puede leer sin
+    // ambigüedad para armar el resumen del grupo.
+    // Separador: barra vertical. Los nombres de tema llevan comas, la barra no.
+    const MARCA_INICIO = "### GEDMAT-DATOS v1 ###";
+    const MARCA_FIN    = "### FIN GEDMAT-DATOS ###";
+
+    function segundosDesdeTiempo(txt) {
+      const m = /(\d+)\s*min\s*(\d+)/.exec(String(txt || ""));
+      return m ? (parseInt(m[1], 10) * 60 + parseInt(m[2], 10)) : 0;
+    }
+
+    function limpiarCampo(txt) {
+      return quitarEtiquetas(String(txt === undefined || txt === null ? "" : txt))
+        .replace(/[|\r\n]+/g, " ").replace(/\s+/g, " ").trim();
+    }
+
+    function construirDatosPlanos() {
+      const d = datosInforme;
+      const L = [];
+      L.push(MARCA_INICIO);
+      L.push("alumno|" + limpiarCampo(nombreEstudiante || "Estudiante"));
+      L.push("fecha|" + limpiarCampo(d.fecha));
+      L.push("tiempo_seg|" + segundosDesdeTiempo(d.tiempo));
+      L.push("correctas|" + d.correctas);
+      L.push("incorrectas|" + d.incorrectas);
+      L.push("sin_responder|" + d.sinResponder);
+      L.push("porcentaje|" + d.porcentaje);
+      L.push("total_preguntas|" + d.totalPreguntas);
+
+      L.push("--temas--");
+      L.push("tema|area|aciertos|total");
+      Object.keys(d.estadisticas).sort(function (a, b) {
+        const sa = d.estadisticas[a], sb = d.estadisticas[b];
+        return (sa.correct / sa.total) - (sb.correct / sb.total);
+      }).forEach(function (tema) {
+        const e = d.estadisticas[tema];
+        L.push(limpiarCampo(tema) + "|" + (e.theme === "algebra" ? "Algebra" : "Cuantitativo") +
+               "|" + e.correct + "|" + e.total);
+      });
+
+      L.push("--errores--");
+      L.push("numero|tema|respuesta_alumno|respuesta_correcta");
+      d.errores.forEach(function (e) {
+        L.push(e.number + "|" + limpiarCampo(e.topic) + "|" +
+               limpiarCampo(e.userAnswer) + "|" + limpiarCampo(e.correctAnswer));
+      });
+
+      L.push(MARCA_FIN);
+      return L.join("\n");
+    }
+
+    function construirInformeDocente() {
+      const d = datosInforme;
+      if (!d) { return "<p>No hay informe disponible.</p>"; }
+
+      const base = "font-family:Arial,Helvetica,sans-serif;color:#212529;font-size:14px;line-height:1.5;";
+      const th = "background:#0056b3;color:#ffffff;padding:6px 9px;text-align:left;font-size:13px;border:1px solid #0056b3;";
+      const td = "padding:6px 9px;border:1px solid #adb5bd;font-size:13px;";
+
+      const enCero = [], aMedias = [];
+      Object.keys(d.estadisticas).forEach(function (tema) {
+        const e = d.estadisticas[tema];
+        if (e.correct === 0) { enCero.push([tema, e]); }
+        else if (e.correct < e.total) { aMedias.push([tema, e]); }
+      });
+      const porNombre = function (a, b) { return a[0].localeCompare(b[0], "es"); };
+      enCero.sort(porNombre); aMedias.sort(porNombre);
+
+      function tabla(titulo, lista) {
+        if (!lista.length) { return '<p style="margin:0 0 16px;color:#555;">' + titulo + ': ninguno.</p>'; }
+        let t = '<h2 style="font-size:15px;margin:18px 0 8px;">' + titulo +
+                ' <span style="color:#555;font-weight:normal;">(' + lista.length + ')</span></h2>';
+        t += '<table width="100%" cellpadding="0" cellspacing="0" border="1" style="border-collapse:collapse;border-color:#adb5bd;">';
+        t += '<tr><th style="' + th + '">Tema</th><th style="' + th + '">Área</th><th style="' + th + '">Aciertos</th></tr>';
+        lista.forEach(function (par) {
+          t += '<tr><td style="' + td + '">' + escaparHTML(par[0]) + '</td><td style="' + td + '">' +
+               (par[1].theme === "algebra" ? "Álgebra" : "Cuantitativo") + '</td><td style="' + td +
+               'text-align:center;">' + par[1].correct + " / " + par[1].total + '</td></tr>';
+        });
+        return t + '</table>';
+      }
+
+      let h = '<div style="' + base + '">';
+      h += '<h1 style="font-size:18px;color:#0056b3;margin:0 0 4px;">' +
+           escaparHTML(nombreEstudiante || "Estudiante") + ' &mdash; ' + d.porcentaje + '%</h1>';
+      h += '<p style="margin:0 0 14px;color:#555;font-size:13px;">' +
+           escaparHTML(d.fecha) + ' · ' + escaparHTML(d.tiempo) + ' · ' +
+           d.correctas + ' correctas, ' + d.incorrectas + ' incorrectas, ' +
+           d.sinResponder + ' sin responder</p>';
+      h += tabla("Temas sin ningún acierto", enCero);
+      h += tabla("Temas a medias", aMedias);
+      h += '<h2 style="font-size:15px;margin:22px 0 6px;">Datos para el análisis</h2>';
+      h += '<p style="margin:0 0 8px;color:#555;font-size:12px;">Bloque de lectura automática. ' +
+           'No hace falta leerlo: lo procesa la herramienta de resumen del grupo.</p>';
+      h += '<pre style="font-family:Consolas,Menlo,monospace;font-size:12px;background:#f8f9fa;' +
+           'border:1px solid #adb5bd;padding:10px;white-space:pre;">' +
+           escaparHTML(construirDatosPlanos()) + '</pre>';
+      h += '</div>';
+      return h;
+    }
+
     // ---------- PARÁMETROS DEL CORREO ----------
     // El servicio rechaza con 413 si el TOTAL de variables supera 50 KB.
     // Se mide en bytes UTF-8 (los acentos ocupan dos) y se baja de nivel
     // hasta que quepa, dejando margen para la cabecera de la peticion.
-    function construirParametros(destino, copia, nombre, marca) {
+    function construirParametros(destino, copia, nombre, marca, paraDocente) {
       const LIMITE_BYTES = 46000;
       const quien = nombre || "Estudiante";
       const parametros = {
@@ -1875,9 +2042,10 @@
         incorrectas: String(datosInforme.incorrectas),
         sin_responder: String(datosInforme.sinResponder),
         fecha: datosInforme.fecha,
-        report_html: construirInformeHTML(0)
+        report_html: paraDocente ? construirInformeDocente() : construirInformeHTML(0)
       };
       let recortado = false;
+      if (paraDocente) { return { parametros: parametros, recortado: false }; }
       if (pesoEnBytes(parametros) > LIMITE_BYTES) {
         parametros.report_html = construirInformeHTML(1);
         recortado = true;
@@ -1943,7 +2111,7 @@
       }
 
       copiaDocenteEnviada = true;
-      const armado = construirParametros(CORREO_DOCENTE, CC_EN_COPIA_DOCENTE, nombreEstudiante, "[Automático]");
+      const armado = construirParametros(CORREO_DOCENTE, CC_EN_COPIA_DOCENTE, nombreEstudiante, "[Automático]", true);
 
       if (!navigator.onLine) {
         guardarPendiente(armado.parametros);
