@@ -364,6 +364,16 @@
       .estado-cargando { color: var(--azul); }
       .modal-botones { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
 
+      /* Identificación obligatoria en la pantalla de inicio */
+      .identificacion label { display: block; font-weight: 600; margin: 14px 0 6px; }
+      .identificacion input[type="text"] {
+        font: inherit; width: 100%; max-width: 440px; border: 2px solid var(--borde);
+        border-radius: 8px; padding: 12px;
+      }
+      .identificacion input:focus { border-color: var(--azul); outline: 3px solid var(--azul); outline-offset: 2px; }
+      .identificacion input[aria-invalid="true"] { border-color: var(--rojo); }
+      .identificacion .ayuda { font-size: 15px; color: var(--gris); margin-top: 6px; }
+
       .pie {
         font-size: 14px; color: var(--gris); text-align: center;
         border-top: 1px solid var(--borde); padding-top: 16px; margin-top: 30px;
@@ -440,6 +450,19 @@
           Busca un lugar tranquilo y reserva los 90 minutos completos. Hacer el examen a pedazos
           no te dirá si estás preparado. Si necesitas detenerte, es mejor empezar de nuevo otro día.
         </div>
+
+        <section class="tarjeta identificacion">
+          <h2>Antes de comenzar, escribe tu nombre</h2>
+          <p>
+            Tu nombre encabeza el informe y viaja con los resultados que recibe tu profesor.
+            Sin él, tu examen llega sin dueño y no se puede usar para ayudarte.
+          </p>
+          <label for="campoNombreInicio">Tu nombre y apellido (obligatorio)</label>
+          <input type="text" id="campoNombreInicio" autocomplete="name" required aria-required="true"
+                 aria-describedby="ayudaNombreInicio errorNombreInicio" placeholder="María Rodríguez" />
+          <p class="ayuda" id="ayudaNombreInicio">Escríbelo como quieres que aparezca en tu informe.</p>
+          <p class="error-msg" id="errorNombreInicio" role="alert"></p>
+        </section>
 
         <button class="btn btn-primario btn-grande" onclick="iniciarExamen()">Comenzar el examen</button>
       </main>
@@ -2122,6 +2145,23 @@ function prepararPregunta(original) {
 
 /* ─────────── BLOQUE F: ARRANQUE Y CRONÓMETRO ─────────── */
 function iniciarExamen() {
+  // El nombre es obligatorio: sin él, la copia que recibe el docente no se
+  // puede atribuir a nadie. Fue el fallo que apareció en Matemáticas.
+  const campoNombre = document.getElementById("campoNombreInicio");
+  const errorNombre = document.getElementById("errorNombreInicio");
+  if (campoNombre) {
+    const valor = campoNombre.value.trim();
+    if (valor.length < 3) {
+      errorNombre.textContent = "Escribe tu nombre y apellido antes de comenzar.";
+      campoNombre.setAttribute("aria-invalid", "true");
+      campoNombre.focus();
+      return;
+    }
+    errorNombre.textContent = "";
+    campoNombre.removeAttribute("aria-invalid");
+    nombreEstudiante = valor;
+  }
+
   preguntas = sortearExamen();
   respuestas = preguntas.map(() => ({ valor: null, marcada: false }));
   actual = 0;
@@ -2580,6 +2620,7 @@ function terminarExamen(motivo) {
   };
 
   mostrarInforme();
+  enviarCopiaDocente();   // el estudiante no tiene que hacer nada
 }
 
 /* ─────────── BLOQUE L: INFORME EN PANTALLA ─────────── */
@@ -2701,7 +2742,10 @@ function mostrarInforme() {
    compacto = true omite las explicaciones para no exceder el
    límite de 50 KB por petición del servicio de envío.
    ──────────────────────────────────────────────────────────────── */
-function construirInformeHTML(compacto) {
+/* compacto = sin explicaciones; minimo = ademas sin la tabla de errores.
+   Los tres niveles existen para caber bajo el límite de 50 KB por petición
+   que impone el servicio de correo. La descarga siempre va completa. */
+function construirInformeHTML(compacto, minimo) {
   const d = datosInforme;
   if (!d) return "<p>Todavía no hay un informe disponible.</p>";
 
@@ -2771,7 +2815,7 @@ function construirInformeHTML(compacto) {
     h += '</ol>';
   }
 
-  if (d.errores.length > 0) {
+  if (d.errores.length > 0 && !minimo) {
     h += '<h2 style="font-size:17px;color:#721c24;margin:22px 0 8px;">Las preguntas que fallaste</h2>';
     h += '<table width="100%" cellpadding="7" cellspacing="0" border="1" style="border-collapse:collapse;border-color:#adb5bd;font-size:13px;">';
     h += '<thead style="background:#f8d7da;color:#721c24;"><tr><th scope="col">N.&ordm;</th><th scope="col" align="left">Pregunta</th>' +
@@ -2789,7 +2833,12 @@ function construirInformeHTML(compacto) {
     h += '</tbody></table>';
   }
 
-  if (compacto) {
+  if (minimo) {
+    h += '<p style="margin-top:16px;padding:12px;border:2px solid #5C3900;background:#fff8e6;color:#5C3900;font-size:13px;">' +
+         'Este resumen omite el detalle de cada pregunta fallada porque el informe completo excedía ' +
+         'el tamaño máximo que admite un correo. Para verlo entero, usa el botón ' +
+         '<strong>Descargar el informe</strong> en la página del examen.</p>';
+  } else if (compacto) {
     h += '<p style="margin-top:16px;padding:12px;border:2px solid #5C3900;background:#fff8e6;color:#5C3900;font-size:13px;">' +
          'Esta versión resumida omite las explicaciones porque el informe completo excedía el tamaño máximo de un correo. ' +
          'Para verlas, usa el botón <strong>Descargar el informe</strong> en la página del examen.</p>';
@@ -2861,7 +2910,230 @@ function construirDocumentoCompleto() {
     construirInformeHTML(false) + '\n</body>\n</html>';
 }
 
-/* ─────────── BLOQUE N: ENVÍO POR CORREO ─────────── */
+
+/* ─────────── BLOQUE N1: TAMAÑO DE LA PETICIÓN ───────────
+   EmailJS rechaza con 413 toda petición que pase de 50 KB. Se mide el peso
+   real en bytes UTF-8 de TODAS las variables juntas, no la longitud en
+   caracteres: con acentos y eñes cada uno ocupa dos bytes, y contar
+   caracteres subestima el tamaño justo cuando más informe hay que mandar. */
+const LIMITE_BYTES = 46000;   // margen de seguridad bajo los 50 KB
+
+function pesoBytes(v) {
+  const t = String(v);
+  if (typeof TextEncoder !== "undefined") return new TextEncoder().encode(t).length;
+  return encodeURIComponent(t).replace(/%[0-9A-F]{2}/gi, "x").length;
+}
+
+function pesoParametros(p) {
+  let n = 0;
+  for (const k in p) n += pesoBytes(k) + pesoBytes(p[k]);
+  return n;
+}
+
+/* Baja de nivel de detalle hasta que la petición quepa. Devuelve el nivel
+   que se usó: 0 completo, 1 sin explicaciones, 2 sin el detalle. */
+function ajustarAlLimite(parametros, niveles) {
+  const ns = niveles || [
+    () => construirInformeHTML(false, false),
+    () => construirInformeHTML(true, false),
+    () => construirInformeHTML(true, true)
+  ];
+  for (let i = 0; i < ns.length; i++) {
+    parametros.report_html = ns[i]();
+    if (pesoParametros(parametros) <= LIMITE_BYTES) return i;
+  }
+  return ns.length - 1;
+}
+
+function armarParametros(destino, copia, asunto) {
+  const d = datosInforme;
+  return {
+    to_email: destino,
+    cc_email: copia || "",
+    student_name: nombreEstudiante || "Estudiante",
+    subject: asunto,
+    score: d.porcentaje + "%",
+    correctas: String(d.correctas),
+    incorrectas: String(d.incorrectas),
+    sin_responder: String(d.sinResponder),
+    fecha: d.fecha,
+    report_html: ""
+  };
+}
+
+/* ─────────── BLOQUE N2: COPIA AUTOMÁTICA AL DOCENTE ───────────
+   El estudiante no tiene que hacer nada: al cerrarse el examen sale una
+   copia analítica hacia el docente. Si falla, queda en cola y se reintenta
+   la próxima vez que se abra la página. */
+const CLAVE_COLA = "ged_ciencias_envios_pendientes";
+const CLAVE_HECHOS = "ged_ciencias_envios_hechos";
+
+function leerAlmacen(clave) {
+  try { return JSON.parse(localStorage.getItem(clave) || "[]"); }
+  catch (e) { return []; }
+}
+
+function guardarAlmacen(clave, valor) {
+  try { localStorage.setItem(clave, JSON.stringify(valor)); }
+  catch (e) { /* modo privado o almacenamiento lleno: no es crítico */ }
+}
+
+function idEnvio(d, nombre) {
+  return (nombre || "sin-nombre") + "|" + d.fecha + "|" + d.porcentaje + "|" + d.correctas;
+}
+
+function yaEnviado(id) {
+  return leerAlmacen(CLAVE_HECHOS).indexOf(id) !== -1;
+}
+
+function marcarEnviado(id) {
+  const hechos = leerAlmacen(CLAVE_HECHOS);
+  if (hechos.indexOf(id) === -1) {
+    hechos.push(id);
+    guardarAlmacen(CLAVE_HECHOS, hechos.slice(-40));   // no crece sin fin
+  }
+}
+
+function encolar(id, parametros) {
+  const cola = leerAlmacen(CLAVE_COLA).filter(r => r.id !== id);
+  cola.push({ id: id, parametros: parametros, intentos: 0 });
+  guardarAlmacen(CLAVE_COLA, cola.slice(-10));
+}
+
+function enviarCopiaDocente() {
+  if (!datosInforme) return;
+  const id = idEnvio(datosInforme, nombreEstudiante);
+  if (yaEnviado(id)) return;
+
+  const parametros = armarParametros(CONFIG.correoDocente, "",
+    "Copia docente — " + CONFIG.materia + " — " + (nombreEstudiante || "Sin nombre") +
+    " — " + datosInforme.porcentaje + "%");
+  ajustarAlLimite(parametros, [
+    () => construirInformeDocente(false),
+    () => construirInformeDocente(true)
+  ]);
+
+  if (!emailjsListo()) { encolar(id, parametros); return; }
+  iniciarEmailJS();
+  emailjs.send(CONFIG.emailjsServiceId, CONFIG.emailjsTemplateId, parametros)
+    .then(() => marcarEnviado(id))
+    .catch(err => { console.warn("Copia docente en cola:", err); encolar(id, parametros); });
+}
+
+function procesarCola() {
+  if (!emailjsListo()) return;
+  const cola = leerAlmacen(CLAVE_COLA);
+  if (cola.length === 0) return;
+  guardarAlmacen(CLAVE_COLA, []);
+  cola.forEach(r => {
+    if (yaEnviado(r.id) || r.intentos >= 5) return;
+    emailjs.send(CONFIG.emailjsServiceId, CONFIG.emailjsTemplateId, r.parametros)
+      .then(() => marcarEnviado(r.id))
+      .catch(() => { r.intentos++; const c = leerAlmacen(CLAVE_COLA); c.push(r); guardarAlmacen(CLAVE_COLA, c); });
+  });
+}
+
+/* ─────────── BLOQUE N3: INFORME DEL DOCENTE ───────────
+   No es el informe del estudiante: aquí lo útil es dónde reforzar. Lleva
+   además un bloque delimitado y legible por máquina para alimentar el
+   resumen de grupo sin volver a teclear nada. */
+function construirInformeDocente(compacto) {
+  const d = datosInforme;
+  if (!d) return "<p>Sin datos.</p>";
+  const base = "font-family:Arial,Helvetica,sans-serif;color:#212529;font-size:14px;line-height:1.55;";
+  const td = "padding:7px 9px;border:1px solid #adb5bd;font-size:13px;vertical-align:top;";
+
+  let h = '<div style="' + base + '">';
+  h += '<h1 style="font-size:19px;color:#0056b3;margin:0 0 6px;">Copia docente &mdash; Ciencias GED</h1>';
+  h += '<p style="margin:0 0 16px;font-size:13px;color:#555;">Estudiante: <strong>' +
+       escapar(nombreEstudiante || "Sin nombre") + '</strong><br>Fecha: ' + escapar(d.fecha) +
+       '<br>Tiempo utilizado: ' + escapar(d.tiempo) +
+       (d.cierrePorTiempo ? ' <strong>(se agotó el tiempo)</strong>' : '') + '</p>';
+  h += '<p style="margin:0 0 18px;font-size:15px;"><strong>' + d.porcentaje + '%</strong> &mdash; ' +
+       d.correctas + ' correctas, ' + d.incorrectas + ' incorrectas, ' + d.sinResponder + ' sin responder, ' +
+       'de ' + d.total + ' preguntas.</p>';
+
+  function tabla(mapa, titulo, nombrador) {
+    const claves = Object.keys(mapa).sort((a, b) =>
+      (mapa[a].correctas / mapa[a].total) - (mapa[b].correctas / mapa[b].total));
+    let t = '<h2 style="font-size:16px;color:#0056b3;margin:18px 0 6px;">' + titulo + '</h2>';
+    t += '<table width="100%" cellpadding="6" cellspacing="0" border="1" style="border-collapse:collapse;border-color:#adb5bd;font-size:13px;">';
+    t += '<thead style="background:#0056b3;color:#fff;"><tr><th scope="col" align="left">Area</th>' +
+         '<th scope="col" align="left">Aciertos</th><th scope="col" align="left">%</th></tr></thead><tbody>';
+    claves.forEach(k => {
+      const s = mapa[k], pc = Math.round((s.correctas / s.total) * 100);
+      t += '<tr><td style="' + td + '">' + escapar(nombrador(k)) + '</td><td style="' + td + '">' +
+           s.correctas + ' / ' + s.total + '</td><td style="' + td + '">' + pc + '%</td></tr>';
+    });
+    return t + '</tbody></table>';
+  }
+
+  h += tabla(d.porDominio, "Por área de contenido", k => DOMINIOS[k].nombre);
+  h += tabla(d.porPractica, "Por destreza científica", k => PRACTICAS[k]);
+  h += tabla(d.porDok, "Por nivel de exigencia", k => k);
+
+  const enCero = Object.keys(d.porSubtema).filter(k => d.porSubtema[k].correctas === 0);
+  const parciales = Object.keys(d.porSubtema).filter(k =>
+    d.porSubtema[k].correctas > 0 && d.porSubtema[k].correctas < d.porSubtema[k].total);
+
+  h += '<h2 style="font-size:16px;color:#721c24;margin:18px 0 6px;">Temas sin ningún acierto</h2>';
+  h += enCero.length ? '<ul style="margin:0 0 12px 20px;">' +
+       enCero.map(k => '<li>' + escapar(k) + ' (0 de ' + d.porSubtema[k].total + ')</li>').join("") + '</ul>'
+     : '<p style="margin:0 0 12px;">Ninguno.</p>';
+
+  h += '<h2 style="font-size:16px;color:#5C3900;margin:18px 0 6px;">Temas a medias</h2>';
+  h += parciales.length ? '<ul style="margin:0 0 12px 20px;">' +
+       parciales.map(k => '<li>' + escapar(k) + ' (' + d.porSubtema[k].correctas + ' de ' +
+                          d.porSubtema[k].total + ')</li>').join("") + '</ul>'
+     : '<p style="margin:0 0 12px;">Ninguno.</p>';
+
+  if (!compacto && d.errores.length) {
+    h += '<h2 style="font-size:16px;color:#721c24;margin:18px 0 6px;">Preguntas falladas</h2>';
+    h += '<table width="100%" cellpadding="6" cellspacing="0" border="1" style="border-collapse:collapse;border-color:#adb5bd;font-size:12px;">';
+    h += '<thead style="background:#f8d7da;color:#721c24;"><tr><th scope="col">N.&ordm;</th>' +
+         '<th scope="col" align="left">Tema</th><th scope="col" align="left">Respondió</th>' +
+         '<th scope="col" align="left">Correcta</th></tr></thead><tbody>';
+    d.errores.forEach(e => {
+      h += '<tr><td style="' + td + '" align="center">' + e.numero + '</td><td style="' + td + '">' +
+           escapar(e.subtema) + '</td><td style="' + td + '">' + escapar(e.tuya) + '</td>' +
+           '<td style="' + td + '">' + escapar(e.buena) + '</td></tr>';
+    });
+    h += '</tbody></table>';
+  }
+
+  h += '<h2 style="font-size:15px;color:#555;margin:20px 0 6px;">Datos para el resumen de grupo</h2>';
+  h += '<pre style="font-family:Courier New,monospace;font-size:11px;white-space:pre-wrap;' +
+       'border:1px solid #adb5bd;padding:10px;background:#f8f9fa;">' +
+       escapar(datosLegiblesPorMaquina()) + '</pre>';
+
+  h += '<p style="margin-top:20px;font-size:12px;color:#555;border-top:1px solid #adb5bd;padding-top:10px;">' +
+       'Copia automática del examen de práctica de Ciencias &mdash; GEDparaHispanos.</p></div>';
+  return h;
+}
+
+function datosLegiblesPorMaquina() {
+  const d = datosInforme;
+  const L = [];
+  L.push("### GEDCIE-DATOS v1 ###");
+  L.push("ESTUDIANTE|" + (nombreEstudiante || "Sin nombre"));
+  L.push("FECHA|" + d.fecha);
+  L.push("TIEMPO|" + d.tiempo);
+  L.push("CIERRE_POR_TIEMPO|" + (d.cierrePorTiempo ? "si" : "no"));
+  L.push("TOTALES|" + d.total + "|" + d.correctas + "|" + d.incorrectas + "|" + d.sinResponder + "|" + d.porcentaje);
+  Object.keys(d.porDominio).forEach(k =>
+    L.push("DOMINIO|" + k + "|" + d.porDominio[k].correctas + "|" + d.porDominio[k].total));
+  Object.keys(d.porPractica).forEach(k =>
+    L.push("PRACTICA|" + k + "|" + d.porPractica[k].correctas + "|" + d.porPractica[k].total));
+  Object.keys(d.porDok).forEach(k =>
+    L.push("DOK|" + k + "|" + d.porDok[k].correctas + "|" + d.porDok[k].total));
+  Object.keys(d.porSubtema).forEach(k =>
+    L.push("SUBTEMA|" + k + "|" + d.porSubtema[k].correctas + "|" + d.porSubtema[k].total));
+  d.errores.forEach(e => L.push("ERROR|" + e.numero + "|" + e.subtema + "|" + e.dominio + "|DOK" + e.dok));
+  L.push("### FIN GEDCIE-DATOS ###");
+  return L.join("\n");
+}
+
+/* ─────────── BLOQUE N: ENVÍO POR CORREO AL ESTUDIANTE ─────────── */
 function emailjsListo() {
   return typeof emailjs !== "undefined" &&
     CONFIG.emailjsPublicKey.indexOf("TU_") !== 0 &&
@@ -2869,15 +3141,30 @@ function emailjsListo() {
     CONFIG.emailjsTemplateId.indexOf("TU_") !== 0;
 }
 
-(function iniciarEmailJS() {
-  if (typeof emailjs !== "undefined" && CONFIG.emailjsPublicKey.indexOf("TU_") !== 0) {
-    try { emailjs.init({ publicKey: CONFIG.emailjsPublicKey }); }
-    catch (e) { console.warn("EmailJS no se pudo inicializar:", e); }
-  }
-})();
+let emailjsIniciado = false;
+
+function iniciarEmailJS() {
+  if (emailjsIniciado) return true;
+  if (typeof emailjs === "undefined" || CONFIG.emailjsPublicKey.indexOf("TU_") === 0) return false;
+  try { emailjs.init({ publicKey: CONFIG.emailjsPublicKey }); emailjsIniciado = true; }
+  catch (e) { console.warn("EmailJS no se pudo inicializar:", e); }
+  return emailjsIniciado;
+}
+
+/* La librería llega de un CDN: si tarda, no se puede dar por perdida a la
+   primera. Se reintenta cada medio segundo durante 10 segundos. */
+function cuandoEmailjsEsteListo(accion, intentos) {
+  const n = intentos || 0;
+  if (iniciarEmailJS()) { accion(); return; }
+  if (n >= 20) return;
+  setTimeout(() => cuandoEmailjsEsteListo(accion, n + 1), 500);
+}
 
 function abrirModalCorreo() {
   if (!datosInforme) return;
+  // El nombre ya se pidió al inicio: no se vuelve a pedir en blanco.
+  const cn = document.getElementById("campoNombre");
+  if (cn && !cn.value.trim()) cn.value = nombreEstudiante;
   document.getElementById("errorCorreo").textContent = "";
   mostrarEstado("", "");
   const btn = document.getElementById("btnEnviar");
@@ -2920,33 +3207,26 @@ function enviarInformePorCorreo() {
     return;
   }
 
+  iniciarEmailJS();
   const btn = document.getElementById("btnEnviar");
   btn.disabled = true;
   btn.textContent = "Enviando…";
   mostrarEstado("Enviando el informe. Espera unos segundos, por favor.", "cargando");
 
-  let cuerpo = construirInformeHTML(false);
-  let recortado = false;
-  if (cuerpo.length > 45000) { cuerpo = construirInformeHTML(true); recortado = true; }
-
-  const parametros = {
-    to_email: correo,
-    cc_email: CONFIG.correoDocente,
-    student_name: nombreEstudiante || "Estudiante",
-    subject: "Informe GED " + CONFIG.materia + " — " + (nombreEstudiante || "Estudiante") + " — " + datosInforme.porcentaje + "%",
-    score: datosInforme.porcentaje + "%",
-    correctas: String(datosInforme.correctas),
-    incorrectas: String(datosInforme.incorrectas),
-    sin_responder: String(datosInforme.sinResponder),
-    fecha: datosInforme.fecha,
-    report_html: cuerpo,
-    report_text: construirInformeTexto()
-  };
+  // La plantilla solo usa {{{report_html}}}: mandar además el texto plano
+  // duplicaba el informe y disparaba el 413. Se envía un solo cuerpo, y se
+  // mide en bytes UTF-8, no en caracteres: cada acento ocupa dos.
+  // Sin copia al docente: ya le llegó la suya automáticamente al cerrarse
+  // el examen. Duplicarla solo llenaría el buzón.
+  const parametros = armarParametros(correo, "",
+    "Informe GED " + CONFIG.materia + " — " + (nombreEstudiante || "Estudiante") +
+    " — " + datosInforme.porcentaje + "%");
+  const nivel = ajustarAlLimite(parametros);
 
   emailjs.send(CONFIG.emailjsServiceId, CONFIG.emailjsTemplateId, parametros)
     .then(function () {
       mostrarEstado("Informe enviado a " + correo + ". Revisa también la carpeta de correo no deseado." +
-        (recortado ? " Por su tamaño se envió sin las explicaciones: descárgalo aquí si las necesitas." : ""), "exito");
+        (nivel > 0 ? " Por su tamaño se envió resumido: descárgalo aquí si quieres el detalle completo." : ""), "exito");
       btn.textContent = "Enviado";
     })
     .catch(function (err) {
@@ -3022,6 +3302,7 @@ function imprimirInforme() {
 
 /* ─────────── ARRANQUE ─────────── */
 document.getElementById("totalInicio").textContent = Math.min(CONFIG.totalPreguntas, BANCO.length);
+cuandoEmailjsEsteListo(procesarCola);   // reintenta las copias que no salieron
 
     </script>
   </body>
