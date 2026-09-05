@@ -372,10 +372,14 @@
       .identificacion label { display: block; font-weight: 600; margin: 14px 0 6px; }
       .identificacion input[type="text"] {
         font: inherit; width: 100%; max-width: 440px; border: 2px solid var(--borde);
-        border-radius: 8px; padding: 12px;
+        border-radius: 8px; padding: 12px; background: #fff; color: #212529;
       }
       .identificacion input:focus { border-color: var(--azul); outline: 3px solid var(--azul); outline-offset: 2px; }
       .identificacion input[aria-invalid="true"] { border-color: var(--rojo); }
+      /* Código de grupo: 4 caracteres. Ancho corto y monoespaciado para que
+         se lea carácter a carácter y no invite a escribir una frase. */
+      .identificacion input.campo-codigo { width: 9ch; max-width: 100%; text-transform: uppercase;
+        font-family: Consolas, Menlo, monospace; letter-spacing: 0.18em; text-align: center; }
       .identificacion .ayuda { font-size: 15px; color: var(--gris); margin-top: 6px; }
 
       .pie {
@@ -456,16 +460,24 @@
         </div>
 
         <section class="tarjeta identificacion">
-          <h2>Antes de comenzar, escribe tu nombre</h2>
+          <h2>Antes de comenzar, identifícate</h2>
           <p>
-            Tu nombre encabeza el informe y viaja con los resultados que recibe tu profesor.
-            Sin él, tu examen llega sin dueño y no se puede usar para ayudarte.
+            Tu nombre y tu grupo encabezan el informe y viajan con los resultados que recibe
+            tu profesor. Sin ellos, tu examen llega sin dueño y no se puede usar para ayudarte.
           </p>
           <label for="campoNombreInicio">Tu nombre y apellido (obligatorio)</label>
           <input type="text" id="campoNombreInicio" autocomplete="name" required aria-required="true"
                  aria-describedby="ayudaNombreInicio errorNombreInicio" placeholder="María Rodríguez" />
           <p class="ayuda" id="ayudaNombreInicio">Escríbelo como quieres que aparezca en tu informe.</p>
           <p class="error-msg" id="errorNombreInicio" role="alert"></p>
+
+          <label for="campoGrupoInicio">El código de tu grupo, 4 caracteres (obligatorio)</label>
+          <input type="text" id="campoGrupoInicio" class="campo-codigo" maxlength="4"
+                 autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false"
+                 required aria-required="true"
+                 aria-describedby="ayudaGrupoInicio errorGrupoInicio" placeholder="3A01" />
+          <p class="ayuda" id="ayudaGrupoInicio">Son los cuatro caracteres que te dio tu profesor, por ejemplo 3A01. Sin ellos, tu informe llega sin clase.</p>
+          <p class="error-msg" id="errorGrupoInicio" role="alert"></p>
         </section>
 
         <button class="btn btn-primario btn-grande" onclick="iniciarExamen()">Comenzar el examen</button>
@@ -2025,6 +2037,44 @@ let cronometro = null;
 let examenActivo = false;
 let datosInforme = null;
 let nombreEstudiante = "";
+
+/* ═══════════════════════════════════════════════════════════════════════
+   GRUPO O SECCIÓN — código de 4 caracteres
+   No hay lista que mantener: el alumno escribe el código que le diste.
+   FORMATO_GRUPO decide qué se acepta. Por defecto, 4 letras o dígitos.
+   Si tus códigos son solo numéricos, cámbialo por  /^[0-9]{4}$/  y
+   ningún alumno podrá colar una letra por error.
+   ═══════════════════════════════════════════════════════════════════════ */
+const FORMATO_GRUPO = /^[A-Z0-9]{4}$/;
+const CLAVE_GRUPO   = "ged_grupo_alumno";   // recuerda el grupo entre exámenes
+let grupoEstudiante = "";
+
+/* Deja el código en mayúsculas y sin nada que no sea letra o dígito.
+   Así "3a 01" y "3A01" llegan iguales al informe. */
+function normalizarGrupo(txt) {
+  return String(txt === undefined || txt === null ? "" : txt)
+    .toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 4);
+}
+
+function prepararCampoGrupo() {
+  const c = document.getElementById("campoGrupoInicio");
+  if (!c) return;
+  c.addEventListener("input", function () {
+    const limpio = normalizarGrupo(c.value);
+    if (c.value !== limpio) { c.value = limpio; }
+  });
+  // Si ya hizo otro examen en este navegador, el código viene puesto.
+  try {
+    const guardado = localStorage.getItem(CLAVE_GRUPO);
+    if (guardado && FORMATO_GRUPO.test(guardado)) { c.value = guardado; }
+  } catch (e) { /* modo privado: no es crítico */ }
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", prepararCampoGrupo);
+} else {
+  prepararCampoGrupo();
+}
 let focoPrevio = null;
 let piezaSeleccionada = null;   // arrastrar y soltar por teclado
 
@@ -2164,6 +2214,25 @@ function iniciarExamen() {
     campoNombre.removeAttribute("aria-invalid");
     nombreEstudiante = valor;
   }
+
+  // El grupo es igual de obligatorio que el nombre: un informe sin grupo no
+  // se puede clasificar y termina perdiéndose.
+  const campoGrupo = document.getElementById("campoGrupoInicio");
+  const errorGrupo = document.getElementById("errorGrupoInicio");
+  const valorGrupo = normalizarGrupo(campoGrupo ? campoGrupo.value : "");
+  if (!FORMATO_GRUPO.test(valorGrupo)) {
+    if (errorGrupo) {
+      errorGrupo.textContent = valorGrupo === ""
+        ? "Escribe el código de tu grupo antes de comenzar."
+        : "El código del grupo tiene 4 caracteres, por ejemplo 3A01. Revísalo con tu profesor.";
+    }
+    if (campoGrupo) { campoGrupo.value = valorGrupo; campoGrupo.setAttribute("aria-invalid", "true"); campoGrupo.focus(); }
+    return;
+  }
+  if (errorGrupo) errorGrupo.textContent = "";
+  if (campoGrupo) campoGrupo.removeAttribute("aria-invalid");
+  grupoEstudiante = valorGrupo;
+  try { localStorage.setItem(CLAVE_GRUPO, grupoEstudiante); } catch (e) { }
 
   preguntas = sortearExamen();
   respuestas = preguntas.map(() => ({ valor: null, marcada: false }));
@@ -2759,7 +2828,8 @@ function construirInformeHTML(compacto, minimo) {
   let h = '<div style="' + base + '">';
   h += '<h1 style="font-size:20px;color:#0056b3;margin:0 0 6px;">Informe de resultados &mdash; Ciencias GED</h1>';
   h += '<p style="margin:0 0 18px;color:#555555;font-size:13px;">Estudiante: <strong>' +
-       escapar(nombreEstudiante || "Estudiante") + '</strong><br>Fecha: ' + escapar(d.fecha) +
+       escapar(nombreEstudiante || "Estudiante") + '</strong><br>Grupo: <strong>' +
+       escapar(grupoEstudiante || "Sin grupo") + '</strong><br>Fecha: ' + escapar(d.fecha) +
        '<br>Tiempo utilizado: ' + escapar(d.tiempo) + '</p>';
 
   h += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:0 0 18px;"><tr>' +
@@ -2861,6 +2931,7 @@ function construirInformeTexto() {
   L.push("INFORME DE RESULTADOS - CIENCIAS GED");
   L.push("====================================");
   L.push("Estudiante: " + (nombreEstudiante || "Estudiante"));
+  L.push("Grupo: " + (grupoEstudiante || "Sin grupo"));
   L.push("Fecha: " + d.fecha);
   L.push("Tiempo utilizado: " + d.tiempo);
   L.push("");
@@ -2927,7 +2998,8 @@ function construirInformeDocente(compacto) {
   let h = '<div style="' + base + '">';
   h += '<h1 style="font-size:19px;color:#0056b3;margin:0 0 6px;">Copia docente &mdash; Ciencias GED</h1>';
   h += '<p style="margin:0 0 16px;font-size:13px;color:#555;">Estudiante: <strong>' +
-       escapar(nombreEstudiante || "Sin nombre") + '</strong><br>Fecha: ' + escapar(d.fecha) +
+       escapar(nombreEstudiante || "Sin nombre") + '</strong><br>Grupo: <strong>' +
+       escapar(grupoEstudiante || "Sin grupo") + '</strong><br>Fecha: ' + escapar(d.fecha) +
        '<br>Tiempo utilizado: ' + escapar(d.tiempo) +
        (d.cierrePorTiempo ? ' <strong>(se agotó el tiempo)</strong>' : '') + '</p>';
   h += '<p style="margin:0 0 18px;font-size:15px;"><strong>' + d.porcentaje + '%</strong> &mdash; ' +
@@ -2997,6 +3069,7 @@ function datosLegiblesPorMaquina() {
   const L = [];
   L.push("### GEDCIE-DATOS v1 ###");
   L.push("ESTUDIANTE|" + (nombreEstudiante || "Sin nombre"));
+  L.push("GRUPO|" + (grupoEstudiante || "Sin grupo"));
   L.push("FECHA|" + d.fecha);
   L.push("TIEMPO|" + d.tiempo);
   L.push("CIERRE_POR_TIEMPO|" + (d.cierrePorTiempo ? "si" : "no"));
@@ -3154,6 +3227,7 @@ function armarParametros(destino, copia, asunto) {
     to_email: destino,
     cc_email: copia || "",
     student_name: nombreEstudiante || "Estudiante",
+    student_group: grupoEstudiante || "Sin grupo",
     subject: asunto,
     score: d.porcentaje + "%",
     correctas: String(d.correctas),
@@ -3166,6 +3240,7 @@ function armarParametros(destino, copia, asunto) {
 
 function asuntoDocente() {
   return MARCA_AUTOMATICO + " Informe GED " + MATERIA + " — " +
+    (grupoEstudiante || "Sin grupo") + " — " +
     (nombreEstudiante || "Sin nombre") + " — " + datosInforme.porcentaje + "%";
 }
 
@@ -3190,7 +3265,8 @@ function guardarAlmacen(clave, valor) {
 }
 
 function idEnvio(d, nombre) {
-  return (nombre || "sin-nombre") + "|" + d.fecha + "|" + d.porcentaje + "|" + d.correctas;
+  return (nombre || "sin-nombre") + "|" + (grupoEstudiante || "sin-grupo") +
+    "|" + d.fecha + "|" + d.porcentaje + "|" + d.correctas;
 }
 
 function yaEnviado(id) {
@@ -3353,7 +3429,8 @@ function descargarInforme() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = ARCHIVO_BASE + "-" + nombreArchivoSeguro(nombreEstudiante) + ".html";
+  a.download = ARCHIVO_BASE + "-" + nombreArchivoSeguro(grupoEstudiante || "sin-grupo") +
+               "-" + nombreArchivoSeguro(nombreEstudiante) + ".html";
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
