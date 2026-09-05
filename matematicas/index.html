@@ -168,9 +168,13 @@
       .campo-grupo { margin-bottom: 16px; }
       .campo-inicio { max-width: 420px; margin: 0 auto 20px; text-align: left; }
       .campo-grupo label { display: block; font-weight: bold; font-size: 15px; margin-bottom: 6px; color: #212529; }
-      .campo-grupo input { width: 100%; padding: 12px; font-size: 16px; font-family: inherit; border: 2px solid #6c757d; border-radius: 8px; }
+      .campo-grupo input { width: 100%; padding: 12px; font-size: 16px; font-family: inherit; border: 2px solid #6c757d; border-radius: 8px; background: #ffffff; color: #212529; }
       .campo-grupo input:focus { outline: none; border-color: #0056b3; box-shadow: 0 0 0 3px rgba(0,86,179,0.25); }
       .campo-grupo input[aria-invalid="true"] { border-color: #b02a37; }
+      /* Código de grupo: 4 caracteres. Ancho corto y monoespaciado para que
+         se lea carácter a carácter y no invite a escribir una frase. */
+      .campo-grupo input.campo-codigo { width: 9ch; max-width: 100%; text-transform: uppercase;
+        font-family: Consolas, Menlo, monospace; letter-spacing: 0.18em; text-align: center; }
       .ayuda-campo { font-size: 13px; color: #555555; margin-top: 4px; }
       .error-msg { color: #b02a37; font-weight: bold; font-size: 14px; margin-top: 6px; }
       .error-msg:empty { display: none; }
@@ -227,6 +231,15 @@
                  aria-describedby="ayudaNombreInicio errorNombreInicio" placeholder="Nombre y apellido">
           <p class="ayuda-campo" id="ayudaNombreInicio">Tu profesor recibe tu resultado al terminar, para poder orientarte.</p>
           <p class="error-msg" id="errorNombreInicio" role="alert"></p>
+        </div>
+        <div class="campo-grupo campo-inicio">
+          <label for="campoGrupoInicio">Escribe el código de tu grupo (4 caracteres)</label>
+          <input type="text" id="campoGrupoInicio" class="campo-codigo" maxlength="4"
+                 autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false"
+                 required aria-required="true"
+                 aria-describedby="ayudaGrupoInicio errorGrupoInicio" placeholder="3A01">
+          <p class="ayuda-campo" id="ayudaGrupoInicio">Son los cuatro caracteres que te dio tu profesor, por ejemplo 3A01. Sin ellos, tu informe llega sin clase.</p>
+          <p class="error-msg" id="errorGrupoInicio" role="alert"></p>
         </div>
         <button class="start-button" onclick="startExam()">Comenzar Examen</button>
       </div>
@@ -1301,6 +1314,25 @@
       if (campo) { campo.removeAttribute("aria-invalid"); }
       nombreEstudiante = valor;
 
+      // El grupo es igual de obligatorio que el nombre: un informe sin grupo
+      // no se puede clasificar y termina perdiéndose.
+      const campoG = document.getElementById("campoGrupoInicio");
+      const errorG = document.getElementById("errorGrupoInicio");
+      const valorG = normalizarGrupo(campoG ? campoG.value : "");
+      if (!FORMATO_GRUPO.test(valorG)) {
+        if (errorG) {
+          errorG.textContent = valorG === ""
+            ? "Escribe el código de tu grupo para comenzar el examen."
+            : "El código del grupo tiene 4 caracteres, por ejemplo 3A01. Revísalo con tu profesor.";
+        }
+        if (campoG) { campoG.value = valorG; campoG.setAttribute("aria-invalid", "true"); campoG.focus(); }
+        return;
+      }
+      if (errorG) { errorG.textContent = ""; }
+      if (campoG) { campoG.removeAttribute("aria-invalid"); }
+      grupoEstudiante = valorG;
+      try { localStorage.setItem(CLAVE_GRUPO, grupoEstudiante); } catch (e) { }
+
       questions = generateExam();
       document.getElementById("startScreen").style.display = "none";
       document.getElementById("examInterface").style.display = "block";
@@ -1592,6 +1624,44 @@
     // ---------- ESTADO ----------
     let datosInforme = null;      // se llena al terminar el examen
     let nombreEstudiante = "";
+
+/* ═══════════════════════════════════════════════════════════════════════
+       GRUPO O SECCIÓN — código de 4 caracteres
+       No hay lista que mantener: el alumno escribe el código que le diste.
+       FORMATO_GRUPO decide qué se acepta. Por defecto, 4 letras o dígitos.
+       Si tus códigos son solo numéricos, cámbialo por  /^[0-9]{4}$/  y
+       ningún alumno podrá colar una letra por error.
+       ═══════════════════════════════════════════════════════════════════════ */
+    const FORMATO_GRUPO = /^[A-Z0-9]{4}$/;
+    const CLAVE_GRUPO   = "ged_grupo_alumno";   // recuerda el grupo entre exámenes
+    let grupoEstudiante = "";
+
+    /* Deja el código en mayúsculas y sin nada que no sea letra o dígito.
+       Así "3a 01" y "3A01" llegan iguales al informe. */
+    function normalizarGrupo(txt) {
+      return String(txt === undefined || txt === null ? "" : txt)
+        .toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 4);
+    }
+
+    function prepararCampoGrupo() {
+      const c = document.getElementById("campoGrupoInicio");
+      if (!c) return;
+      c.addEventListener("input", function () {
+        const limpio = normalizarGrupo(c.value);
+        if (c.value !== limpio) { c.value = limpio; }
+      });
+      // Si ya hizo otro examen en este navegador, el código viene puesto.
+      try {
+        const guardado = localStorage.getItem(CLAVE_GRUPO);
+        if (guardado && FORMATO_GRUPO.test(guardado)) { c.value = guardado; }
+      } catch (e) { /* modo privado: no es crítico */ }
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", prepararCampoGrupo);
+    } else {
+      prepararCampoGrupo();
+    }
     let focoPrevio = null;
 
     // ---------- UTILIDADES ----------
@@ -1722,6 +1792,7 @@
       let h = '<div style="' + base + '">';
       h += '<h1 style="font-size:20px;color:#0056b3;margin:0 0 6px;">Informe de resultados &mdash; Razonamiento matemático GED</h1>';
       h += '<p style="margin:0 0 18px;color:#555555;font-size:13px;">Estudiante: <strong>' + nombre + '</strong><br>' +
+           'Grupo: <strong>' + escaparHTML(grupoEstudiante || "Sin grupo") + '</strong><br>' +
            'Fecha: ' + escaparHTML(d.fecha) + '<br>' +
            'Tiempo utilizado: ' + escaparHTML(d.tiempo) + '</p>';
 
@@ -1846,6 +1917,7 @@
       L.push("INFORME DE RESULTADOS - RAZONAMIENTO MATEMATICO GED");
       L.push("===================================================");
       L.push("Estudiante: " + (nombreEstudiante || "Estudiante"));
+      L.push("Grupo: " + (grupoEstudiante || "Sin grupo"));
       L.push("Fecha: " + d.fecha);
       L.push("Tiempo utilizado: " + d.tiempo);
       L.push("");
@@ -1912,6 +1984,7 @@
       const L = [];
       L.push(MARCA_INICIO);
       L.push("alumno|" + limpiarCampo(nombreEstudiante || "Estudiante"));
+      L.push("grupo|" + limpiarCampo(grupoEstudiante || "Sin grupo"));
       L.push("fecha|" + limpiarCampo(d.fecha));
       L.push("tiempo_seg|" + segundosDesdeTiempo(d.tiempo));
       L.push("correctas|" + d.correctas);
@@ -1979,6 +2052,7 @@
       h += '<h1 style="font-size:18px;color:#0056b3;margin:0 0 4px;">' +
            escaparHTML(nombreEstudiante || "Estudiante") + ' &mdash; ' + d.porcentaje + '%</h1>';
       h += '<p style="margin:0 0 14px;color:#555;font-size:13px;">' +
+           'Grupo: <strong>' + escaparHTML(grupoEstudiante || "Sin grupo") + '</strong><br>' +
            escaparHTML(d.fecha) + ' · ' + escaparHTML(d.tiempo) + ' · ' +
            d.correctas + ' correctas, ' + d.incorrectas + ' incorrectas, ' +
            d.sinResponder + ' sin responder</p>';
@@ -2118,6 +2192,7 @@ function armarParametros(destino, copia, asunto) {
     to_email: destino,
     cc_email: copia || "",
     student_name: nombreEstudiante || "Estudiante",
+    student_group: grupoEstudiante || "Sin grupo",
     subject: asunto,
     score: d.porcentaje + "%",
     correctas: String(d.correctas),
@@ -2130,6 +2205,7 @@ function armarParametros(destino, copia, asunto) {
 
 function asuntoDocente() {
   return MARCA_AUTOMATICO + " Informe GED " + MATERIA + " — " +
+    (grupoEstudiante || "Sin grupo") + " — " +
     (nombreEstudiante || "Sin nombre") + " — " + datosInforme.porcentaje + "%";
 }
 
@@ -2154,7 +2230,8 @@ function guardarAlmacen(clave, valor) {
 }
 
 function idEnvio(d, nombre) {
-  return (nombre || "sin-nombre") + "|" + d.fecha + "|" + d.porcentaje + "|" + d.correctas;
+  return (nombre || "sin-nombre") + "|" + (grupoEstudiante || "sin-grupo") +
+    "|" + d.fecha + "|" + d.porcentaje + "|" + d.correctas;
 }
 
 function yaEnviado(id) {
@@ -2352,7 +2429,8 @@ cuandoEmailjsEsteListo(procesarCola);
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = ARCHIVO_BASE + "-" + nombreArchivoSeguro(nombreEstudiante) + ".html";
+      a.download = ARCHIVO_BASE + "-" + nombreArchivoSeguro(grupoEstudiante || "sin-grupo") +
+                   "-" + nombreArchivoSeguro(nombreEstudiante) + ".html";
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
