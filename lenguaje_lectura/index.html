@@ -138,6 +138,8 @@
       .campo-grupo input { width: 100%; padding: 12px; font-size: 16px; font-family: inherit; border: 2px solid #555555; border-radius: 8px; }
       .campo-grupo input:focus { outline: none; border-color: #c0392b; box-shadow: 0 0 0 3px rgba(192,57,43,0.25); }
       .campo-grupo input[aria-invalid="true"] { border-color: #b02a37; }
+      .campo-grupo input.campo-codigo { width: 9ch; max-width: 100%; text-transform: uppercase;
+        font-family: Consolas, Menlo, monospace; letter-spacing: 0.18em; text-align: center; }
       .ayuda-campo { font-size: 13px; color: #555555; margin-top: 4px; }
       .error-msg { color: #b02a37; font-weight: bold; font-size: 14px; margin-top: 6px; }
       .error-msg:empty { display: none; }
@@ -219,6 +221,15 @@
                  aria-describedby="ayudaNombreInicio errorNombreInicio" placeholder="Nombre y apellido">
           <p class="ayuda-campo" id="ayudaNombreInicio">Tu profesor recibe tu resultado al terminar, para poder orientarte.</p>
           <p class="error-msg" id="errorNombreInicio" role="alert"></p>
+        </div>
+        <div class="campo-grupo campo-inicio">
+          <label for="campoGrupoInicio">Escribe el código de tu grupo (4 caracteres)</label>
+          <input type="text" id="campoGrupoInicio" class="campo-codigo" maxlength="4"
+                 autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false"
+                 required aria-required="true"
+                 aria-describedby="ayudaGrupoInicio errorGrupoInicio" placeholder="3A01">
+          <p class="ayuda-campo" id="ayudaGrupoInicio">Son los cuatro caracteres que te dio tu profesor, por ejemplo 3A01. Sin ellos, tu informe llega sin clase.</p>
+          <p class="error-msg" id="errorGrupoInicio" role="alert"></p>
         </div>
         <button class="start-button" onclick="startExam()">Comenzar Sección 1</button>
       </div>
@@ -835,6 +846,25 @@
       if (campo) { campo.removeAttribute("aria-invalid"); }
       nombreEstudiante = valor;
 
+      // El grupo es igual de obligatorio que el nombre: un informe sin grupo
+      // no se puede clasificar y termina perdiéndose.
+      const campoG = document.getElementById("campoGrupoInicio");
+      const errorG = document.getElementById("errorGrupoInicio");
+      const valorG = normalizarGrupo(campoG ? campoG.value : "");
+      if (!FORMATO_GRUPO.test(valorG)) {
+        if (errorG) {
+          errorG.textContent = valorG === ""
+            ? "Escribe el código de tu grupo para comenzar el examen."
+            : "El código del grupo tiene 4 caracteres, por ejemplo 3A01. Revísalo con tu profesor.";
+        }
+        if (campoG) { campoG.value = valorG; campoG.setAttribute("aria-invalid", "true"); campoG.focus(); }
+        return;
+      }
+      if (errorG) { errorG.textContent = ""; }
+      if (campoG) { campoG.removeAttribute("aria-invalid"); }
+      grupoEstudiante = valorG;
+      try { localStorage.setItem(CLAVE_GRUPO, grupoEstudiante); } catch (e) { }
+
       document.getElementById("startScreen").style.display = "none";
       document.getElementById("examInterface").style.display = "block";
       examStarted = true;
@@ -1075,7 +1105,7 @@
       let skillScores = {reading:{c:0,t:0}, language:{c:0,t:0}, argument:{c:0,t:0}};
 
       questions.forEach((q, index) => {
-        if (!areaStats[q.topic]) areaStats[q.topic] = {total:0,correct:0,incorrect:0,pages:q.bookPages,skill:q.skill};
+        if (!areaStats[q.topic]) areaStats[q.topic] = {total:0,correct:0,incorrect:0,pages:q.bookPages,skill:q.skill,dok:q.dok};
         areaStats[q.topic].total++;
         if (q.skill && skillScores[q.skill]) skillScores[q.skill].t++;
 
@@ -1087,7 +1117,7 @@
           areaStats[q.topic].incorrect++;
           incorrectQuestions.push({
             number:index+1, question:q.question||"(ver pasaje)", topic:q.topic,
-            bookPages:q.bookPages, skill:q.skill,
+            bookPages:q.bookPages, skill:q.skill, dok:q.dok,
             userAnswer:"(sin respuesta)", correctAnswer:getCorrectText(q), explanation:q.explanation
           });
           return;
@@ -1111,7 +1141,7 @@
           areaStats[q.topic].incorrect++;
           incorrectQuestions.push({
             number:index+1, question:q.question||"(ver pasaje)", topic:q.topic,
-            bookPages:q.bookPages, skill:q.skill,
+            bookPages:q.bookPages, skill:q.skill, dok:q.dok,
             userAnswer:getUserAnswerText(q,ans), correctAnswer:getCorrectText(q), explanation:q.explanation
           });
         }
@@ -1262,6 +1292,40 @@
     // ---------- ESTADO ----------
     let datosInforme = null;      // se llena al terminar el examen
     let nombreEstudiante = "";
+
+    /* ─── CÓDIGO DE GRUPO ───────────────────────────────────────────────
+       FORMATO_GRUPO decide qué se acepta. Por defecto, 4 letras o dígitos.
+       Es el mismo bloque que llevan Matemáticas y Ciencias. */
+    const FORMATO_GRUPO = /^[A-Z0-9]{4}$/;
+    const CLAVE_GRUPO   = "ged_grupo_alumno";   // recuerda el grupo entre exámenes
+    let grupoEstudiante = "";
+
+    /* Deja el código en mayúsculas y sin nada que no sea letra o dígito.
+       Así "3a 01" y "3A01" llegan iguales al informe. */
+    function normalizarGrupo(txt) {
+      return String(txt === undefined || txt === null ? "" : txt)
+        .toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 4);
+    }
+
+    function prepararCampoGrupo() {
+      const c = document.getElementById("campoGrupoInicio");
+      if (!c) return;
+      c.addEventListener("input", function () {
+        const limpio = normalizarGrupo(c.value);
+        if (c.value !== limpio) { c.value = limpio; }
+      });
+      // Si ya hizo otro examen en este navegador, el código viene puesto.
+      try {
+        const guardado = localStorage.getItem(CLAVE_GRUPO);
+        if (guardado && FORMATO_GRUPO.test(guardado)) { c.value = guardado; }
+      } catch (e) { /* modo privado: no es crítico */ }
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", prepararCampoGrupo);
+    } else {
+      prepararCampoGrupo();
+    }
     let copiaDocenteEnviada = false;
     let focoPrevio = null;
 
@@ -1385,9 +1449,13 @@
     // de modo que el envío no dependa de leer el DOM.
     function guardarDatosInforme(correctas, incorrectas, sinResponder, porcentaje,
                                  listaErrores, estadisticas, destrezas, segundos) {
+      const ahora = new Date();
       datosInforme = {
-        fecha: new Date().toLocaleString("es-ES", { dateStyle: "long", timeStyle: "short" }),
+        fecha: ahora.toLocaleString("es-ES", { dateStyle: "long", timeStyle: "short" }),
+        fechaISO: fechaLocalISO(ahora),
         tiempo: formatearTiempo(segundos),
+        tiempoSeg: segundos,
+        cierrePorTiempo: (typeof timeLeft !== "undefined" && timeLeft <= 0),
         totalPreguntas: correctas + incorrectas,
         correctas: correctas,
         incorrectas: incorrectas,
@@ -1418,6 +1486,7 @@
       let h = '<div style="' + base + '">';
       h += '<h1 style="font-size:20px;color:#a93226;margin:0 0 6px;">Informe de resultados &mdash; Razonamiento a través de las Artes del Lenguaje (GED)</h1>';
       h += '<p style="margin:0 0 18px;color:#555555;font-size:13px;">Estudiante: <strong>' + nombre + '</strong><br>' +
+           'Grupo: <strong>' + escaparHTML(grupoEstudiante || "Sin grupo") + '</strong><br>' +
            'Fecha: ' + escaparHTML(d.fecha) + '<br>' +
            'Tiempo utilizado: ' + escaparHTML(d.tiempo) + '</p>';
 
@@ -1619,8 +1688,16 @@
     // un bloque de datos delimitado que una herramienta puede leer sin
     // ambigüedad para armar el resumen del grupo.
     // Separador: barra vertical. Los nombres de tema llevan comas, la barra no.
-    const MARCA_INICIO = "### GEDRLA-DATOS v1 ###";
-    const MARCA_FIN    = "### FIN GEDRLA-DATOS ###";
+    const MARCA_INICIO = "### GED-DATOS v2 ###";
+    const MARCA_FIN    = "### FIN GED-DATOS v2 ###";
+
+    /* Fecha en hora LOCAL, no UTC: toISOString() desplazaría la marca varias
+       horas y un examen de la noche aparecería fechado al día siguiente. */
+    function fechaLocalISO(f) {
+      const p = function (n) { return String(n).padStart(2, "0"); };
+      return f.getFullYear() + "-" + p(f.getMonth() + 1) + "-" + p(f.getDate()) +
+             "T" + p(f.getHours()) + ":" + p(f.getMinutes());
+    }
 
     function segundosDesdeTiempo(txt) {
       const m = /(\d+)\s*min\s*(\d+)/.exec(String(txt || ""));
@@ -1632,45 +1709,69 @@
         .replace(/[|\r\n]+/g, " ").replace(/\s+/g, " ").trim();
     }
 
+    /* ─────────────────────────────────────────────────────────────────
+       FORMATO GED-DATOS v2 — común a las cuatro materias.
+       Cada sección declara sus columnas en la primera fila, de modo que
+       el procesador de grupo lee por nombre y no por posición.
+       ───────────────────────────────────────────────────────────────── */
     function construirDatosPlanos() {
       const d = datosInforme;
       const L = [];
+
       L.push(MARCA_INICIO);
       L.push("materia|Artes del Lenguaje");
       L.push("alumno|" + limpiarCampo(nombreEstudiante || "Estudiante"));
+      L.push("grupo|" + limpiarCampo(grupoEstudiante || "Sin grupo"));
       L.push("fecha|" + limpiarCampo(d.fecha));
-      L.push("tiempo_seg|" + segundosDesdeTiempo(d.tiempo));
+      L.push("fecha_iso|" + (d.fechaISO || ""));
+      L.push("tiempo_seg|" + (d.tiempoSeg || segundosDesdeTiempo(d.tiempo)));
+      L.push("cierre_por_tiempo|" + (d.cierrePorTiempo ? "si" : "no"));
+      L.push("total_preguntas|" + d.totalPreguntas);
       L.push("correctas|" + d.correctas);
       L.push("incorrectas|" + d.incorrectas);
       L.push("sin_responder|" + d.sinResponder);
       L.push("porcentaje|" + d.porcentaje);
-      L.push("total_preguntas|" + d.totalPreguntas);
 
-      L.push("--destrezas--");
-      L.push("destreza|aciertos|total");
+      // El eje DOK no viene precalculado: se agrega desde los temas.
+      const porDok = {};
+      Object.keys(d.estadisticas).forEach(function (tema) {
+        const e = d.estadisticas[tema];
+        const k = e.dok ? "DOK " + e.dok : "DOK sin clasificar";
+        if (!porDok[k]) { porDok[k] = { correctas: 0, total: 0 }; }
+        porDok[k].correctas += e.correct; porDok[k].total += e.total;
+      });
+
+      L.push("--ejes--");
+      L.push("eje|clase|aciertos|total");
       if (d.destrezas) {
         ["reading", "language", "argument"].forEach(function (k) {
           const e = d.destrezas[k];
           if (!e || !e.t) { return; }
-          L.push(limpiarCampo(nombreDestreza(k)) + "|" + e.c + "|" + e.t);
+          L.push(limpiarCampo(nombreDestreza(k)) + "|destreza|" + e.c + "|" + e.t);
         });
       }
+      Object.keys(porDok).sort().forEach(function (k) {
+        L.push(k + "|dok|" + porDok[k].correctas + "|" + porDok[k].total);
+      });
 
       L.push("--temas--");
-      L.push("tema|destreza|aciertos|total");
+      L.push("tema|eje|nivel|aciertos|total|recurso");
       Object.keys(d.estadisticas).sort(function (a, b) {
         const sa = d.estadisticas[a], sb = d.estadisticas[b];
         return (sa.correct / sa.total) - (sb.correct / sb.total);
       }).forEach(function (tema) {
         const e = d.estadisticas[tema];
-        L.push(limpiarCampo(tema) + "|" + limpiarCampo(nombreDestreza(e.skill)) +
-               "|" + e.correct + "|" + e.total);
+        L.push(limpiarCampo(tema) + "|" + limpiarCampo(nombreDestreza(e.skill)) + "|" +
+               (e.dok ? "DOK " + e.dok : "") + "|" + e.correct + "|" + e.total + "|" +
+               limpiarCampo(e.pages || e.bookPages || ""));
       });
 
       L.push("--errores--");
-      L.push("numero|tema|respuesta_alumno|respuesta_correcta");
+      L.push("numero|tema|eje|nivel|respuesta_alumno|respuesta_correcta");
       d.errores.forEach(function (e) {
         L.push(e.number + "|" + limpiarCampo(e.topic) + "|" +
+               limpiarCampo(nombreDestreza(e.skill)) + "|" +
+               (e.dok ? "DOK " + e.dok : "") + "|" +
                limpiarCampo(e.userAnswer) + "|" + limpiarCampo(e.correctAnswer));
       });
 
@@ -1751,7 +1852,9 @@
         to_email: destino,
         cc_email: copia,
         student_name: quien,
-        subject: (marca ? marca + " " : "") + "Informe GED Artes del Lenguaje — " + quien + " — " + datosInforme.porcentaje + "%",
+        student_group: grupoEstudiante || "Sin grupo",
+        subject: (marca ? marca + " " : "") + "Informe GED Artes del Lenguaje — " +
+                 (grupoEstudiante || "Sin grupo") + " — " + quien + " — " + datosInforme.porcentaje + "%",
         score: datosInforme.porcentaje + "%",
         correctas: String(datosInforme.correctas),
         incorrectas: String(datosInforme.incorrectas),
@@ -1964,7 +2067,8 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "informe-ged-lenguaje-" + nombreArchivoSeguro(nombreEstudiante) + ".html";
+      a.download = "informe-ged-lenguaje-" + nombreArchivoSeguro(grupoEstudiante || "sin-grupo") +
+                   "-" + nombreArchivoSeguro(nombreEstudiante) + ".html";
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
