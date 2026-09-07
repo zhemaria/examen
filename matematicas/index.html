@@ -1452,7 +1452,7 @@
       let correctCount = 0, incorrectQuestions = [], skippedCount = 0, areaStats = {};
 
       questions.forEach((q, i) => {
-        if (!areaStats[q.topic]) areaStats[q.topic] = { total:0, correct:0, incorrect:0, pages:q.bookPages, theme:q.theme };
+        if (!areaStats[q.topic]) areaStats[q.topic] = { total:0, correct:0, incorrect:0, pages:q.bookPages, theme:q.theme, dok:q.dok };
         areaStats[q.topic].total++;
 
         if (answers[i] && answers[i].value !== undefined && answers[i].value !== "") {
@@ -1465,12 +1465,12 @@
             areaStats[q.topic].incorrect++;
             let uText = q.type === "multiple-choice" ? (q.options[answers[i].value] || "N/A") : answers[i].value;
             let cText = q.type === "multiple-choice" ? q.options[q.correct] : q.correct;
-            incorrectQuestions.push({ number:i+1, question:q.question, topic:q.topic, bookPages:q.bookPages, theme:q.theme, userAnswer:uText, correctAnswer:cText, explanation:q.explanation });
+            incorrectQuestions.push({ number:i+1, question:q.question, topic:q.topic, bookPages:q.bookPages, theme:q.theme, dok:q.dok, userAnswer:uText, correctAnswer:cText, explanation:q.explanation });
           }
         } else {
           skippedCount++; areaStats[q.topic].incorrect++;
           let cText = q.type === "multiple-choice" ? q.options[q.correct] : q.correct;
-          incorrectQuestions.push({ number:i+1, question:q.question, topic:q.topic, bookPages:q.bookPages, theme:q.theme, userAnswer:"(sin respuesta)", correctAnswer:cText, explanation:q.explanation });
+          incorrectQuestions.push({ number:i+1, question:q.question, topic:q.topic, bookPages:q.bookPages, theme:q.theme, dok:q.dok, userAnswer:"(sin respuesta)", correctAnswer:cText, explanation:q.explanation });
         }
       });
 
@@ -1758,9 +1758,13 @@
     // Se invoca desde endExam(). Guarda TODO el informe en memoria,
     // de modo que el envío no dependa de leer el DOM.
     function guardarDatosInforme(correctas, incorrectas, sinResponder, porcentaje, listaErrores, estadisticas, segundosUsados) {
+      const ahora = new Date();
       datosInforme = {
-        fecha: new Date().toLocaleString("es-ES", { dateStyle: "long", timeStyle: "short" }),
+        fecha: ahora.toLocaleString("es-ES", { dateStyle: "long", timeStyle: "short" }),
+        fechaISO: fechaLocalISO(ahora),
         tiempo: formatearTiempo(segundosUsados),
+        tiempoSeg: segundosUsados,
+        cierrePorTiempo: (typeof timeLeft !== "undefined" && timeLeft <= 0),
         totalPreguntas: correctas + incorrectas,
         correctas: correctas,
         incorrectas: incorrectas,
@@ -1966,8 +1970,18 @@
     // un bloque de datos delimitado que una herramienta puede leer sin
     // ambigüedad para armar el resumen del grupo.
     // Separador: barra vertical. Los nombres de tema llevan comas, la barra no.
-    const MARCA_INICIO = "### GEDMAT-DATOS v1 ###";
-    const MARCA_FIN    = "### FIN GEDMAT-DATOS ###";
+    const MARCA_INICIO = "### GED-DATOS v2 ###";
+    const MARCA_FIN    = "### FIN GED-DATOS v2 ###";
+
+    /* Fecha en hora LOCAL, no UTC: toISOString() desplazaria la marca varias
+       horas y un examen de la noche aparecería fechado al día siguiente. */
+    function fechaLocalISO(f) {
+      const p = function (n) { return String(n).padStart(2, "0"); };
+      return f.getFullYear() + "-" + p(f.getMonth() + 1) + "-" + p(f.getDate()) +
+             "T" + p(f.getHours()) + ":" + p(f.getMinutes());
+    }
+
+    function nombreArea(theme) { return theme === "algebra" ? "Álgebra" : "Cuantitativo"; }
 
     function segundosDesdeTiempo(txt) {
       const m = /(\d+)\s*min\s*(\d+)/.exec(String(txt || ""));
@@ -1979,35 +1993,68 @@
         .replace(/[|\r\n]+/g, " ").replace(/\s+/g, " ").trim();
     }
 
+    /* ─────────────────────────────────────────────────────────────────
+       FORMATO GED-DATOS v2 — común a las cuatro materias.
+       Cada sección declara sus columnas en la primera fila, de modo que
+       el procesador de grupo lee por nombre y no por posición.
+       ───────────────────────────────────────────────────────────────── */
     function construirDatosPlanos() {
       const d = datosInforme;
       const L = [];
+
       L.push(MARCA_INICIO);
+      L.push("materia|" + MATERIA);
       L.push("alumno|" + limpiarCampo(nombreEstudiante || "Estudiante"));
       L.push("grupo|" + limpiarCampo(grupoEstudiante || "Sin grupo"));
       L.push("fecha|" + limpiarCampo(d.fecha));
-      L.push("tiempo_seg|" + segundosDesdeTiempo(d.tiempo));
+      L.push("fecha_iso|" + (d.fechaISO || ""));
+      L.push("tiempo_seg|" + (d.tiempoSeg || segundosDesdeTiempo(d.tiempo)));
+      L.push("cierre_por_tiempo|" + (d.cierrePorTiempo ? "si" : "no"));
+      L.push("total_preguntas|" + d.totalPreguntas);
       L.push("correctas|" + d.correctas);
       L.push("incorrectas|" + d.incorrectas);
       L.push("sin_responder|" + d.sinResponder);
       L.push("porcentaje|" + d.porcentaje);
-      L.push("total_preguntas|" + d.totalPreguntas);
+
+      // Matemáticas no lleva mapas de ejes precalculados: se agregan aquí
+      // a partir de las estadísticas por tema.
+      const porArea = {}, porDok = {};
+      Object.keys(d.estadisticas).forEach(function (tema) {
+        const e = d.estadisticas[tema];
+        const area = nombreArea(e.theme);
+        const dok  = e.dok ? "DOK " + e.dok : "DOK sin clasificar";
+        if (!porArea[area]) { porArea[area] = { correctas: 0, total: 0 }; }
+        if (!porDok[dok])   { porDok[dok]   = { correctas: 0, total: 0 }; }
+        porArea[area].correctas += e.correct; porArea[area].total += e.total;
+        porDok[dok].correctas   += e.correct; porDok[dok].total   += e.total;
+      });
+
+      L.push("--ejes--");
+      L.push("eje|clase|aciertos|total");
+      Object.keys(porArea).forEach(function (k) {
+        L.push(k + "|area|" + porArea[k].correctas + "|" + porArea[k].total);
+      });
+      Object.keys(porDok).sort().forEach(function (k) {
+        L.push(k + "|dok|" + porDok[k].correctas + "|" + porDok[k].total);
+      });
 
       L.push("--temas--");
-      L.push("tema|area|aciertos|total");
+      L.push("tema|eje|nivel|aciertos|total|recurso");
       Object.keys(d.estadisticas).sort(function (a, b) {
         const sa = d.estadisticas[a], sb = d.estadisticas[b];
         return (sa.correct / sa.total) - (sb.correct / sb.total);
       }).forEach(function (tema) {
         const e = d.estadisticas[tema];
-        L.push(limpiarCampo(tema) + "|" + (e.theme === "algebra" ? "Algebra" : "Cuantitativo") +
-               "|" + e.correct + "|" + e.total);
+        L.push(limpiarCampo(tema) + "|" + nombreArea(e.theme) + "|" +
+               (e.dok ? "DOK " + e.dok : "") + "|" + e.correct + "|" + e.total + "|" +
+               limpiarCampo(e.pages || ""));
       });
 
       L.push("--errores--");
-      L.push("numero|tema|respuesta_alumno|respuesta_correcta");
+      L.push("numero|tema|eje|nivel|respuesta_alumno|respuesta_correcta");
       d.errores.forEach(function (e) {
-        L.push(e.number + "|" + limpiarCampo(e.topic) + "|" +
+        L.push(e.number + "|" + limpiarCampo(e.topic) + "|" + nombreArea(e.theme) + "|" +
+               (e.dok ? "DOK " + e.dok : "") + "|" +
                limpiarCampo(e.userAnswer) + "|" + limpiarCampo(e.correctAnswer));
       });
 
