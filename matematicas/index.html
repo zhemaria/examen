@@ -544,7 +544,7 @@
 
     // Q5: Distancia en recta numérica
     { part:1, theme:"quantitative", dok:1, calculator:false, type:"fill-in-blank",
-      topic:"Distancia y valor absoluto", bookPages:"págs. 6–7, 54, 72",
+      topic:"Distancia en la recta numérica", bookPages:"págs. 6–7, 54, 72",
       generate() {
         const a = -randInt(3,12), b = randInt(2,10);
         const dist = Math.abs(b - a);
@@ -591,7 +591,7 @@
 
     // Q8: Valor absoluto
     { part:1, theme:"quantitative", dok:2, calculator:false, type:"multiple-choice",
-      topic:"Valor absoluto", bookPages:"págs. 6–7, 54",
+      topic:"Evaluar expresiones con valor absoluto", bookPages:"págs. 6–7, 54",
       generate() {
         const a = -randInt(2,9), b = randInt(1,5), c = randInt(6,12);
         const absA = Math.abs(a), inner = b - c, absInner = Math.abs(inner);
@@ -1098,7 +1098,7 @@
 
     // Q37: Porcentaje de un número
     { part:2, theme:"quantitative", dok:1, calculator:true, type:"multiple-choice",
-      topic:"Porcentajes y descuentos", bookPages:"págs. 14–15",
+      topic:"Calcular el porcentaje de un número", bookPages:"págs. 14–15",
       generate() {
         const pct = randChoice([10,15,20,25,30,40,50,60,75]);
         const num = randChoice([80,100,120,150,200,250,300,400,500]);
@@ -1492,7 +1492,9 @@
       else msg = "No te desanimes. Revisa las explicaciones y enfócate en los temas a reforzar. ¡La práctica es la clave!";
       document.getElementById("resultMessage").textContent = msg;
 
-      guardarDatosInforme(correctCount, totalQuestionsInSim - correctCount, skippedCount, percentage, incorrectQuestions, areaStats, 115 * 60 - timeLeft, dokStats);
+      // Las sin responder NO son incorrectas: se restan para que las tres
+      // cuentas sumen exactamente el total de preguntas.
+      guardarDatosInforme(correctCount, totalQuestionsInSim - correctCount - skippedCount, skippedCount, percentage, incorrectQuestions, areaStats, 115 * 60 - timeLeft, dokStats);
       generateErrorReport(correctCount, totalQuestionsInSim - correctCount, skippedCount, percentage, incorrectQuestions, areaStats);
       enviarCopiaDocente();
     }
@@ -1772,7 +1774,7 @@
         tiempo: formatearTiempo(segundosUsados),
         tiempoSeg: segundosUsados,
         cierrePorTiempo: (typeof timeLeft !== "undefined" && timeLeft <= 0),
-        totalPreguntas: correctas + incorrectas,
+        totalPreguntas: correctas + incorrectas + sinResponder,
         correctas: correctas,
         incorrectas: incorrectas,
         sinResponder: sinResponder,
