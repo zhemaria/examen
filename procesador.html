@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<!-- Procesador de informes de grupo — GEDparaHispanos
+     José M. Fernández, ABE/ASE Math Master Teacher,
+     Harry S. Truman College — City Colleges of Chicago.
+     Licencia Creative Commons BY-NC-SA 4.0
+     https://creativecommons.org/licenses/by-nc-sa/4.0/ -->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Procesador de informes de grupo — GEDparaHispanos</title>
+<meta name="author" content="José M. Fernández">
+<meta name="license" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+<style>
+/* ══════════════════════════════════════════════════════════════════
+   PALETA E IDENTIDAD
+   Instrumento de diagnóstico, no panel de control. La tinta es marina
+   para separarlo de las cuatro materias, que tienen color propio.
+   Todos los pares texto/fondo se comprobaron a 4.5:1 o mejor.
+   ══════════════════════════════════════════════════════════════════ */
+:root{
+  --papel:#ffffff;
+  --papel-hueco:#f2f4f7;
+  --regla:#d3d9e0;
+  --tinta:#14213d;          /* 14.7:1 sobre blanco */
+  --tinta-suave:#495468;    /* 7.3:1  sobre blanco */
+  --senal:#8c2f39;          /* 7.1:1  sobre blanco */
+  --senal-fondo:#fbeef0;
+  --aviso:#5c3900;          /* 10.3:1 sobre blanco */
+  --aviso-fondo:#fff8e6;
+  --calma:#14604a;          /* 7.6:1  sobre blanco */
+  --calma-fondo:#e9f3ef;
+  --serif:Georgia,"Iowan Old Style","Times New Roman",serif;
+  --sans:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--papel);color:var(--tinta);
+  font-family:var(--sans);font-size:16px;line-height:1.55;
+}
+.hoja{max-width:1080px;margin:0 auto;padding:28px 22px 80px}
+
+/* ── Tipografía ───────────────────────────────────────────────── */
+h1{font-family:var(--serif);font-size:30px;line-height:1.2;font-weight:normal;margin:0 0 6px}
+h2{font-family:var(--serif);font-size:23px;line-height:1.25;font-weight:normal;
+   margin:44px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--tinta)}
+h3{font-size:17px;margin:26px 0 8px}
+h4{font-size:15px;margin:18px 0 6px}
+p{margin:0 0 12px;max-width:70ch}
+.prosa{font-family:var(--serif);font-size:17px;line-height:1.6}
+.subtitulo{color:var(--tinta-suave);margin-bottom:24px;max-width:70ch}
+.nota{font-size:14px;color:var(--tinta-suave);max-width:70ch}
+code,.mono{font-family:Consolas,Menlo,"DejaVu Sans Mono",monospace;font-size:14px}
+
+/* ── Controles ────────────────────────────────────────────────── */
+.panel{background:var(--papel-hueco);border:1px solid var(--regla);border-radius:4px;padding:18px}
+label{display:block;font-weight:600;font-size:14px;margin-bottom:5px}
+textarea,select,input[type=number],input[type=text]{
+  width:100%;font-family:inherit;font-size:15px;padding:9px 10px;
+  border:2px solid var(--tinta-suave);border-radius:4px;background:#fff;color:var(--tinta)}
+textarea{font-family:Consolas,Menlo,monospace;font-size:13px;min-height:140px;resize:vertical}
+select{max-width:420px}
+input[type=number]{max-width:110px}
+:focus-visible{outline:3px solid var(--tinta);outline-offset:2px}
+.boton{
+  font-family:inherit;font-size:15px;font-weight:600;padding:10px 18px;
+  border:2px solid var(--tinta);border-radius:4px;background:var(--tinta);color:#fff;cursor:pointer}
+.boton.secundario{background:#fff;color:var(--tinta)}
+.boton:disabled{opacity:.5;cursor:not-allowed}
+.fila-controles{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;margin:14px 0}
+.fila-controles>div{flex:0 1 auto}
+.zona-suelta{
+  border:2px dashed var(--tinta-suave);border-radius:4px;padding:22px;text-align:center;
+  color:var(--tinta-suave);margin-bottom:14px;background:#fff}
+.zona-suelta.encima{border-color:var(--tinta);background:var(--papel-hueco);color:var(--tinta)}
+
+/* ── Tablas ───────────────────────────────────────────────────── */
+table{border-collapse:collapse;width:100%;margin:10px 0 22px;font-size:14px}
+caption{text-align:left;font-size:13px;color:var(--tinta-suave);padding-bottom:7px}
+th,td{border:1px solid var(--regla);padding:7px 9px;text-align:left;vertical-align:top}
+th{background:var(--tinta);color:#fff;font-weight:600}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tbody tr:nth-child(even){background:var(--papel-hueco)}
+
+/* ── Hallazgos: el margen izquierdo lleva el peso de la evidencia ── */
+.hallazgo{display:grid;grid-template-columns:112px 1fr;gap:18px;
+  padding:16px 0;border-top:1px solid var(--regla)}
+.hallazgo:last-child{border-bottom:1px solid var(--regla)}
+.medida{font-size:12px;color:var(--tinta-suave);line-height:1.35}
+.medida .barra{display:block;height:7px;background:var(--regla);border-radius:2px;margin:5px 0 6px;overflow:hidden}
+.medida .barra span{display:block;height:100%;background:var(--tinta-suave)}
+.veredicto{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;
+  border-radius:3px;border:1px solid;margin-bottom:6px}
+.v-senal{color:var(--senal);background:var(--senal-fondo);border-color:var(--senal)}
+.v-aviso{color:var(--aviso);background:var(--aviso-fondo);border-color:var(--aviso)}
+.v-calma{color:var(--calma);background:var(--calma-fondo);border-color:var(--calma)}
+.v-mudo{color:var(--tinta-suave);background:var(--papel-hueco);border-color:var(--tinta-suave)}
+.hallazgo h3{margin:0 0 4px;font-family:var(--serif);font-size:19px;font-weight:normal}
+.hallazgo p{margin:0 0 8px;font-family:var(--serif);font-size:16px;line-height:1.55}
+.detalle{font-size:13px;color:var(--tinta-suave);font-family:var(--sans)}
+
+/* ── Semáforo de calidad ──────────────────────────────────────── */
+.semaforo{border-left:8px solid;padding:18px 20px;border-radius:4px;margin-bottom:8px}
+.s-verde{border-color:var(--calma);background:var(--calma-fondo)}
+.s-ambar{border-color:var(--aviso);background:var(--aviso-fondo)}
+.s-rojo{border-color:var(--senal);background:var(--senal-fondo)}
+.semaforo h2{margin:0 0 8px;border:0;padding:0;font-size:22px}
+.semaforo p{margin:0 0 8px;font-family:var(--serif);font-size:17px}
+.cifras{display:flex;flex-wrap:wrap;gap:26px;margin-top:12px;font-size:14px}
+.cifras div{min-width:120px}
+.cifras b{display:block;font-size:26px;font-family:var(--serif);font-weight:normal;
+  font-variant-numeric:tabular-nums;line-height:1.1}
+
+/* ── Barras de perfil ─────────────────────────────────────────── */
+.perfil{margin:6px 0 22px}
+.perfil .linea{display:grid;grid-template-columns:150px 1fr 96px;gap:12px;align-items:center;
+  padding:5px 0;font-size:14px}
+.perfil .pista{background:var(--papel-hueco);border:1px solid var(--regla);height:20px;border-radius:2px;overflow:hidden}
+.perfil .relleno{height:100%;background:var(--tinta)}
+.perfil .cifra{text-align:right;font-variant-numeric:tabular-nums}
+
+.aviso-caja{border:2px solid var(--aviso);background:var(--aviso-fondo);color:var(--aviso);
+  padding:12px 14px;border-radius:4px;margin:12px 0;font-size:15px}
+.error-caja{border:2px solid var(--senal);background:var(--senal-fondo);color:var(--senal);
+  padding:12px 14px;border-radius:4px;margin:12px 0;font-size:15px}
+.oculto{display:none}
+footer{margin-top:56px;padding-top:16px;border-top:1px solid var(--regla);
+  font-size:13px;color:var(--tinta-suave)}
+footer a{color:var(--tinta-suave)}
+@media (max-width:640px){
+  .hallazgo{grid-template-columns:1fr;gap:6px}
+  .perfil .linea{grid-template-columns:1fr;gap:3px}
+  .perfil .cifra{text-align:left}
+}
+@media print{
+  .no-imprimir{display:none!important}
+  body{font-size:12pt}
+  .hoja{max-width:none;padding:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="hoja">
+
+<h1>Procesador de informes de grupo</h1>
+<p class="subtitulo">Reúne los informes automáticos de una clase y busca dónde
+conviene revisar la enseñanza. Analiza el grupo como un todo, no alumno por alumno.</p>
+
+<!-- ══════════ 1. ENTRADA ══════════ -->
+<section class="no-imprimir" aria-labelledby="t-entrada">
+  <h2 id="t-entrada">Cargar los informes</h2>
+
+  <div class="zona-suelta" id="zonaSuelta">
+    Arrastre aquí los archivos de los informes (.txt, .md, .eml o .html),
+    o pegue los bloques de datos en el recuadro de abajo.
+  </div>
+
+  <div class="panel">
+    <label for="areaPegado">Bloques de datos</label>
+    <textarea id="areaPegado" aria-describedby="ayudaPegado"
+      placeholder="Pegue aquí uno o varios bloques que empiecen por ### GED-DATOS v2 ###"></textarea>
+    <p class="nota" id="ayudaPegado" style="margin-top:6px">
+      Puede pegar varios bloques seguidos. En el correo, haga clic delante de la primera
+      almohadilla, baje hasta el final y haga clic detrás de la última con la tecla
+      Mayúsculas pulsada.</p>
+    <div class="fila-controles">
+      <button type="button" class="boton" id="btnCargar">Cargar los bloques</button>
+      <button type="button" class="boton secundario" id="btnVaciar">Vaciar todo</button>
+    </div>
+  </div>
+
+  <div id="estadoCarga" role="status" aria-live="polite"></div>
+  <div id="listaCargados"></div>
+</section>
+
+<!-- ══════════ 2. SELECCIÓN ══════════ -->
+<section id="seccionSeleccion" class="oculto no-imprimir" aria-labelledby="t-seleccion">
+  <h2 id="t-seleccion">Elegir el conjunto a analizar</h2>
+  <p class="nota">Una materia y un grupo cada vez. Mezclar materias o secciones
+  distintas produce medias que no significan nada.</p>
+  <div class="fila-controles">
+    <div>
+      <label for="selMateria">Materia</label>
+      <select id="selMateria"></select>
+    </div>
+    <div>
+      <label for="selGrupo">Grupo</label>
+      <select id="selGrupo"></select>
+    </div>
+    <div>
+      <label for="numSegundos">Segundos por pregunta mínimos</label>
+      <input type="number" id="numSegundos" value="30" min="0" max="300" step="5">
+    </div>
+    <div>
+      <label for="numMuestra">Observaciones mínimas por tema</label>
+      <input type="number" id="numMuestra" value="8" min="2" max="100" step="1">
+    </div>
+    <div><button type="button" class="boton" id="btnAnalizar">Analizar el grupo</button></div>
+  </div>
+  <p class="nota">Un intento por debajo del mínimo de segundos por pregunta se aparta del
+  análisis: quien despacha el examen en dos minutos no dice nada sobre la enseñanza y sí
+  arrastra la media. Sigue apareciendo en la lista de la clase.</p>
+</section>
+
+<!-- ══════════ 3. INFORME ══════════ -->
+<div id="informe"></div>
+
+<footer>
+  <p>Procesador de informes de grupo — GEDparaHispanos.<br>
+  José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago.</p>
+  <p><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a></p>
+</footer>
+</div>
+
+<script>
+"use strict";
+/* ══════════════════════════════════════════════════════════════════════════
+   PROCESADOR DE INFORMES DE GRUPO
+   Lee el formato GED-DATOS v2 que emiten los cuatro exámenes de simulación
+   y responde a una sola pregunta: en qué conviene revisar la enseñanza.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+var MARCA_INICIO = "### GED-DATOS v2 ###";
+var MARCA_FIN    = "### FIN GED-DATOS v2 ###";
+var TEXTO_BLANCO = "(sin respuesta)";
+
+var informes = [];   // todos los intentos cargados
+var avisos   = [];   // incidencias de la carga
+
+/* ─────────────── Utilidades ─────────────── */
+function esc(t){
+  return String(t===undefined||t===null?"":t)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+/* Para comparar nombres escritos a mano: sin tildes, sin dobles espacios y en
+   minúsculas. El nombre que se MUESTRA es siempre el que escribió el alumno. */
+function claveNombre(t){
+  return String(t||"").toLowerCase().normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9 ]/g," ")
+    .replace(/\s+/g," ").trim();
+}
+function pct(a,b){ return b>0 ? Math.round(a/b*100) : 0; }
+function mediana(v){
+  if(!v.length) return 0;
+  var o=v.slice().sort(function(x,y){return x-y;});
+  var m=Math.floor(o.length/2);
+  return o.length%2 ? o[m] : Math.round((o[m-1]+o[m])/2);
+}
+function plural(n,uno,varios){ return n===1?uno:varios; }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   LECTURA DEL FORMATO
+   Cada sección declara sus columnas en la primera fila, así que se lee por
+   nombre de columna. Una materia que añada una columna nueva no rompe nada.
+   ══════════════════════════════════════════════════════════════════════════ */
+function extraerBloques(texto){
+  var t = String(texto||"").replace(/\r\n/g,"\n");
+  var bloques = [], i = 0;
+  while(true){
+    var a = t.indexOf(MARCA_INICIO, i);
+    if(a < 0) break;
+    var b = t.indexOf(MARCA_FIN, a);
+    if(b < 0){ bloques.push(t.slice(a)); break; }
+    bloques.push(t.slice(a, b + MARCA_FIN.length));
+    i = b + MARCA_FIN.length;
+  }
+  return bloques;
+}
+
+function detectarFormatoAntiguo(texto){
+  var m = String(texto||"").match(/###\s*GED(MAT|CIE|RLA)-DATOS\s*v1\s*###/g);
+  return m ? m.length : 0;
+}
+
+function leerBloque(bloque){
+  var lineas = bloque.split("\n"), d = {cab:{}, sec:{}};
+  var seccion = null, columnas = null;
+  for(var i=0;i<lineas.length;i++){
+    var l = lineas[i].replace(/\s+$/,"");
+    if(!l) continue;
+    if(l.indexOf("###")===0){ seccion=null; columnas=null; continue; }
+    if(l.slice(0,2)==="--" && l.slice(-2)==="--"){
+      seccion = l.replace(/^-+|-+$/g,""); columnas=null;
+      d.sec[seccion] = d.sec[seccion] || [];
+      continue;
+    }
+    if(seccion===null){
+      var c = l.indexOf("|");
+      if(c>0) d.cab[l.slice(0,c)] = l.slice(c+1);
+      continue;
+    }
+    var p = l.split("|");
+    if(columnas===null){ columnas = p; continue; }
+    var fila = {};
+    for(var k=0;k<columnas.length;k++) fila[columnas[k]] = p[k]!==undefined ? p[k] : "";
+    d.sec[seccion].push(fila);
+  }
+  return d;
+}
+
+function normalizarInforme(d){
+  var c = d.cab;
+  if(!c.materia || !c.alumno) return null;
+  var total = parseInt(c.total_preguntas,10) || 0;
+  var inf = {
+    materia: c.materia,
+    alumno: c.alumno,
+    claveAlumno: claveNombre(c.alumno),
+    grupo: c.grupo || "Sin grupo",
+    fecha: c.fecha || "",
+    fechaISO: c.fecha_iso || "",
+    tiempoSeg: parseInt(c.tiempo_seg,10) || 0,
+    cierrePorTiempo: (c.cierre_por_tiempo === "si"),
+    total: total,
+    correctas: parseInt(c.correctas,10) || 0,
+    incorrectas: parseInt(c.incorrectas,10) || 0,
+    sinResponder: parseInt(c.sin_responder,10) || 0,
+    porcentaje: parseInt(c.porcentaje,10) || 0,
+    ejes: d.sec.ejes || [],
+    temas: d.sec.temas || [],
+    errores: d.sec.errores || []
+  };
+  inf.segPorPregunta = total>0 ? Math.round(inf.tiempoSeg/total) : 0;
+  inf.cuadra = (inf.correctas + inf.incorrectas + inf.sinResponder) === total && total>0;
+  return inf;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   CARGA
+   ══════════════════════════════════════════════════════════════════════════ */
+function cargarTexto(texto, origen){
+  var antiguos = detectarFormatoAntiguo(texto);
+  if(antiguos){
+    avisos.push("En " + origen + " hay " + antiguos + " " +
+      plural(antiguos,"informe","informes") + " en el formato antiguo (v1). " +
+      "Ese examen se hizo con una versión anterior: hay que repetirlo con la actual.");
+  }
+  var bloques = extraerBloques(texto), nuevos = 0;
+  for(var i=0;i<bloques.length;i++){
+    var inf = normalizarInforme(leerBloque(bloques[i]));
+    if(!inf){ avisos.push("En " + origen + " hay un bloque sin materia o sin alumno; se descartó."); continue; }
+    if(!inf.cuadra){
+      avisos.push("El informe de " + inf.alumno + " (" + inf.materia + ") no cuadra: " +
+        inf.correctas + " + " + inf.incorrectas + " + " + inf.sinResponder +
+        " no suman " + inf.total + ". Se descartó.");
+      continue;
+    }
+    /* Los blancos se cuentan por tema mirando la marca "(sin respuesta)" en las
+       filas de error. Si esa marca no coincide con la cifra de la cabecera, el
+       examen la está poniendo mal y el análisis por tema saldría torcido. */
+    var marcados = inf.errores.filter(function(x){
+      return x.respuesta_alumno === TEXTO_BLANCO; }).length;
+    if(marcados !== inf.sinResponder){
+      avisos.push("En el informe de " + inf.alumno + " (" + inf.materia + ") hay " +
+        marcados + " respuestas marcadas como en blanco pero la cabecera dice " +
+        inf.sinResponder + ". El reparto de blancos por tema puede salir torcido.");
+    }
+    var dup = informes.some(function(x){
+      return x.materia===inf.materia && x.grupo===inf.grupo &&
+             x.claveAlumno===inf.claveAlumno && x.fechaISO===inf.fechaISO;
+    });
+    if(dup){ continue; }   // el mismo correo pegado dos veces
+    informes.push(inf); nuevos++;
+  }
+  return {nuevos:nuevos, bloques:bloques.length};
+}
+
+function pintarCarga(){
+  var e = document.getElementById("estadoCarga");
+  var l = document.getElementById("listaCargados");
+  if(!informes.length && !avisos.length){ e.innerHTML=""; l.innerHTML=""; return; }
+
+  var h = "";
+  if(informes.length){
+    h += '<p class="nota">Hay ' + informes.length + " " +
+         plural(informes.length,"informe cargado","informes cargados") + ".</p>";
+  }
+  for(var i=0;i<avisos.length;i++) h += '<div class="aviso-caja">' + esc(avisos[i]) + "</div>";
+  e.innerHTML = h;
+
+  if(!informes.length){ l.innerHTML=""; return; }
+  var t = '<table><caption>Informes cargados, en el orden en que se leyeron.</caption><thead><tr>' +
+    '<th scope="col">Alumno</th><th scope="col">Materia</th><th scope="col">Grupo</th>' +
+    '<th scope="col">Fecha</th><th scope="col" class="num">Resultado</th>' +
+    '<th scope="col" class="num">s/pregunta</th></tr></thead><tbody>';
+  informes.forEach(function(x){
+    t += "<tr><td>" + esc(x.alumno) + "</td><td>" + esc(x.materia) + "</td><td>" +
+      esc(x.grupo) + "</td><td>" + esc(x.fecha) + '</td><td class="num">' +
+      x.porcentaje + '%</td><td class="num">' + x.segPorPregunta + "</td></tr>";
+  });
+  l.innerHTML = t + "</tbody></table>";
+  prepararSeleccion();
+}
+
+function prepararSeleccion(){
+  var sec = document.getElementById("seccionSeleccion");
+  if(!informes.length){ sec.classList.add("oculto"); return; }
+  sec.classList.remove("oculto");
+  var materias = [], sm = document.getElementById("selMateria");
+  informes.forEach(function(x){ if(materias.indexOf(x.materia)<0) materias.push(x.materia); });
+  materias.sort();
+  var previa = sm.value;
+  sm.innerHTML = materias.map(function(m){ return '<option>' + esc(m) + "</option>"; }).join("");
+  if(materias.indexOf(previa)>=0) sm.value = previa;
+  pintarGrupos();
+}
+
+function pintarGrupos(){
+  var m = document.getElementById("selMateria").value;
+  var grupos = [];
+  informes.forEach(function(x){
+    if(x.materia===m && grupos.indexOf(x.grupo)<0) grupos.push(x.grupo);
+  });
+  grupos.sort();
+  var sg = document.getElementById("selGrupo");
+  var op = grupos.map(function(g){ return '<option value="' + esc(g) + '">' + esc(g) + "</option>"; });
+  if(grupos.length>1) op.unshift('<option value="__todos__">Todos los grupos de esta materia</option>');
+  sg.innerHTML = op.join("");
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ANÁLISIS
+   ══════════════════════════════════════════════════════════════════════════ */
+function analizar(){
+  var materia = document.getElementById("selMateria").value;
+  var grupo   = document.getElementById("selGrupo").value;
+  var minSeg  = parseInt(document.getElementById("numSegundos").value,10) || 0;
+  var minObs  = parseInt(document.getElementById("numMuestra").value,10) || 2;
+
+  var conjunto = informes.filter(function(x){
+    return x.materia===materia && (grupo==="__todos__" || x.grupo===grupo);
+  });
+
+  /* Un mismo alumno puede haber repetido el simulacro: se queda el intento
+     más reciente, y se avisa. */
+  var porAlumno = {}, repetidos = [];
+  conjunto.forEach(function(x){
+    var k = x.claveAlumno;
+    if(!porAlumno[k]) { porAlumno[k] = x; return; }
+    repetidos.push(x.alumno);
+    if((x.fechaISO||"") > (porAlumno[k].fechaISO||"")) porAlumno[k] = x;
+  });
+  var intentos = Object.keys(porAlumno).map(function(k){ return porAlumno[k]; });
+
+  /* Nombres parecidos pero no idénticos: puede ser la misma persona escrita de
+     dos formas. No se funden solos; se avisa para que lo decida el docente. */
+  var parecidos = [];
+  for(var i=0;i<intentos.length;i++)
+    for(var j=i+1;j<intentos.length;j++)
+      if(seParecen(intentos[i].claveAlumno, intentos[j].claveAlumno))
+        parecidos.push(intentos[i].alumno + " / " + intentos[j].alumno);
+
+  var usables = intentos.filter(function(x){ return x.segPorPregunta >= minSeg; });
+  var apartados = intentos.filter(function(x){ return x.segPorPregunta < minSeg; });
+
+  document.getElementById("informe").innerHTML =
+    construirInforme(materia, grupo, intentos, usables, apartados, repetidos, parecidos, minObs, minSeg);
+  document.getElementById("informe").scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+/* Distancia de edición barata: dos nombres se parecen si difieren en pocos
+   caracteres respecto a su longitud. */
+function seParecen(a,b){
+  if(a===b) return false;
+  if(Math.abs(a.length-b.length) > 3) return false;
+  var d = distancia(a,b);
+  return d>0 && d <= Math.max(1, Math.floor(Math.min(a.length,b.length)*0.15));
+}
+function distancia(a,b){
+  var m=a.length,n=b.length,f=[],i,j;
+  for(i=0;i<=m;i++){ f[i]=[i]; }
+  for(j=0;j<=n;j++){ f[0][j]=j; }
+  for(i=1;i<=m;i++) for(j=1;j<=n;j++)
+    f[i][j] = Math.min(f[i-1][j]+1, f[i][j-1]+1, f[i-1][j-1] + (a[i-1]===b[j-1]?0:1));
+  return f[m][n];
+}
+
+/* ── Agregación por tema ──────────────────────────────────────────────────
+   Cada intento trae sus temas con aciertos y total. Se suman entre alumnos.
+   Los errores se cruzan para separar el fallo del blanco y para detectar el
+   distractor compartido. */
+function agregarTemas(usables){
+  var mapa = {};
+  usables.forEach(function(inf){
+    inf.temas.forEach(function(t){
+      var k = t.tema;
+      if(!mapa[k]) mapa[k] = {
+        tema:k, eje:t.eje||"", nivel:t.nivel||"", recurso:t.recurso||"",
+        obs:0, aciertos:0, blancos:0, fallos:0, alumnos:0, items:{}
+      };
+      var e = mapa[k];
+      e.obs += parseInt(t.total,10)||0;
+      e.aciertos += parseInt(t.aciertos,10)||0;
+      e.alumnos++;
+      if(!e.eje && t.eje) e.eje = t.eje;
+      if(!e.recurso && t.recurso) e.recurso = t.recurso;
+    });
+    inf.errores.forEach(function(x){
+      var e = mapa[x.tema];
+      if(!e) return;
+      var blanco = (x.respuesta_alumno === TEXTO_BLANCO);
+      if(blanco) e.blancos++; else e.fallos++;
+      if(blanco) return;
+      /* La respuesta correcta identifica el ítem dentro del tema: dos alumnos
+         con la misma respuesta correcta vieron la misma pregunta. */
+      var clave = x.respuesta_correcta || "";
+      if(!e.items[clave]) e.items[clave] = {};
+      var suya = x.respuesta_alumno || "";
+      e.items[clave][suya] = (e.items[clave][suya]||0) + 1;
+    });
+  });
+  return Object.keys(mapa).map(function(k){ return mapa[k]; });
+}
+
+/* ── Distractor compartido ────────────────────────────────────────────────
+   Que varios alumnos coincidan en la misma respuesta equivocada NO basta: con
+   cuatro opciones, tres coincidencias salen por azar continuamente. Se exige
+   que la concentración sea improbable bajo la hipótesis de que los que fallan
+   eligen al azar entre los distractores.
+
+   DISTRACTORES es cuántas opciones equivocadas tiene una pregunta típica de
+   opción múltiple. Si una pregunta tuviera más, la prueba resulta más
+   exigente de la cuenta, que es el lado por el que conviene equivocarse. */
+var DISTRACTORES = 3;
+var UMBRAL_AZAR  = 0.05;
+
+function combinaciones(n,k){
+  if(k<0||k>n) return 0;
+  var r=1;
+  for(var i=1;i<=k;i++) r = r*(n-k+i)/i;
+  return r;
+}
+/* Probabilidad de que UNA opción concreta se lleve al menos "top" de los "w"
+   fallos si cada alumno eligiera al azar. */
+function colaBinomial(w, top, p){
+  var s=0;
+  for(var i=top;i<=w;i++) s += combinaciones(w,i)*Math.pow(p,i)*Math.pow(1-p,w-i);
+  return s;
+}
+function esConcentracionImprobable(top, w){
+  if(w < 4 || top < 4) return false;
+  var p = colaBinomial(w, top, 1/DISTRACTORES);
+  // Se mira la opción MÁS elegida de entre las tres, así que se corrige por
+  // haber escogido el máximo (Bonferroni).
+  return Math.min(1, p*DISTRACTORES) < UMBRAL_AZAR;
+}
+
+function analizarDistractores(e){
+  var mejor = null, itemsConVarios = 0, totalItems = 0;
+  Object.keys(e.items).forEach(function(clave){
+    totalItems++;
+    var reparto = e.items[clave], suma = 0, top = 0, texto = "";
+    Object.keys(reparto).forEach(function(r){
+      suma += reparto[r];
+      if(reparto[r] > top){ top = reparto[r]; texto = r; }
+    });
+    if(suma >= 2) itemsConVarios++;
+    if(esConcentracionImprobable(top, suma)){
+      if(!mejor || top/suma > mejor.veces/mejor.de)
+        mejor = {veces:top, de:suma, texto:texto, correcta:clave};
+    }
+  });
+  /* Si casi cada error tiene su propia respuesta correcta, las preguntas se
+     generan al vuelo (Matemáticas) y esta comparación no es aplicable. */
+  var generado = totalItems > 0 && itemsConVarios === 0 && totalItems >= 3;
+  return {mejor:mejor, generado:generado};
+}
+
+function clasificar(e, mediaGrupo, minObs){
+  if(e.obs < minObs) return {clase:"mudo", etiqueta:"Muestra corta"};
+  var tasa = e.aciertos/e.obs;
+  var tasaBlancos = e.blancos/e.obs;
+  if(tasaBlancos >= 0.35) return {clase:"aviso", etiqueta:"No llegaron"};
+  var d = analizarDistractores(e);
+  if(d.mejor) return {clase:"senal", etiqueta:"Distractor compartido", distractor:d.mejor};
+  if(tasa <= mediaGrupo - 0.15) return {clase:"senal", etiqueta:"Fallo repartido", generado:d.generado};
+  if(tasa <= mediaGrupo - 0.05) return {clase:"aviso", etiqueta:"Por debajo de la clase"};
+  return {clase:"calma", etiqueta:"Dentro de lo normal"};
+}
+
+/* ── Perfil por eje ───────────────────────────────────────────── */
+function agregarEjes(usables, clase){
+  var mapa = {};
+  usables.forEach(function(inf){
+    inf.ejes.forEach(function(e){
+      if(e.clase !== clase) return;
+      if(!mapa[e.eje]) mapa[e.eje] = {eje:e.eje, aciertos:0, total:0};
+      mapa[e.eje].aciertos += parseInt(e.aciertos,10)||0;
+      mapa[e.eje].total    += parseInt(e.total,10)||0;
+    });
+  });
+  return Object.keys(mapa).map(function(k){ return mapa[k]; })
+    .sort(function(a,b){ return a.eje < b.eje ? -1 : 1; });
+}
+function clasesDeEje(usables){
+  var v = [];
+  usables.forEach(function(inf){ inf.ejes.forEach(function(e){
+    if(v.indexOf(e.clase)<0) v.push(e.clase); }); });
+  return v;
+}
+
+/* ── Efecto de la posición en el examen ───────────────────────────────────
+   Si los blancos se amontonan al final, el problema es de tiempo o de
+   cansancio, no de enseñanza. */
+function blancosPorTramo(usables){
+  var tramos = [{n:0,b:0},{n:0,b:0},{n:0,b:0},{n:0,b:0}];
+  usables.forEach(function(inf){
+    var t = inf.total || 1;
+    for(var i=1;i<=t;i++){ tramos[Math.min(3,Math.floor((i-1)/t*4))].n++; }
+    inf.errores.forEach(function(x){
+      if(x.respuesta_alumno !== TEXTO_BLANCO) return;
+      var num = parseInt(x.numero,10)||1;
+      tramos[Math.min(3,Math.floor((num-1)/t*4))].b++;
+    });
+  });
+  return tramos;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   INFORME
+   ══════════════════════════════════════════════════════════════════════════ */
+function construirInforme(materia, grupo, intentos, usables, apartados, repetidos, parecidos, minObs, minSeg){
+  var nombreGrupo = (grupo==="__todos__") ? "todos los grupos" : grupo;
+  var h = '<h2>' + esc(materia) + " &mdash; " + esc(nombreGrupo) + "</h2>";
+
+  /* ── Calidad del dato: va primero, antes que cualquier conclusión ── */
+  var n = usables.length;
+  var medianaSeg = mediana(usables.map(function(x){return x.segPorPregunta;}));
+  var totalPreg  = usables.reduce(function(a,x){return a+x.total;},0);
+  var totalBlan  = usables.reduce(function(a,x){return a+x.sinResponder;},0);
+  var tasaBlancos = pct(totalBlan, totalPreg);
+  var porTiempo  = usables.filter(function(x){return x.cierrePorTiempo;}).length;
+  var descartePct = intentos.length ? Math.round(apartados.length/intentos.length*100) : 0;
+
+  var nivel, titulo, texto;
+  if(n < 6 || descartePct > 40){
+    nivel="rojo"; titulo="Los datos no dan para sacar conclusiones";
+    texto = (n<6)
+      ? "Con " + n + " " + plural(n,"intento válido","intentos válidos") +
+        " cualquier porcentaje se mueve demasiado con un solo alumno. Lo que aparece abajo es descriptivo, no diagnóstico."
+      : "Se apartó el " + descartePct + "% de los intentos por rapidez. Con esa proporción, lo que queda no representa a la clase.";
+  } else if(n < 12 || descartePct > 20 || tasaBlancos > 20){
+    nivel="ambar"; titulo="Los datos sirven, con reservas";
+    texto = "Hay señal suficiente para orientarse, pero conviene confirmar cualquier decisión con lo que usted ve en clase antes de reorganizar una unidad.";
+  } else {
+    nivel="verde"; titulo="Los datos sostienen el análisis";
+    texto = "Tamaño de muestra y dedicación suficientes. Lo que sigue puede leerse como diagnóstico.";
+  }
+
+  h += '<div class="semaforo s-' + nivel + '" role="status">' +
+       "<h2>" + esc(titulo) + "</h2><p>" + esc(texto) + "</p>" +
+       '<div class="cifras">' +
+       "<div><b>" + n + "</b>intentos analizados</div>" +
+       "<div><b>" + medianaSeg + " s</b>mediana por pregunta</div>" +
+       "<div><b>" + tasaBlancos + "%</b>preguntas en blanco</div>" +
+       "<div><b>" + apartados.length + "</b>apartados por rapidez</div>" +
+       "<div><b>" + porTiempo + "</b>cerrados por tiempo</div>" +
+       "</div></div>";
+
+  if(apartados.length){
+    h += '<p class="nota">Apartados por hacer el examen a menos de ' + minSeg +
+      " segundos por pregunta: " +
+      apartados.map(function(x){ return esc(x.alumno) + " (" + x.segPorPregunta + " s)"; }).join(", ") +
+      ". Suelen ser exámenes despachados sin leer; sus respuestas no informan sobre la enseñanza.</p>";
+  }
+  if(repetidos.length){
+    h += '<p class="nota">Repitieron el simulacro y se tomó el intento más reciente: ' +
+      esc(repetidos.join(", ")) + ".</p>";
+  }
+  if(parecidos.length){
+    h += '<div class="aviso-caja">Hay nombres muy parecidos que podrían ser la misma persona escrita de dos formas: ' +
+      esc(parecidos.join("; ")) + ". No se han unido: compruébelo usted.</div>";
+  }
+  if(!n) return h + '<div class="error-caja">No queda ningún intento que analizar.</div>';
+
+  /* ── Hallazgos por tema ── */
+  var temas = agregarTemas(usables);
+  var sumaObs = temas.reduce(function(a,t){return a+t.obs;},0);
+  var sumaAci = temas.reduce(function(a,t){return a+t.aciertos;},0);
+  var media = sumaObs ? sumaAci/sumaObs : 0;
+
+  temas.forEach(function(t){
+    t.tasa = t.obs ? t.aciertos/t.obs : 0;
+    t.veredicto = clasificar(t, media, minObs);
+  });
+  var orden = {senal:0, aviso:1, calma:2, mudo:3};
+  temas.sort(function(a,b){
+    var d = orden[a.veredicto.clase] - orden[b.veredicto.clase];
+    return d !== 0 ? d : a.tasa - b.tasa;
+  });
+
+  h += "<h2>Qué dicen los temas</h2>";
+  h += '<p class="prosa">La clase acierta el ' + Math.round(media*100) +
+       "% de media. Cada tema se juzga contra esa media, no contra un listón fijo: " +
+       "un 55% no significa lo mismo en un grupo que ronda el 50 que en uno que ronda el 85.</p>";
+
+  var conSenal = temas.filter(function(t){return t.veredicto.clase==="senal";});
+  var conAviso = temas.filter(function(t){return t.veredicto.clase==="aviso";});
+  var mudos    = temas.filter(function(t){return t.veredicto.clase==="mudo";});
+
+  if(!conSenal.length && !conAviso.length){
+    h += '<div class="semaforo s-verde"><p>Ningún tema se separa de la media de la clase ' +
+         "lo suficiente como para señalarlo. Eso no quiere decir que todo vaya bien: " +
+         "quiere decir que el grupo es homogéneo y que este examen no distingue puntos flojos.</p></div>";
+  }
+
+  conSenal.concat(conAviso).forEach(function(t){ h += pintarHallazgo(t, media); });
+
+  if(mudos.length){
+    h += "<h3>Temas con muestra demasiado corta</h3>";
+    h += '<p class="nota">Menos de ' + minObs + " observaciones. Se listan para que no parezca " +
+         "que se han perdido, pero no se puede concluir nada de ellos: " +
+         esc(mudos.map(function(t){return t.tema;}).join("; ")) + ".</p>";
+  }
+
+  /* ── Tabla completa ── */
+  h += "<h2>Todos los temas</h2>";
+  h += '<table><caption>Rendimiento del grupo en cada tema, ordenado de menor a mayor acierto. ' +
+       '"Blancos" son preguntas que nadie llegó a responder.</caption><thead><tr>' +
+       '<th scope="col">Tema</th><th scope="col">Eje</th><th scope="col">Nivel</th>' +
+       '<th scope="col" class="num">Acierto</th><th scope="col" class="num">Obs.</th>' +
+       '<th scope="col" class="num">Fallos</th><th scope="col" class="num">Blancos</th>' +
+       '<th scope="col">Dónde estudiarlo</th></tr></thead><tbody>';
+  temas.slice().sort(function(a,b){return a.tasa-b.tasa;}).forEach(function(t){
+    h += "<tr><td>" + esc(t.tema) + "</td><td>" + esc(t.eje) + "</td><td>" + esc(t.nivel) +
+      '</td><td class="num">' + Math.round(t.tasa*100) + '%</td><td class="num">' + t.obs +
+      '</td><td class="num">' + t.fallos + '</td><td class="num">' + t.blancos +
+      "</td><td>" + esc(t.recurso) + "</td></tr>";
+  });
+  h += "</tbody></table>";
+
+  /* ── Perfiles por eje ── */
+  var clases = clasesDeEje(usables);
+  if(clases.length){
+    h += "<h2>Perfil de la clase por eje</h2>";
+    clases.forEach(function(cl){
+      var filas = agregarEjes(usables, cl);
+      if(!filas.length) return;
+      h += "<h3>" + esc(nombreClase(cl)) + "</h3>";
+      h += '<div class="perfil">';
+      filas.forEach(function(f){
+        var p = pct(f.aciertos, f.total);
+        h += '<div class="linea"><span>' + esc(f.eje) + '</span>' +
+             '<span class="pista"><span class="relleno" style="width:' + p + '%"></span></span>' +
+             '<span class="cifra">' + p + "% de " + f.total + "</span></div>";
+      });
+      h += "</div>";
+    });
+    h += interpretarDok(agregarEjes(usables,"dok"));
+  }
+
+  /* ── Posición en el examen ── */
+  var tr = blancosPorTramo(usables);
+  var pr = tr.map(function(x){ return pct(x.b, x.n); });
+  h += "<h2>Dónde se quedan las preguntas en blanco</h2>";
+  h += '<table><caption>Porcentaje de preguntas sin responder según su lugar en el examen. ' +
+       "Cada tramo es la cuarta parte del examen.</caption><thead><tr>" +
+       '<th scope="col">Tramo</th><th scope="col" class="num">Primer cuarto</th>' +
+       '<th scope="col" class="num">Segundo</th><th scope="col" class="num">Tercero</th>' +
+       '<th scope="col" class="num">Último cuarto</th></tr></thead><tbody><tr>' +
+       "<th scope=\"row\">En blanco</th>" +
+       pr.map(function(p){return '<td class="num">' + p + "%</td>";}).join("") +
+       "</tr></tbody></table>";
+  if(pr[3] >= pr[0] + 15){
+    h += '<p class="prosa">Los blancos se acumulan al final: el último cuarto tiene ' +
+      (pr[3]-pr[0]) + " puntos más que el primero. Eso apunta a falta de tiempo o a cansancio, " +
+      "no a desconocimiento. Los temas que caen en ese tramo no se pueden juzgar como enseñanza.</p>";
+  } else {
+    h += '<p class="prosa">Los blancos se reparten de forma pareja a lo largo del examen, ' +
+      "así que no parece haber un efecto de cansancio o de reloj que contamine los últimos temas.</p>";
+  }
+
+  /* ── La clase, alumno a alumno ── */
+  h += "<h2>La clase, alumno a alumno</h2>";
+  h += '<p class="nota">Secundario respecto a lo anterior, pero útil para saber a quién ' +
+       "acompañar. Ordenado por resultado.</p>";
+  h += '<table><caption>Un intento por alumno, el más reciente si repitió.</caption><thead><tr>' +
+       '<th scope="col">Alumno</th><th scope="col" class="num">Resultado</th>' +
+       '<th scope="col" class="num">Correctas</th><th scope="col" class="num">Fallos</th>' +
+       '<th scope="col" class="num">Blancos</th><th scope="col" class="num">s/pregunta</th>' +
+       '<th scope="col">Notas</th></tr></thead><tbody>';
+  intentos.slice().sort(function(a,b){return a.porcentaje-b.porcentaje;}).forEach(function(x){
+    var notas = [];
+    if(x.segPorPregunta < minSeg) notas.push("apartado del análisis por rapidez");
+    if(x.cierrePorTiempo) notas.push("se le acabó el tiempo");
+    if(x.sinResponder > x.total*0.3) notas.push("dejó muchas en blanco");
+    h += "<tr><td>" + esc(x.alumno) + '</td><td class="num">' + x.porcentaje +
+      '%</td><td class="num">' + x.correctas + '</td><td class="num">' + x.incorrectas +
+      '</td><td class="num">' + x.sinResponder + '</td><td class="num">' + x.segPorPregunta +
+      "</td><td>" + esc(notas.join("; ")) + "</td></tr>";
+  });
+  h += "</tbody></table>";
+
+  h += '<div class="fila-controles no-imprimir">' +
+       '<button type="button" class="boton" onclick="window.print()">Imprimir o guardar en PDF</button>' +
+       '<button type="button" class="boton secundario" onclick="descargarInforme()">Descargar el informe</button>' +
+       "</div>";
+  return h;
+}
+
+function nombreClase(c){
+  var n = {area:"Por área de contenido", dominio:"Por área de contenido",
+           practica:"Por destreza científica", destreza:"Por destreza",
+           dok:"Por nivel de exigencia (DOK)"};
+  return n[c] || ("Por " + c);
+}
+
+function interpretarDok(filas){
+  if(filas.length < 2) return "";
+  var m = {};
+  filas.forEach(function(f){ m[f.eje] = pct(f.aciertos, f.total); });
+  var uno = m["DOK 1"], dos = m["DOK 2"], tres = m["DOK 3"];
+  if(uno===undefined || tres===undefined) return "";
+  if(uno - tres >= 20){
+    return '<p class="prosa">La clase rinde ' + (uno-tres) + " puntos peor en DOK 3 que en DOK 1. " +
+      "El contenido lo tienen; lo que falta es razonar con él. Eso no se arregla repitiendo " +
+      "la explicación, sino poniéndoles a justificar y a comparar.</p>";
+  }
+  if(Math.abs(uno-tres) <= 8){
+    return '<p class="prosa">El rendimiento es parejo en los tres niveles de exigencia. ' +
+      "Cuando no hay caída al subir de nivel, el problema no es de razonamiento sino de " +
+      "contenido: no llegaron a saberlo, y por eso da igual la profundidad de la pregunta.</p>";
+  }
+  return "";
+}
+
+function pintarHallazgo(t, media){
+  var v = t.veredicto;
+  var p = Math.round(t.tasa*100);
+  var dif = Math.round((t.tasa - media)*100);
+  var clase = {senal:"v-senal", aviso:"v-aviso", calma:"v-calma", mudo:"v-mudo"}[v.clase];
+
+  var texto = "", detalle = "";
+  if(v.etiqueta === "Distractor compartido"){
+    var d = v.distractor;
+    texto = "De los " + d.de + " alumnos que fallaron esta pregunta, " + d.veces +
+      " eligieron exactamente la misma respuesta. Un fallo repetido y idéntico no es " +
+      "desconocimiento repartido: es un concepto mal formado, y suele venir de cómo se explicó " +
+      "o del ejemplo con el que se fijó.";
+    detalle = "Respondieron <em>" + esc(d.texto) + "</em> donde iba <em>" + esc(d.correcta) + "</em>.";
+  } else if(v.etiqueta === "No llegaron"){
+    texto = "Más de un tercio de las observaciones de este tema quedaron en blanco. " +
+      "Antes de replantear la enseñanza conviene mirar si estas preguntas caen al final " +
+      "del examen: puede ser un problema de reloj y no de aprendizaje.";
+  } else if(v.etiqueta === "Fallo repartido"){
+    texto = "La clase queda " + Math.abs(dif) + " puntos por debajo de su propia media, y los " +
+      "errores se reparten entre opciones distintas. Eso apunta a que el contenido no llegó " +
+      "a asentarse, más que a una confusión concreta.";
+    if(v.generado) detalle = "En esta materia las preguntas se generan con números distintos " +
+      "para cada alumno, así que no se puede comprobar si comparten una respuesta equivocada.";
+  } else if(v.etiqueta === "Por debajo de la clase"){
+    texto = "Queda " + Math.abs(dif) + " puntos por debajo de la media del grupo. Es una " +
+      "diferencia pequeña: vigílelo, pero no reorganice nada solo por esto.";
+  }
+
+  var confianza = Math.min(100, Math.round(t.obs/24*100));
+  var h = '<div class="hallazgo"><div class="medida">' +
+    "<strong>" + t.obs + "</strong> observaciones" +
+    '<span class="barra"><span style="width:' + confianza + '%"></span></span>' +
+    t.alumnos + " " + plural(t.alumnos,"alumno","alumnos") + "<br>" +
+    t.fallos + " " + plural(t.fallos,"fallo","fallos") + ", " + t.blancos + " en blanco" +
+    "</div><div>" +
+    '<span class="veredicto ' + clase + '">' + esc(v.etiqueta) + "</span>" +
+    "<h3>" + esc(t.tema) + "</h3>" +
+    "<p>" + texto + "</p>";
+  if(detalle) h += '<p class="detalle">' + detalle + "</p>";
+  h += '<p class="detalle">Acierto del grupo: ' + p + "%. " +
+       (t.eje ? "Eje: " + esc(t.eje) + ". " : "") +
+       (t.nivel ? "Nivel: " + esc(t.nivel) + ". " : "") +
+       (t.recurso ? "Material: " + esc(t.recurso) + "." : "") + "</p>";
+  return h + "</div></div>";
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   DESCARGA
+   ══════════════════════════════════════════════════════════════════════════ */
+function descargarInforme(){
+  var estilos = document.querySelector("style").textContent;
+  var cuerpo  = document.getElementById("informe").innerHTML
+                  .replace(/<div class="fila-controles no-imprimir">[\s\S]*?<\/div>/,"");
+  var doc = '<!DOCTYPE html>\n<html lang="es"><head><meta charset="utf-8">' +
+    '<meta name="viewport" content="width=device-width, initial-scale=1">' +
+    "<title>Informe de grupo &mdash; GEDparaHispanos</title>" +
+    '<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">' +
+    "<style>" + estilos + "</style></head><body><div class=\"hoja\">" +
+    "<h1>Informe de grupo</h1>" + cuerpo +
+    '<footer><p>Procesador de informes de grupo &mdash; GEDparaHispanos.<br>' +
+    "José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College &mdash; City Colleges of Chicago.</p>" +
+    '<p><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a></p>' +
+    "</footer></div></body></html>";
+  var blob = new Blob([doc], {type:"text/html;charset=utf-8"});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url;
+  a.download = "informe-de-grupo.html";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ENLACES DE LA INTERFAZ
+   ══════════════════════════════════════════════════════════════════════════ */
+document.getElementById("btnCargar").addEventListener("click", function(){
+  var t = document.getElementById("areaPegado").value;
+  if(!t.trim()){ avisos.push("No hay nada pegado en el recuadro."); pintarCarga(); return; }
+  var r = cargarTexto(t, "el texto pegado");
+  if(!r.bloques) avisos.push("En el texto pegado no se encontró ningún bloque de datos. " +
+    "Compruebe que empieza por " + MARCA_INICIO + ".");
+  document.getElementById("areaPegado").value = "";
+  pintarCarga();
+});
+
+document.getElementById("btnVaciar").addEventListener("click", function(){
+  informes = []; avisos = [];
+  document.getElementById("areaPegado").value = "";
+  document.getElementById("informe").innerHTML = "";
+  document.getElementById("seccionSeleccion").classList.add("oculto");
+  pintarCarga();
+});
+
+document.getElementById("selMateria").addEventListener("change", pintarGrupos);
+document.getElementById("btnAnalizar").addEventListener("click", analizar);
+
+var zona = document.getElementById("zonaSuelta");
+["dragenter","dragover"].forEach(function(ev){
+  zona.addEventListener(ev, function(e){ e.preventDefault(); zona.classList.add("encima"); });
+});
+["dragleave","drop"].forEach(function(ev){
+  zona.addEventListener(ev, function(e){ e.preventDefault(); zona.classList.remove("encima"); });
+});
+zona.addEventListener("drop", function(e){
+  var archivos = e.dataTransfer.files, pendientes = archivos.length;
+  if(!pendientes) return;
+  for(var i=0;i<archivos.length;i++){
+    (function(f){
+      var lector = new FileReader();
+      lector.onload = function(){
+        cargarTexto(String(lector.result), f.name);
+        if(--pendientes === 0) pintarCarga();
+      };
+      lector.onerror = function(){
+        avisos.push("No se pudo leer el archivo " + f.name + ".");
+        if(--pendientes === 0) pintarCarga();
+      };
+      lector.readAsText(f, "utf-8");
+    })(archivos[i]);
+  }
+});
+</script>
+</body>
+</html>
