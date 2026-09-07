@@ -2660,7 +2660,7 @@ function terminarExamen(motivo) {
       if (bien) mapa[clave].correctas++;
     });
 
-    if (!porSubtema[q.subtema]) porSubtema[q.subtema] = { total: 0, correctas: 0, ruta: q.ruta, dominio: q.dominio };
+    if (!porSubtema[q.subtema]) porSubtema[q.subtema] = { total: 0, correctas: 0, ruta: q.ruta, dominio: q.dominio, dok: q.dok };
     porSubtema[q.subtema].total++;
     if (bien) porSubtema[q.subtema].correctas++;
 
@@ -2682,9 +2682,12 @@ function terminarExamen(motivo) {
 
   const porcentaje = Math.round((correctas / preguntas.length) * 100);
 
+  const _ahora = new Date();
   datosInforme = {
-    fecha: new Date().toLocaleString("es-ES", { dateStyle: "long", timeStyle: "short" }),
+    fecha: _ahora.toLocaleString("es-ES", { dateStyle: "long", timeStyle: "short" }),
+    fechaISO: fechaLocalISO(_ahora),
     tiempo: formatearTiempo(CONFIG.minutos * 60 - segundosRestantes),
+    tiempoSeg: CONFIG.minutos * 60 - segundosRestantes,
     cierrePorTiempo: motivo === "tiempo",
     total: preguntas.length,
     correctas, incorrectas, sinResponder, porcentaje,
@@ -3064,26 +3067,68 @@ function construirInformeDocente(compacto) {
   return h;
 }
 
+/* Fecha en hora LOCAL, no UTC: toISOString() desplazaria la marca varias
+   horas y un examen de la noche aparecería fechado al día siguiente. */
+function fechaLocalISO(f) {
+  const p = n => String(n).padStart(2, "0");
+  return f.getFullYear() + "-" + p(f.getMonth() + 1) + "-" + p(f.getDate()) +
+         "T" + p(f.getHours()) + ":" + p(f.getMinutes());
+}
+
+/* Ninguna celda puede contener la barra vertical ni saltos de línea:
+   son los separadores del formato. */
+function limpiarCampo(txt) {
+  return String(txt === undefined || txt === null ? "" : txt)
+    .replace(/[|\r\n]+/g, " ").replace(/\s+/g, " ").trim();
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   FORMATO GED-DATOS v2 — común a las cuatro materias.
+   Cada sección declara sus columnas en la primera fila, de modo que el
+   procesador de grupo lee por nombre de columna y no por posición.
+   ───────────────────────────────────────────────────────────────────── */
 function datosLegiblesPorMaquina() {
   const d = datosInforme;
+  const c = limpiarCampo;
   const L = [];
-  L.push("### GEDCIE-DATOS v1 ###");
-  L.push("ESTUDIANTE|" + (nombreEstudiante || "Sin nombre"));
-  L.push("GRUPO|" + (grupoEstudiante || "Sin grupo"));
-  L.push("FECHA|" + d.fecha);
-  L.push("TIEMPO|" + d.tiempo);
-  L.push("CIERRE_POR_TIEMPO|" + (d.cierrePorTiempo ? "si" : "no"));
-  L.push("TOTALES|" + d.total + "|" + d.correctas + "|" + d.incorrectas + "|" + d.sinResponder + "|" + d.porcentaje);
-  Object.keys(d.porDominio).forEach(k =>
-    L.push("DOMINIO|" + k + "|" + d.porDominio[k].correctas + "|" + d.porDominio[k].total));
-  Object.keys(d.porPractica).forEach(k =>
-    L.push("PRACTICA|" + k + "|" + d.porPractica[k].correctas + "|" + d.porPractica[k].total));
-  Object.keys(d.porDok).forEach(k =>
-    L.push("DOK|" + k + "|" + d.porDok[k].correctas + "|" + d.porDok[k].total));
-  Object.keys(d.porSubtema).forEach(k =>
-    L.push("SUBTEMA|" + k + "|" + d.porSubtema[k].correctas + "|" + d.porSubtema[k].total));
-  d.errores.forEach(e => L.push("ERROR|" + e.numero + "|" + e.subtema + "|" + e.dominio + "|DOK" + e.dok));
-  L.push("### FIN GEDCIE-DATOS ###");
+
+  L.push("### GED-DATOS v2 ###");
+  L.push("materia|" + MATERIA);
+  L.push("alumno|" + c(nombreEstudiante || "Sin nombre"));
+  L.push("grupo|" + c(grupoEstudiante || "Sin grupo"));
+  L.push("fecha|" + c(d.fecha));
+  L.push("fecha_iso|" + (d.fechaISO || ""));
+  L.push("tiempo_seg|" + (d.tiempoSeg || 0));
+  L.push("cierre_por_tiempo|" + (d.cierrePorTiempo ? "si" : "no"));
+  L.push("total_preguntas|" + d.total);
+  L.push("correctas|" + d.correctas);
+  L.push("incorrectas|" + d.incorrectas);
+  L.push("sin_responder|" + d.sinResponder);
+  L.push("porcentaje|" + d.porcentaje);
+
+  L.push("--ejes--");
+  L.push("eje|clase|aciertos|total");
+  [[d.porDominio, "dominio"], [d.porPractica, "practica"], [d.porDok, "dok"]].forEach(par => {
+    const mapa = par[0], clase = par[1];
+    Object.keys(mapa).forEach(k =>
+      L.push(c(k) + "|" + clase + "|" + mapa[k].correctas + "|" + mapa[k].total));
+  });
+
+  L.push("--temas--");
+  L.push("tema|eje|nivel|aciertos|total|recurso");
+  Object.keys(d.porSubtema).forEach(k => {
+    const s = d.porSubtema[k];
+    L.push(c(k) + "|" + c(s.dominio) + "|" + (s.dok ? "DOK " + s.dok : "") + "|" +
+           s.correctas + "|" + s.total + "|" + c(s.ruta || ""));
+  });
+
+  L.push("--errores--");
+  L.push("numero|tema|eje|nivel|respuesta_alumno|respuesta_correcta");
+  d.errores.forEach(e =>
+    L.push(e.numero + "|" + c(e.subtema) + "|" + c(e.dominio) + "|DOK " + e.dok + "|" +
+           c(e.tuya) + "|" + c(e.buena)));
+
+  L.push("### FIN GED-DATOS v2 ###");
   return L.join("\n");
 }
 
