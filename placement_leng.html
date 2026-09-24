@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<!--
+  Prueba de ubicación de Artes del lenguaje · Niveles 1–4 · GEDparaHispanos
+  Autor: José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago
+  Licencia: Creative Commons CC BY-NC-SA 4.0 — https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+
+  Estructura (igual que placement_math): 30 preguntas, 30 minutos.
+    8 de Nivel 1 · 8 de Nivel 2 · 8 de Nivel 3 · 6 de Nivel 4, elegidas al azar de un banco por nivel.
+  Puntos de corte:  0–7 → Nivel 1 · 8–14 → Nivel 2 · 15–21 → Nivel 3 · 22–30 → Nivel 4
+  Tiempo: al cumplirse los 30 minutos, la puntuación de ubicación queda fijada. El estudiante
+  puede seguir respondiendo como práctica; esas respuestas se informan aparte y no cuentan.
+  Contenidos alineados con los planes curriculares de Artes del lenguaje, Niveles 1–4
+  (Illinois ABE/ASE English Language Arts Content Standards).
+-->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prueba de ubicación de Artes del lenguaje — GEDparaHispanos</title>
+<meta name="description" content="Prueba de ubicación gratuita de Artes del lenguaje en español: 30 preguntas para saber en qué nivel, del 1 al 4, conviene empezar.">
+<meta name="author" content="José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago">
+<meta name="license" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --azul:#0b3a66; --azul-2:#1d5a94; --azul-cl:#e8f1fa;
+    --ruta:#f2b705; --ruta-cl:#fff6d6;
+    --tinta:#1b2430; --gris:#4a5563; --linea:#d8e0e8; --fondo:#f3f6f9; --papel:#fff;
+    --verde:#1e6b3c; --verde-cl:#e6f4ea; --rojo:#a3261c; --rojo-cl:#fdecea; --ambar:#5c3900;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:"Atkinson Hyperlegible","Segoe UI",system-ui,-apple-system,sans-serif;
+    background:var(--fondo);color:var(--tinta);font-size:18px;line-height:1.6;}
+  .envoltura{max-width:820px;margin:0 auto;padding:0 20px 60px;}
+  a{color:var(--azul-2);text-underline-offset:3px;}
+  :focus-visible{outline:3px solid var(--azul);outline-offset:3px;border-radius:4px;}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;}
+  [hidden]{display:none !important;}
+
+  header.principal{background:var(--azul);color:#fff;padding:34px 0 30px;}
+  header.principal .envoltura{padding-bottom:0;}
+  header.principal .sitio{font-size:16px;opacity:.92;margin-bottom:8px;}
+  header.principal h1{font-size:clamp(26px,4.6vw,36px);line-height:1.2;max-width:22ch;}
+  .reloj{display:inline-flex;align-items:center;gap:8px;margin-top:16px;background:var(--ruta);color:#1b2430;
+    font-weight:700;padding:6px 14px;border-radius:6px;font-size:17px;}
+  .reloj.urgente{background:#fff;color:var(--rojo);}
+
+  .tarjeta{background:var(--papel);border:1px solid var(--linea);border-radius:10px;padding:24px;margin-top:26px;}
+  h2{font-size:clamp(22px,3.6vw,27px);color:var(--azul);line-height:1.25;margin-bottom:12px;}
+  h3{font-size:19px;color:var(--azul);margin:18px 0 8px;}
+  .tarjeta p{margin:8px 0;max-width:66ch;}
+  .tarjeta ul{margin:8px 0 8px 24px;} .tarjeta li{margin:5px 0;}
+  .campo{margin:16px 0;}
+  .campo label{display:block;font-weight:700;margin-bottom:4px;}
+  .campo .ayuda{display:block;font-size:15px;color:var(--gris);}
+  input[type=text]{width:100%;max-width:420px;padding:10px 12px;font:inherit;border:2px solid #767676;border-radius:8px;}
+  .casilla{display:flex;gap:10px;align-items:flex-start;margin:14px 0;}
+  .casilla input{width:22px;height:22px;margin-top:3px;flex-shrink:0;}
+
+  button{font:inherit;cursor:pointer;}
+  .btn{display:inline-block;background:var(--azul);color:#fff;border:2px solid var(--azul);font-weight:700;
+    padding:10px 20px;border-radius:8px;font-size:17px;}
+  .btn:hover{background:#082b4c;}
+  .btn.sec{background:var(--papel);color:var(--azul);}
+  .btn.sec:hover{background:var(--azul-cl);}
+  .btn.marca[aria-pressed=true]{background:var(--ruta-cl);border-color:var(--ambar);color:var(--ambar);}
+  .btn:disabled{opacity:.45;cursor:not-allowed;}
+  .fila-btn{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;align-items:center;}
+  .fila-btn .derecha{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap;}
+
+  .progreso{height:10px;background:var(--linea);border-radius:5px;overflow:hidden;margin:4px 0 14px;}
+  .progreso div{height:100%;background:var(--ruta);width:0;transition:width .2s;}
+  @media (prefers-reduced-motion:reduce){.progreso div{transition:none;}}
+  .cabecera-preg{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:16px;color:var(--gris);}
+  .cabecera-preg strong{color:var(--tinta);}
+
+  .texto-base{background:var(--azul-cl);border-left:5px solid var(--azul-2);border-radius:0 8px 8px 0;
+    padding:14px 18px;margin:14px 0;font-size:17.5px;}
+  .texto-base p{margin:6px 0;}
+  .texto-base table{border-collapse:collapse;margin:6px 0;background:#fff;}
+  .texto-base caption{text-align:left;font-weight:700;padding-bottom:4px;}
+  .texto-base th,.texto-base td{border:1px solid var(--linea);padding:6px 12px;text-align:left;}
+  .texto-base thead th{background:#f7f9fb;}
+  fieldset{border:none;margin-top:10px;}
+  legend{font-size:20px;font-weight:700;line-height:1.4;margin-bottom:12px;}
+  .opcion{display:flex;gap:12px;align-items:flex-start;border:2px solid var(--linea);border-radius:10px;
+    padding:12px 14px;margin:9px 0;cursor:pointer;background:#fff;}
+  .opcion:hover{border-color:var(--azul-2);}
+  .opcion input{width:22px;height:22px;margin-top:3px;flex-shrink:0;accent-color:var(--azul);}
+  .opcion:has(input:checked){border-color:var(--azul);background:var(--azul-cl);}
+  .opcion:has(input:focus-visible){outline:3px solid var(--azul);outline-offset:2px;}
+
+  .rejilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px;margin:14px 0;}
+  .rejilla button{border:2px solid var(--linea);background:#fff;border-radius:8px;padding:8px 4px;font-weight:700;line-height:1.2;}
+  .rejilla button .est{display:block;font-size:14px;font-weight:400;}
+  .rejilla button.resp{border-color:var(--verde);background:var(--verde-cl);}
+  .rejilla button.marc{border-color:var(--ambar);background:var(--ruta-cl);}
+  .leyenda{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:16px;color:var(--gris);}
+
+  .resultado-nivel{background:var(--azul);color:#fff;border-radius:10px;padding:20px 22px;margin:14px 0;}
+  .resultado-nivel .grande{font-size:clamp(28px,5vw,38px);font-weight:700;line-height:1.2;}
+  table.desglose{border-collapse:collapse;width:100%;margin:8px 0;font-size:17px;}
+  table.desglose caption{text-align:left;font-weight:700;color:var(--azul);padding-bottom:6px;}
+  table.desglose th,table.desglose td{border:1px solid var(--linea);padding:8px 10px;text-align:left;}
+  table.desglose thead th{background:var(--azul-cl);color:var(--azul);}
+  .aviso{background:var(--ruta-cl);border-left:5px solid var(--ambar);padding:12px 16px;border-radius:0 8px 8px 0;margin:14px 0;}
+  #anuncio{position:absolute;left:-9999px;}
+  .franja-practica{background:var(--ruta-cl);border:2px solid var(--ambar);color:var(--ambar);border-radius:8px;
+    padding:10px 14px;margin-bottom:14px;font-weight:700;font-size:16.5px;}
+  .fin-tiempo{border:3px solid var(--ambar);}
+
+  footer{border-top:1px solid var(--linea);margin-top:36px;padding-top:16px;font-size:15px;color:var(--gris);text-align:center;}
+
+  @media (max-width:560px){ body{font-size:17px;} .tarjeta{padding:18px;} .fila-btn .derecha{margin-left:0;} }
+  @media print{
+    header.principal,.fila-btn,.no-imprimir,footer .no-imprimir{display:none !important;}
+    body{background:#fff;} .tarjeta{border:none;padding:0;}
+    .resultado-nivel{background:none;color:var(--tinta);border:2px solid #000;}
+  }
+</style>
+</head>
+<body>
+<header class="principal">
+  <div class="envoltura">
+    <p class="sitio">GEDparaHispanos</p>
+    <h1>Prueba de ubicación de Artes del lenguaje</h1>
+    <p class="reloj" id="reloj" hidden><span aria-hidden="true">⏱</span> <span id="reloj-texto">30:00</span></p>
+  </div>
+</header>
+<div id="anuncio" aria-live="polite" role="status"></div>
+
+<main class="envoltura">
+
+  <!-- ============ INICIO ============ -->
+  <section class="tarjeta" id="pantalla-inicio" aria-labelledby="t-inicio">
+    <h2 id="t-inicio">Antes de empezar</h2>
+    <p>Esta prueba le indica en qué nivel, del 1 al 4, le conviene empezar a estudiar Artes del lenguaje. No es un examen: nadie la califica y el resultado solo lo ve usted.</p>
+    <ul>
+      <li>Tiene <strong>30 preguntas</strong> de lectura, vocabulario, gramática, ortografía y escritura. Van de más fáciles a más difíciles.</li>
+      <li>Dispone de <strong>30 minutos</strong>, como en un examen real. Al cumplirse el tiempo, su resultado queda fijado con las respuestas que tenga en ese momento.</li>
+      <li>Si quiere, después puede seguir respondiendo para practicar, pero esas respuestas <strong>no cuentan</strong> para su ubicación.</li>
+      <li>Puede ir y volver entre preguntas. Si duda, pulse <strong>«Marcar para revisar»</strong> y vuelva a ella antes de entregar.</li>
+      <li>Si no sabe una respuesta, no se preocupe: elija la que le parezca mejor o pase a la siguiente. Es normal que las últimas preguntas cuesten más.</li>
+      <li>Hágala sola o solo, sin diccionario ni ayuda, para que el resultado le sirva de verdad.</li>
+    </ul>
+    <div class="campo">
+      <label for="nombre">Su nombre <span class="ayuda">Opcional. Solo aparece en la hoja de resultados, por si quiere imprimirla.</span></label>
+      <input type="text" id="nombre" autocomplete="name">
+    </div>
+    <div class="fila-btn">
+      <button type="button" class="btn" id="btn-empezar">Empezar la prueba</button>
+    </div>
+  </section>
+
+  <!-- ============ PREGUNTA ============ -->
+  <section class="tarjeta" id="pantalla-pregunta" hidden aria-labelledby="num-pregunta">
+    <p class="franja-practica" id="franja-pregunta" hidden>Tiempo terminado: lo que responda ahora es práctica y no cuenta para su ubicación.</p>
+    <div class="progreso" aria-hidden="true"><div id="barra"></div></div>
+    <div class="cabecera-preg">
+      <span id="num-pregunta" tabindex="-1"><strong>Pregunta 1 de 30</strong></span>
+      <span id="parte">Parte 1 de 4</span>
+      <span id="contador-marcadas">0 marcadas para revisar</span>
+    </div>
+    <div id="texto-base" class="texto-base" hidden></div>
+    <fieldset>
+      <legend id="enunciado"></legend>
+      <div id="opciones"></div>
+    </fieldset>
+    <div class="fila-btn">
+      <button type="button" class="btn sec" id="btn-anterior">Anterior</button>
+      <button type="button" class="btn sec marca" id="btn-marcar" aria-pressed="false">🚩 Marcar para revisar</button>
+      <div class="derecha">
+        <button type="button" class="btn sec" id="btn-revision">Ir a la revisión</button>
+        <button type="button" class="btn" id="btn-siguiente">Siguiente</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FIN DEL TIEMPO ============ -->
+  <section class="tarjeta fin-tiempo" id="pantalla-tiempo" hidden aria-labelledby="t-tiempo">
+    <h2 id="t-tiempo" tabindex="-1">Se terminó el tiempo</h2>
+    <p id="tiempo-resumen"></p>
+    <p>Su resultado de ubicación ya quedó fijado con esas respuestas. Puede ver sus resultados ahora o seguir respondiendo para practicar. Lo que responda o cambie a partir de ahora <strong>no cuenta</strong> para su ubicación.</p>
+    <div class="fila-btn">
+      <button type="button" class="btn" id="btn-ver-resultados">Ver mis resultados</button>
+      <button type="button" class="btn sec" id="btn-practicar">Seguir respondiendo para practicar</button>
+    </div>
+  </section>
+
+  <!-- ============ REVISIÓN ============ -->
+  <section class="tarjeta" id="pantalla-revision" hidden aria-labelledby="t-revision">
+    <p class="franja-practica" id="franja-revision" hidden>Tiempo terminado: lo que responda ahora es práctica y no cuenta para su ubicación.</p>
+    <h2 id="t-revision" tabindex="-1">Revise antes de entregar</h2>
+    <p id="resumen-revision"></p>
+    <p>Pulse cualquier número para volver a esa pregunta.</p>
+    <div class="leyenda" aria-hidden="true">
+      <span>✓ Respondida</span><span>🚩 Marcada para revisar</span><span>— Sin responder</span>
+    </div>
+    <div class="rejilla" id="rejilla"></div>
+    <div class="fila-btn">
+      <button type="button" class="btn sec" id="btn-seguir">Seguir respondiendo</button>
+      <div class="derecha"><button type="button" class="btn" id="btn-entregar">Entregar la prueba</button></div>
+    </div>
+  </section>
+
+  <!-- ============ RESULTADOS ============ -->
+  <section class="tarjeta" id="pantalla-resultados" hidden aria-labelledby="t-resultados">
+    <h2 id="t-resultados" tabindex="-1">Sus resultados</h2>
+    <p id="res-meta"></p>
+    <div id="res-aviso-tiempo" class="aviso" hidden>Se terminó el tiempo. Su nivel se calculó con las respuestas que tenía al cumplirse los 30 minutos.</div>
+    <div class="resultado-nivel">
+      <p>Le conviene empezar por el</p>
+      <p class="grande" id="res-nivel">Nivel 1</p>
+      <p id="res-puntos"></p>
+    </div>
+    <div id="res-practica" class="aviso" hidden></div>
+    <h3>Qué significa</h3>
+    <p id="res-descripcion"></p>
+    <p id="res-enfoque"></p>
+    <h3>Qué hacer ahora</h3>
+    <div id="res-pasos"></div>
+    <h3>Detalle por nivel</h3>
+    <table class="desglose">
+      <caption>Respuestas correctas en cada parte de la prueba</caption>
+      <thead><tr><th scope="col">Parte</th><th scope="col">Correctas</th></tr></thead>
+      <tbody id="res-desglose"></tbody>
+    </table>
+    <div class="fila-btn no-imprimir">
+      <button type="button" class="btn" id="btn-imprimir">🖨️ Imprimir o guardar en PDF</button>
+      <button type="button" class="btn sec" id="btn-copiar">📋 Copiar resultados</button>
+      <a class="btn sec" href="https://www.gedparahispanos.com/inicio" target="_blank" rel="noopener noreferrer">Volver a GEDparaHispanos</a>
+    </div>
+    <p class="no-imprimir" id="copia-estado" role="status"></p>
+  </section>
+
+  <footer>
+    <p>José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago</p>
+    <p>Preguntas basadas en los Illinois ABE/ASE English Language Arts Content Standards y en los planes curriculares de Artes del lenguaje, Niveles 1–4.</p>
+    <p>GEDparaHispanos · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="noopener noreferrer license">Licencia CC BY-NC-SA 4.0</a></p>
+  </footer>
+</main>
+
+<script>
+/* =====================================================================
+   1. BANCO DE PREGUNTAS
+   Cada pregunta: t (texto base opcional, HTML), p (pregunta), o (opciones:
+   la PRIMERA es la correcta; se barajan al mostrarlas).
+   ===================================================================== */
+var BANCO = {
+  1: [
+    { p: "¿Qué palabra va primero en orden alfabético?",
+      o: ["casa", "mesa", "perro", "tren"] },
+    { p: "¿Qué oración está bien escrita?",
+      o: ["María vive en Chicago.", "maría vive en chicago.", "María vive en chicago.", "maría vive en Chicago."] },
+    { p: "¿Cuál es una pregunta bien escrita?",
+      o: ["¿Dónde está la parada del autobús?", "Dónde está la parada del autobús?", "¿Dónde está la parada del autobús.", "¿dónde está la parada del autobús?"] },
+    { p: "¿Cuántas sílabas tiene la palabra «mariposa»?",
+      o: ["Cuatro: ma-ri-po-sa", "Tres: mari-po-sa", "Dos: mari-posa", "Cinco: m-a-ri-po-sa"] },
+    { p: "Complete la oración: «Las flores ___ están en la mesa.»",
+      o: ["rojas", "rojo", "roja", "rojos"] },
+    { p: "Complete la oración: «Ayer yo ___ al mercado con mi hermana.»",
+      o: ["fui", "voy", "iré", "vaya"] },
+    { p: "¿Cuál de estas palabras es un sustantivo (nombre de una cosa)?",
+      o: ["ventana", "rápido", "correr", "azul"] },
+    { t: "<p>Ana se levanta a las seis. Prepara el desayuno para sus hijos y los lleva a la escuela. Después trabaja ocho horas en una panadería. Por la noche ayuda a los niños con la tarea. Ana tiene un día muy ocupado.</p>",
+      p: "¿Cuál es la idea principal del texto?",
+      o: ["Ana tiene un día muy ocupado.", "Ana trabaja en una panadería.", "Los hijos de Ana van a la escuela.", "Ana se levanta a las seis."] },
+    { t: "<p>Primero, lave el arroz. Después, póngalo en una olla con dos tazas de agua. Luego, cocínelo a fuego lento durante veinte minutos. Por último, sírvalo caliente.</p>",
+      p: "Según las instrucciones, ¿qué se hace justo después de lavar el arroz?",
+      o: ["Se pone en una olla con agua.", "Se sirve caliente.", "Se cocina veinte minutos.", "Se lava otra vez."] },
+    { t: "<p>Hacía tanto frío que Pedro se puso un abrigo grueso para no temblar.</p>",
+      p: "En esta oración, ¿qué quiere decir «grueso»?",
+      o: ["De tela espesa, que abriga mucho", "Muy fino y ligero", "De color oscuro", "Muy caro"] },
+    { t: "<table><caption>Horario de la biblioteca</caption><thead><tr><th scope=\"col\">Día</th><th scope=\"col\">Horario</th></tr></thead><tbody><tr><td>Lunes</td><td>9:00 a 5:00</td></tr><tr><td>Martes</td><td>9:00 a 8:00</td></tr><tr><td>Sábado</td><td>10:00 a 2:00</td></tr></tbody></table>",
+      p: "Según la tabla, ¿qué día cierra más tarde la biblioteca?",
+      o: ["El martes", "El lunes", "El sábado", "Todos cierran a la misma hora"] },
+    { t: "<p>Llovió toda la noche. Por eso, a la mañana siguiente la calle estaba llena de charcos.</p>",
+      p: "¿Por qué la calle estaba llena de charcos?",
+      o: ["Porque llovió toda la noche.", "Porque alguien lavó la calle.", "Porque se rompió una tubería.", "El texto no lo dice."] }
+  ],
+  2: [
+    { p: "¿En cuál de estas palabras hay un diptongo (dos vocales en la misma sílaba)?",
+      o: ["puerta", "país", "leer", "mar"] },
+    { p: "En la palabra «deshacer», ¿qué significa el prefijo «des-»?",
+      o: ["Lo contrario de la acción", "Hacer algo antes", "Hacer algo otra vez", "Hacer algo mucho"] },
+    { p: "En la palabra «panadería», ¿qué indica la terminación «-ería»?",
+      o: ["Un lugar donde se hace o se vende algo", "Una persona que trabaja", "Algo pequeño", "Algo que pasó antes"] },
+    { t: "<p>El señor habló lentamente para que todos lo entendieran.</p>",
+      p: "¿Cuál es el adverbio de esta oración?",
+      o: ["lentamente", "señor", "habló", "todos"] },
+    { p: "Complete la oración: «Todas las mañanas, Luis ___ lava la cara con agua fría.»",
+      o: ["se", "le", "lo", "les"] },
+    { p: "¿Cuál de estas es una oración compuesta (dos ideas unidas por un conector)?",
+      o: ["Quería ir al cine, pero tenía que trabajar.", "Mi hermana trabaja en un hospital.", "El perro de mi vecino ladra mucho.", "Mañana por la tarde."] },
+    { p: "¿Qué oración tiene la coma bien puesta?",
+      o: ["Carmen, ven a comer.", "Carmen ven, a comer.", "Carmen ven a, comer.", "Carmen ven a comer,"] },
+    { p: "¿Qué palabra está bien escrita?",
+      o: ["camión", "arbol", "facil", "lapiz"] },
+    { p: "Usted le escribe a su jefe para pedir un día libre. ¿Qué forma es la más adecuada?",
+      o: ["Estimado señor Pérez: le escribo para solicitar el viernes libre por una cita médica.",
+          "Oye, jefe, el viernes no voy, tengo cita.",
+          "¡Hola! El viernes no cuentes conmigo, ¿ok?",
+          "Jefe: viernes libre. Gracias."] },
+    { t: "<p>Durante la reunión, Rosa no escuchó nada de lo que dijeron. Estaba en las nubes.</p>",
+      p: "¿Qué quiere decir que Rosa «estaba en las nubes»?",
+      o: ["Estaba distraída, pensando en otras cosas.", "Estaba viajando en avión.", "Estaba muy enojada.", "Estaba en un lugar muy alto."] },
+    { t: "<p>¡Visite el nuevo Museo de Ciencias! La entrada es gratuita los domingos y hay actividades para toda la familia. ¡No se lo pierda!</p>",
+      p: "¿Cuál es el propósito principal del autor?",
+      o: ["Convencer a los lectores de visitar el museo", "Explicar cómo se construyó el museo", "Contar una historia sobre una familia", "Comparar dos museos"] },
+    { p: "¿Cuál de estas es una fuente primaria?",
+      o: ["Una carta escrita por un soldado durante la guerra", "Un libro de texto de historia publicado este año", "Un artículo de enciclopedia sobre la guerra", "Un documental hecho cincuenta años después"] },
+    { t: "<table><caption>Frutas vendidas en una semana</caption><thead><tr><th scope=\"col\">Fruta</th><th scope=\"col\">Libras vendidas</th></tr></thead><tbody><tr><td>Manzanas</td><td>30</td></tr><tr><td>Naranjas</td><td>45</td></tr><tr><td>Plátanos</td><td>20</td></tr></tbody></table>",
+      p: "¿Cuántas libras de naranjas más que de plátanos se vendieron?",
+      o: ["25", "15", "65", "10"] }
+  ],
+  3: [
+    { p: "Complete la oración: «El libro ___ me prestaste es muy interesante.»",
+      o: ["que", "quien", "cuyo", "donde"] },
+    { p: "Complete la oración: «Fue a trabajar ___ se sentía un poco enfermo.»",
+      o: ["aunque", "porque", "si", "para que"] },
+    { p: "Complete la oración: «Cuando llegamos a la estación, el tren ya ___.»",
+      o: ["había salido", "sale", "saldrá", "salga"] },
+    { p: "¿Cuál de estas es un fragmento, es decir, una oración incompleta?",
+      o: ["Porque el autobús llegó tarde.", "El autobús llegó tarde.", "Llegué tarde porque el autobús se retrasó.", "¿Por qué llegó tarde el autobús?"] },
+    { p: "¿Qué signo falta en la oración? «Para la receta necesita tres ingredientes___ harina, huevos y leche.»",
+      o: ["Dos puntos ( : )", "Punto y coma ( ; )", "Coma ( , )", "Comillas ( « » )"] },
+    { p: "Las palabras «biología» y «biografía» tienen la raíz griega «bio-». ¿Qué significa?",
+      o: ["vida", "escritura", "tierra", "estudio"] },
+    { t: "<p>Antes de publicar el estudio, la científica quiso verificar los resultados.</p>",
+      p: "¿Qué palabra puede reemplazar a «verificar» sin cambiar el sentido?",
+      o: ["comprobar", "ocultar", "olvidar", "celebrar"] },
+    { t: "<p>Marta miró el reloj por quinta vez, golpeó el suelo con el pie y suspiró. El autobús debía haber pasado hacía veinte minutos.</p>",
+      p: "¿Qué se puede inferir sobre cómo se siente Marta?",
+      o: ["Está impaciente.", "Está alegre.", "Tiene sueño.", "Está tranquila."] },
+    { t: "<p>Este verano casi no llovió en la región. Como consecuencia, los ríos bajaron de nivel, las cosechas se secaron y el precio del maíz subió en los mercados.</p>",
+      p: "¿Cómo está organizado este texto?",
+      o: ["Causa y efecto", "Orden alfabético", "Pregunta y respuesta", "Comparación de dos lugares"] },
+    { p: "¿Cuál de estas oraciones contiene un símil (una comparación con «como»)?",
+      o: ["El niño corrió rápido como el viento.", "Sus ojos eran dos luceros.", "La ciudad nunca duerme.", "El tiempo es oro."] },
+    { p: "¿Cuál de estas oraciones expresa un hecho y no una opinión?",
+      o: ["El río Misisipi desemboca en el golfo de México.", "El Misisipi es el río más bonito del país.", "Nadie debería bañarse en el Misisipi.", "Viajar por el Misisipi es la mejor experiencia."] },
+    { t: "<p>La ciudad debe construir más ciclovías. Según el Departamento de Transporte, los accidentes de bicicleta bajaron un 30 % en las calles que ya tienen ciclovía.</p>",
+      p: "¿Qué evidencia usa el autor para apoyar su opinión?",
+      o: ["Un dato del Departamento de Transporte", "Una experiencia personal", "La opinión de un vecino", "Una comparación con otro país"] },
+    { p: "¿Qué rasgo distingue a una obra de teatro de un cuento?",
+      o: ["Se escribe con diálogos de los personajes y acotaciones.", "Siempre tiene rima.", "Solo tiene un personaje.", "No tiene conflicto."] }
+  ],
+  4: [
+    { p: "¿Qué oración tiene una estructura paralela correcta?",
+      o: ["El programa ayuda a leer mejor, escribir con claridad y pensar de forma crítica.",
+          "El programa ayuda a leer mejor, la escritura clara y que piensen de forma crítica.",
+          "El programa ayuda a la lectura, escribir con claridad y pensando críticamente.",
+          "El programa ayuda leyendo mejor, a escribir con claridad y el pensamiento crítico."] },
+    { t: "<p>Después de perder el autobús, mojarse con la lluvia y olvidar las llaves, Julio suspiró: «¡Qué día tan maravilloso!».</p>",
+      p: "¿Qué recurso usa Julio al hablar?",
+      o: ["Ironía", "Símil", "Hipérbole", "Onomatopeya"] },
+    { t: "<p>«Nuestra empresa está realizando un ajuste de personal», anunció el gerente.</p>",
+      p: "La expresión «ajuste de personal» es un eufemismo. ¿Qué suaviza?",
+      o: ["Que van a despedir a empleados", "Que van a subir los sueldos", "Que van a cambiar los uniformes", "Que van a contratar a más gente"] },
+    { p: "¿Qué palabra describe con una connotación positiva a una persona que gasta poco dinero?",
+      o: ["ahorrativa", "tacaña", "avara", "mezquina"] },
+    { t: "<p>«Mi vecino fumó toda su vida y vivió hasta los 95 años. Por lo tanto, fumar no hace daño.»</p>",
+      p: "¿Cuál es la principal debilidad de este argumento?",
+      o: ["Saca una conclusión general a partir de un solo caso.", "Usa demasiados datos científicos.", "No dice la edad del vecino.", "Ataca a los médicos."] },
+    { p: "Un ensayo defiende que las escuelas deben usar uniformes. ¿Qué oración reconoce un contrargumento y lo refuta?",
+      o: ["Algunos dicen que los uniformes limitan la expresión personal; sin embargo, los estudiantes pueden expresarse de muchas otras maneras.",
+          "Los uniformes son la mejor idea que ha tenido la escuela.",
+          "Muchas escuelas del país ya usan uniformes.",
+          "Los uniformes pueden ser azules, grises o verdes."] },
+    { t: "<p>Un estudio con 20 personas encontró que quienes tomaban una taza de té antes de dormir dijeron que descansaban mejor.</p>",
+      p: "¿Qué conclusión está mejor apoyada por esta información?",
+      o: ["El té podría estar relacionado con dormir mejor, pero hacen falta estudios más amplios.",
+          "Está demostrado que el té cura el insomnio.",
+          "Todas las personas duermen mejor si toman té.",
+          "El café no deja dormir a nadie."] },
+    { t: "<p>«Nueve de cada diez dentistas recomiendan la pasta dental Sonrisa Blanca.»</p>",
+      p: "¿Qué técnica de persuasión usa este anuncio?",
+      o: ["Apelar a la autoridad de expertos", "Apelar al miedo", "Atacar a la competencia", "Contar una historia personal"] },
+    { t: "<p>«¿Quién no quiere un futuro mejor para sus hijos? Por eso debemos invertir en nuestras escuelas.»</p>",
+      p: "¿Con qué propósito usa el orador la pregunta del principio?",
+      o: ["Para que el público se sienta de acuerdo sin necesidad de responder", "Para pedir datos al público", "Para cambiar de tema", "Para mostrar que no sabe la respuesta"] },
+    { t: "<p>El discurso del senador fue tan prolijo que, a la media hora, el público empezó a bostezar.</p>",
+      p: "Por el contexto, ¿qué significa «prolijo»?",
+      o: ["Largo y con demasiados detalles", "Breve y claro", "Muy emocionante", "Dicho en voz muy baja"] }
+  ]
+};
+
+/* =====================================================================
+   2. CONFIGURACIÓN
+   ===================================================================== */
+var POR_NIVEL = { 1: 8, 2: 8, 3: 8, 4: 6 };
+var MINUTOS = 30;
+var ENLACE_LENGUAJE = "https://www.gedparahispanos.com/artes-del-lenguaje";
+var ENLACE_PRIMER_TEMA = "https://www.gedparahispanos.com/artes-del-lenguaje/comprensi%C3%B3n-de-textos";
+var ENLACE_EXAMEN = "https://www.gedparahispanos.com/ex%C3%A1menes/artes-del-lenguaje";
+var ENLACE_RESPUESTA = "https://www.gedparahispanos.com/ex%C3%A1menes/respuesta-extendida";
+
+var DESCRIPCION = {
+  1: "El Nivel 1 construye las bases: el alfabeto, los sonidos y las sílabas, la oración completa y las primeras estrategias para comprender lo que se lee.",
+  2: "El Nivel 2 afianza la lectura y la oración: fluidez, gramática, puntuación y ortografía, la idea principal de un texto y la escritura de párrafos con estructura.",
+  3: "El Nivel 3 lleva a la lectura inferencial: gramática avanzada, vocabulario académico, evidencia del texto, argumentos y la escritura argumentada.",
+  4: "El Nivel 4 prepara directamente para el GED: comprensión crítica, retórica y estilo, evaluación de argumentos y fuentes, y el ensayo argumentativo."
+};
+var ENFOQUE = {
+  1: "Sus primeros temas: fundamentos del texto impreso y el alfabeto; sonidos, sílabas y palabras; construir oraciones.",
+  2: "Sus primeros temas: fonética avanzada y fluidez lectora; gramática de la oración; puntuación, ortografía y registro.",
+  3: "Sus primeros temas: gramática avanzada de la oración; puntuación avanzada y vocabulario académico; comprensión inferencial y evidencia textual.",
+  4: "Sus primeros temas: sintaxis compleja y convenciones; vocabulario avanzado y lenguaje figurado; comprensión crítica e inferencia compleja."
+};
+
+/* =====================================================================
+   3. ESTADO
+   ===================================================================== */
+var preguntas = [];      // { nivel, t, p, opciones[], correcta }
+var respuestas = [];     // índice elegido o null
+var marcadas = [];       // true / false
+var actual = 0;
+var segundos = MINUTOS * 60;
+var intervalo = null;
+var entregada = false;
+var tiempoAgotado = false;
+var respuestasATiempo = null;   // copia fija de las respuestas al cumplirse el tiempo
+var nombre = "";
+
+function $(id){ return document.getElementById(id); }
+function anunciar(txt){ var a = $("anuncio"); a.textContent = ""; setTimeout(function(){ a.textContent = txt; }, 50); }
+function barajar(lista){
+  var c = lista.slice();
+  for (var i = c.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var x = c[i]; c[i] = c[j]; c[j] = x; }
+  return c;
+}
+function mostrar(pantalla){
+  ["pantalla-inicio","pantalla-pregunta","pantalla-tiempo","pantalla-revision","pantalla-resultados"].forEach(function(id){ $(id).hidden = (id !== pantalla); });
+  window.scrollTo(0, 0);
+}
+
+/* =====================================================================
+   4. ARMAR LA PRUEBA
+   ===================================================================== */
+function armarPrueba(){
+  preguntas = [];
+  [1,2,3,4].forEach(function(n){
+    barajar(BANCO[n]).slice(0, POR_NIVEL[n]).forEach(function(q){
+      var orden = barajar([0,1,2,3]);
+      preguntas.push({
+        nivel: n, t: q.t || "", p: q.p,
+        opciones: orden.map(function(k){ return q.o[k]; }),
+        correcta: orden.indexOf(0)
+      });
+    });
+  });
+  respuestas = preguntas.map(function(){ return null; });
+  marcadas = preguntas.map(function(){ return false; });
+}
+
+/* =====================================================================
+   5. MOSTRAR UNA PREGUNTA
+   ===================================================================== */
+function pintarPregunta(){
+  var q = preguntas[actual], total = preguntas.length;
+  $("num-pregunta").innerHTML = "<strong>Pregunta " + (actual + 1) + " de " + total + "</strong>";
+  $("parte").textContent = "Parte " + q.nivel + " de 4";
+  $("barra").style.width = (100 * (actual + 1) / total) + "%";
+
+  var tb = $("texto-base");
+  if (q.t){ tb.innerHTML = q.t; tb.hidden = false; } else { tb.innerHTML = ""; tb.hidden = true; }
+  $("enunciado").textContent = q.p;
+
+  var html = "";
+  q.opciones.forEach(function(op, i){
+    var id = "op-" + actual + "-" + i;
+    html += '<label class="opcion" for="' + id + '"><input type="radio" name="resp" id="' + id + '" value="' + i + '"' +
+            (respuestas[actual] === i ? " checked" : "") + '><span>' + op + '</span></label>';
+  });
+  $("opciones").innerHTML = html;
+  $("opciones").querySelectorAll("input").forEach(function(inp){
+    inp.addEventListener("change", function(){ respuestas[actual] = +inp.value; });
+  });
+
+  $("btn-anterior").disabled = (actual === 0);
+  $("btn-siguiente").textContent = (actual === total - 1) ? "Terminar y revisar" : "Siguiente";
+  var m = $("btn-marcar");
+  m.setAttribute("aria-pressed", String(marcadas[actual]));
+  m.textContent = marcadas[actual] ? "🚩 Marcada: quitar la marca" : "🚩 Marcar para revisar";
+  var nm = marcadas.filter(Boolean).length;
+  $("contador-marcadas").textContent = nm + (nm === 1 ? " marcada" : " marcadas") + " para revisar";
+}
+function irA(i){ actual = i; mostrar("pantalla-pregunta"); pintarPregunta(); $("num-pregunta").focus(); }
+
+/* =====================================================================
+   6. REVISIÓN
+   ===================================================================== */
+function pintarRevision(){
+  var sin = respuestas.filter(function(r){ return r === null; }).length;
+  var nm = marcadas.filter(Boolean).length;
+  $("resumen-revision").textContent = "Respondió " + (preguntas.length - sin) + " de " + preguntas.length + " preguntas." +
+    (sin ? " Le faltan " + sin + "." : "") + (nm ? " Tiene " + nm + (nm === 1 ? " marcada" : " marcadas") + " para revisar." : "");
+  var html = "";
+  preguntas.forEach(function(q, i){
+    var clase = marcadas[i] ? "marc" : (respuestas[i] !== null ? "resp" : "");
+    var simb  = marcadas[i] ? "🚩" : (respuestas[i] !== null ? "✓" : "—");
+    var texto = marcadas[i] ? "marcada para revisar" : (respuestas[i] !== null ? "respondida" : "sin responder");
+    html += '<button type="button" class="' + clase + '" data-i="' + i + '" aria-label="Pregunta ' + (i + 1) + ', ' + texto + '">' +
+            (i + 1) + '<span class="est" aria-hidden="true">' + simb + '</span></button>';
+  });
+  $("rejilla").innerHTML = html;
+  $("rejilla").querySelectorAll("button").forEach(function(b){ b.addEventListener("click", function(){ irA(+b.dataset.i); }); });
+}
+function irARevision(){ mostrar("pantalla-revision"); pintarRevision(); $("t-revision").focus(); }
+
+/* =====================================================================
+   7. RELOJ
+   ===================================================================== */
+function formatoTiempo(s){ var m = Math.floor(s / 60), r = s % 60; return m + ":" + (r < 10 ? "0" : "") + r; }
+function iniciarReloj(){
+  $("reloj").hidden = false;
+  $("reloj-texto").textContent = formatoTiempo(segundos);
+  intervalo = setInterval(function(){
+    segundos--;
+    $("reloj-texto").textContent = formatoTiempo(Math.max(segundos, 0));
+    if (segundos === 600) anunciar("Quedan 10 minutos.");
+    if (segundos === 300){ anunciar("Quedan 5 minutos."); $("reloj").classList.add("urgente"); }
+    if (segundos === 60) anunciar("Queda 1 minuto.");
+    if (segundos <= 0) finDelTiempo();
+  }, 1000);
+}
+
+function contar(lista){
+  var a = { 1: 0, 2: 0, 3: 0, 4: 0 }, total = 0, resp = 0;
+  preguntas.forEach(function(q, i){
+    if (lista[i] !== null) resp++;
+    if (lista[i] === q.correcta){ a[q.nivel]++; total++; }
+  });
+  return { porNivel: a, total: total, respondidas: resp };
+}
+function finDelTiempo(){
+  if (tiempoAgotado) return;
+  tiempoAgotado = true;
+  clearInterval(intervalo);
+  respuestasATiempo = respuestas.slice();
+  $("reloj-texto").textContent = "Tiempo terminado";
+  $("franja-pregunta").hidden = false;
+  $("franja-revision").hidden = false;
+  var r = contar(respuestasATiempo).respondidas;
+  $("tiempo-resumen").textContent = "Al cumplirse los 30 minutos había respondido " + r + " de " + preguntas.length + " preguntas.";
+  anunciar("Se terminó el tiempo.");
+  mostrar("pantalla-tiempo");
+  $("t-tiempo").focus();
+}
+
+/* =====================================================================
+   8. ENTREGA Y RESULTADOS
+   ===================================================================== */
+function nivelRecomendado(total){
+  if (total >= 22) return 4;
+  if (total >= 15) return 3;
+  if (total >= 8)  return 2;
+  return 1;
+}
+function entregar(){
+  if (entregada) return;
+  entregada = true;
+  clearInterval(intervalo);
+  window.removeEventListener("beforeunload", avisoSalida);
+
+  // La ubicación se calcula SOLO con las respuestas dadas dentro del tiempo.
+  var oficial = contar(tiempoAgotado ? respuestasATiempo : respuestas);
+  var aciertos = oficial.porNivel, total = oficial.total;
+  var nivel = nivelRecomendado(total);
+
+  // Práctica fuera de tiempo: se informa aparte, sin afectar el nivel.
+  var cajaP = $("res-practica");
+  cajaP.hidden = true;
+  if (tiempoAgotado){
+    var final = contar(respuestas);
+    var extra = final.respondidas - oficial.respondidas;
+    var cambios = respuestas.filter(function(r, i){ return respuestasATiempo[i] !== null && r !== respuestasATiempo[i]; }).length;
+    if (extra > 0 || cambios > 0){
+      cajaP.innerHTML = "<strong>Práctica fuera de tiempo (no cuenta para su ubicación):</strong> contando también lo que respondió después de los 30 minutos, acertó " +
+        final.total + " de " + preguntas.length + ". Esa diferencia muestra lo que ya sabe pero todavía necesita más tiempo para resolver: " +
+        "ganar rapidez es parte de su preparación para el GED.";
+      cajaP.hidden = false;
+    }
+  }
+
+  var fecha = new Date().toLocaleDateString("es-US", { year: "numeric", month: "long", day: "numeric" });
+  $("res-meta").textContent = (nombre ? nombre + " · " : "") + "Prueba realizada el " + fecha + ".";
+  $("res-aviso-tiempo").hidden = !tiempoAgotado;
+  $("res-nivel").textContent = "Nivel " + nivel;
+  $("res-puntos").textContent = "Respondió bien " + total + " de " + preguntas.length + " preguntas.";
+  $("res-descripcion").textContent = DESCRIPCION[nivel];
+  $("res-enfoque").textContent = ENFOQUE[nivel];
+
+  var pasos = "<ul>" +
+    '<li>Anote su nivel: <strong>Nivel ' + nivel + '</strong>. Lo va a necesitar para organizar su estudio.</li>' +
+    '<li>Empiece por el primer tema de Artes del lenguaje: <a href="' + ENLACE_PRIMER_TEMA + '" target="_blank" rel="noopener noreferrer">Comprensión lectora</a>.</li>' +
+    '<li>Todos los temas están en la sección <a href="' + ENLACE_LENGUAJE + '" target="_blank" rel="noopener noreferrer">Artes del lenguaje</a> de GEDparaHispanos.</li>';
+  if (nivel === 4){
+    pasos += '<li>Como ya está cerca del nivel del GED, pruebe también el <a href="' + ENLACE_EXAMEN + '" target="_blank" rel="noopener noreferrer">examen de simulación de Artes del lenguaje</a> y practique la <a href="' + ENLACE_RESPUESTA + '" target="_blank" rel="noopener noreferrer">respuesta extendida</a>.</li>';
+  }
+  pasos += "</ul>";
+  $("res-pasos").innerHTML = pasos;
+
+  var filas = "";
+  [1,2,3,4].forEach(function(n){ filas += "<tr><td>Parte " + n + " (Nivel " + n + ")</td><td>" + aciertos[n] + " de " + POR_NIVEL[n] + "</td></tr>"; });
+  $("res-desglose").innerHTML = filas;
+
+  mostrar("pantalla-resultados");
+  $("t-resultados").focus();
+}
+function textoResultados(){
+  return ["Prueba de ubicación de Artes del lenguaje — GEDparaHispanos",
+          $("res-meta").textContent,
+          "Nivel recomendado: " + $("res-nivel").textContent,
+          $("res-puntos").textContent + ($("res-aviso-tiempo").hidden ? "" : " (dentro de los 30 minutos)"),
+          Array.prototype.map.call($("res-desglose").rows, function(r){ return r.cells[0].textContent + ": " + r.cells[1].textContent; }).join("\n")
+         ].join("\n");
+}
+function avisoSalida(e){ e.preventDefault(); e.returnValue = ""; }
+
+/* =====================================================================
+   9. BOTONES
+   ===================================================================== */
+$("btn-empezar").addEventListener("click", function(){
+  nombre = $("nombre").value.trim();
+  armarPrueba();
+  window.addEventListener("beforeunload", avisoSalida);
+  iniciarReloj();
+  irA(0);
+});
+$("btn-anterior").addEventListener("click", function(){ if (actual > 0) irA(actual - 1); });
+$("btn-siguiente").addEventListener("click", function(){ if (actual < preguntas.length - 1) irA(actual + 1); else irARevision(); });
+$("btn-marcar").addEventListener("click", function(){ marcadas[actual] = !marcadas[actual]; pintarPregunta(); });
+$("btn-revision").addEventListener("click", irARevision);
+$("btn-seguir").addEventListener("click", function(){
+  var i = respuestas.indexOf(null); if (i < 0) i = marcadas.indexOf(true); irA(i < 0 ? 0 : i);
+});
+$("btn-entregar").addEventListener("click", function(){
+  var sin = respuestas.filter(function(r){ return r === null; }).length;
+  if (tiempoAgotado){ entregar(); return; }
+  var msg = sin ? "Le faltan " + sin + " preguntas por responder. ¿Quiere entregar la prueba de todos modos?" : "¿Quiere entregar la prueba? Después no podrá cambiar sus respuestas.";
+  if (window.confirm(msg)) entregar();
+});
+$("btn-ver-resultados").addEventListener("click", entregar);
+$("btn-practicar").addEventListener("click", function(){
+  var i = respuestas.indexOf(null); irA(i < 0 ? 0 : i);
+});
+$("btn-imprimir").addEventListener("click", function(){ window.print(); });
+$("btn-copiar").addEventListener("click", function(){
+  var txt = textoResultados();
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(function(){ $("copia-estado").textContent = "Resultados copiados. Puede pegarlos en un correo o un documento."; },
+      function(){ $("copia-estado").textContent = "No se pudo copiar. Use el botón de imprimir y elija «Guardar como PDF»."; });
+  } else {
+    $("copia-estado").textContent = "Su navegador no permite copiar. Use el botón de imprimir y elija «Guardar como PDF».";
+  }
+});
+</script>
+</body>
+</html>
