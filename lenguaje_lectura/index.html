@@ -226,7 +226,7 @@
           </ul>
           <p style="text-align:center;font-size:18px"><strong>🎯 Total:</strong> 95 minutos | <strong>❓ Preguntas: </strong>45</p>
           <p style="margin-top:15px;padding:10px;background:#fff3cd;border-radius:8px;border-left:4px solid #5C3900;font-size:14px">
-            <span aria-hidden="true">📚</span> Al finalizar recibirás un <strong>Informe de Errores y Guía de Estudio</strong> con las páginas del <em>Steck-Vaughn GED: Razonamiento a través de las Artes del Lenguaje</em> que debes repasar. Podrás recibirlo por correo, descargarlo o imprimirlo.
+            <span aria-hidden="true">📚</span> Al finalizar recibirás un <strong>Informe de Errores y Guía de Estudio</strong> que te lleva directamente a la lección de GEDparaHispanos donde se explica cada tema que fallaste, y al interactivo para practicarlo. Todo es gratuito y está en línea: no necesitas ningún libro. Podrás recibirlo por correo, descargarlo o imprimirlo.
           </p>
         </div>
         <div class="campo-grupo campo-inicio">
@@ -242,7 +242,7 @@
                  autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false"
                  required aria-required="true"
                  aria-describedby="ayudaGrupoInicio errorGrupoInicio" placeholder="3A01">
-          <p class="ayuda-campo" id="ayudaGrupoInicio">Son los cuatro caracteres que te dio tu profesor, por ejemplo 3A01. Sin ellos, tu informe llega sin clase.</p>
+          <p class="ayuda-campo" id="ayudaGrupoInicio">Son los cuatro caracteres que te dio tu profesor, por ejemplo 3A01. Si estudias por tu cuenta, escribe 9999.</p>
           <p class="error-msg" id="errorGrupoInicio" role="alert"></p>
         </div>
         <button class="start-button" onclick="startExam()">Comenzar Sección 1</button>
@@ -572,12 +572,12 @@
       },
       {
         section:1, dok:2, skill:"language", type:"multiple-choice",
-        topic:"Modificadores mal colocados", bookPages:"págs. 148–149",
-        context:"La siguiente oración tiene un error en la estructura. ¿Cuál de las opciones la corrige mejor?",
-        question:"Habiendo terminado su tarea, la televisión fue encendida.",
-        options:["Habiendo terminado su tarea, la televisión se encendió.","Después de terminar su tarea, encendió la televisión.","La televisión fue encendida, habiendo terminado su tarea.","Encendiendo la televisión, la tarea fue terminada."],
+        topic:"Uso incorrecto del gerundio", bookPages:"",
+        context:"La siguiente oración tiene un error en el uso del gerundio. ¿Cuál de las opciones la corrige mejor?",
+        question:"La empresa contrató a un asistente hablando tres idiomas.",
+        options:["La empresa contrató a un asistente, hablando tres idiomas.","La empresa contrató a un asistente que habla tres idiomas.","Hablando tres idiomas, la empresa contrató a un asistente.","La empresa, hablando tres idiomas, contrató a un asistente."],
         correct:1,
-        explanation:"La oración original tiene un 'modificador colgante'. 'Habiendo terminado su tarea' debería modificar a la persona que hizo la tarea, no a 'la televisión'. La opción B corrige esto al aclarar el sujeto implícito."
+        explanation:"En español, el gerundio no puede describir a un sustantivo como si fuera un adjetivo ('un asistente hablando'): es un calco del inglés. Se usa una oración de relativo: 'un asistente que habla tres idiomas'. Las otras versiones dejan el gerundio colgado o hacen que sea la empresa la que habla los idiomas."
       },
 
       // ========== SECCIÓN 3 (27 PREGUNTAS) ==========
@@ -613,12 +613,12 @@
       },
       {
         section:3, dok:2, skill:"language", type:"multiple-choice",
-        topic:"Convenciones y puntuación (apóstrofos)", bookPages:"págs. 130–131, 138–139",
-        context:"Lea la oración. ¿Qué revisión corrige el error de apóstrofo?",
-        question:"Los muchos beneficios del auto nuevo incluyen su mejor rendimiento de combustible y sus características de seguridad.",
-        options:["Los muchos beneficio's del auto nuevo...","Los muchos beneficios del auto nuevo incluyen su' mejor rendimiento...","Los muchos beneficios del auto nuevo incluyen su mejor rendimiento de combustible y sus característica's de seguridad.","No se necesita ninguna corrección."],
-        correct:3,
-        explanation:"La oración original está escrita correctamente. 'Beneficios' y 'características' son sustantivos plurales, no posesivos, por lo que no necesitan apóstrofo."
+        topic:"Ortografía: la tilde diacrítica", bookPages:"",
+        context:"Un vendedor le explica a una clienta que su compañero le puede llevar el auto nuevo a su casa. Lea las cuatro versiones de lo que le dice.",
+        question:"¿Cuál de estas versiones está escrita correctamente?",
+        options:["Si tu quieres, el te lleva el auto mañana a tu casa.","Sí tú quieres, él te lleva el auto mañana a tú casa.","Si tú quieres, él te lleva el auto mañana a tu casa.","Si tú quieres, el te lleva el auto mañana a tu casa."],
+        correct:2,
+        explanation:"La tilde diacrítica distingue palabras que se escriben igual. 'Tú' (pronombre: tú quieres) lleva tilde, pero 'tu' (posesivo: tu casa) no. 'Él' (pronombre: él te lleva) lleva tilde, pero 'el' (artículo: el auto) no. 'Si' que introduce una condición no lleva tilde; 'sí' con tilde es afirmación ('sí, quiero')."
       },
       {
         section:3, dok:2, skill:"argument", type:"multiple-choice",
@@ -822,13 +822,13 @@
       },
       {
         section:3, dok:1, skill:"language", type:"multiple-choice",
-        topic:"Comillas y puntuación de diálogo", bookPages:"págs. 160–161",
+        topic:"La raya y la puntuación del diálogo", bookPages:"",
         passage:{ title:"Puntuación de Diálogo",
-          text:"¿Vienes a la reunión mañana preguntó Carlos." },
-        question:"¿Cómo debería puntuarse correctamente esta oración?",
-        options:['"¿Vienes a la reunión mañana?" preguntó Carlos.','"¿Vienes a la reunión mañana?" preguntó Carlos?','¿"Vienes a la reunión mañana" preguntó Carlos?','"¿Vienes a la reunión mañana" preguntó Carlos?"'],
-        correct:0,
-        explanation:"En el diálogo, las comillas encierran completamente lo dicho, incluyendo los signos de interrogación, y se termina con punto después de la aclaración narrativa."
+          text:"Vienes a la reunión mañana preguntó Carlos" },
+        question:"Esta línea de diálogo de un relato no tiene puntuación. ¿Cómo debe escribirse según la norma del español?",
+        options:["—¿Vienes a la reunión mañana?, preguntó Carlos.","—¿Vienes a la reunión mañana —preguntó Carlos?","—¿Vienes a la reunión mañana? —Preguntó Carlos.","—¿Vienes a la reunión mañana? —preguntó Carlos."],
+        correct:3,
+        explanation:"En español, el diálogo de un relato se escribe con raya (—), no con comillas. Los signos ¿? encierran solo la pregunta del personaje. Las palabras del narrador van tras una raya y, como empiezan con un verbo de decir ('preguntó'), se escriben con minúscula aunque vayan después del signo de cierre."
       },
       {
         section:3, dok:2, skill:"reading", type:"multiple-choice",
@@ -889,7 +889,7 @@
         if (errorG) {
           errorG.textContent = valorG === ""
             ? "Escribe el código de tu grupo para comenzar el examen."
-            : "El código del grupo tiene 4 caracteres, por ejemplo 3A01. Revísalo con tu profesor.";
+            : "El código del grupo tiene 4 caracteres, por ejemplo 3A01. Revísalo con tu profesor o, si estudias por tu cuenta, escribe 9999.";
         }
         if (campoG) { campoG.value = valorG; campoG.setAttribute("aria-invalid", "true"); campoG.focus(); }
         return;
@@ -1306,7 +1306,7 @@
       // se descuentan: las tres cuentas deben sumar el total de preguntas.
       guardarDatosInforme(correctCount, incorrectQuestions.length - skippedCount, skippedCount, percentage,
                           incorrectQuestions, areaStats, skillScores, segundosUsados, dokStats);
-      generateErrorReport(correctCount, incorrectQuestions.length, skippedCount, percentage, incorrectQuestions, areaStats, skillScores);
+      generateErrorReport(correctCount, incorrectQuestions.length - skippedCount, skippedCount, percentage, incorrectQuestions, areaStats, skillScores);
       enviarCopiaDocente(0);
     }
 
@@ -1327,7 +1327,7 @@
       const skillLabels = {reading:"📖 Comprensión de Lectura", language:"✏️ Gramática y Lenguaje", argument:"🎯 Análisis de Argumentos"};
 
       let html = `<h2>📋 Informe de Errores y Guía de Estudio</h2>
-        <p class="report-subtitle">Libro: <strong>Steck-Vaughn GED: Razonamiento a través de las Artes del Lenguaje</strong></p>
+        <p class="report-subtitle">Cada tema enlaza con su lección y su interactivo en <strong>GEDparaHispanos</strong>. Ábrelos en el orden en que aparecen: primero lo que más te costó.</p>
         <div class="report-summary">
           <div class="summary-card summary-correct"><span class="card-value">${correctCount}</span><span class="card-label">✅ Correctas</span></div>
           <div class="summary-card summary-incorrect"><span class="card-value">${incorrectCount}</span><span class="card-label">❌ Incorrectas</span></div>
@@ -1517,63 +1517,106 @@
     }
 
     // ================= RECURSOS DE GEDPARAHISPANOS =================
-    // Cada tema puede apuntar a un material gratuito del sitio en lugar de a
-    // las páginas del Steck-Vaughn (la mayoría de los alumnos no tiene el
-    // libro). Formato:  "Tema exacto": [URL, "Texto del enlace"]
-    // Mientras un tema no aparezca aquí, el informe muestra las páginas del
-    // libro, así que se puede ir completando poco a poco.
-    const BASE_RLA = "https://zhemaria.github.io/lenguaje/";
+    // Cada tema del examen lleva al alumno a la LECCIÓN de Artes del Lenguaje
+    // de GEDparaHispanos donde se explica, abierta en la sección exacta
+    // (ancla #), y al INTERACTIVO de esa lección para practicar.
+    // Formato de cada línea:
+    //   "Tema": [nivel, "lección", "título corto", "archivo#ancla", "interactivo"]
+    // El interactivo puede quedar vacío ("") si la lección no tiene uno.
+    // Para cambiar un enlace basta con editar su línea.
+    const BASE_SITIO = "https://zhemaria.github.io/";
+    const REPO_NIVEL = { 1: "clases_leng1/", 2: "clases_leng2/", 3: "clases_leng3/", 4: "clases_leng4/" };
+    const BASE_INTERACTIVO = BASE_SITIO + "gramatica/";
+    // Si algún día un tema quedara sin lección, se manda al índice de repaso.
+    const RECURSO_GENERAL = [BASE_INTERACTIVO + "n3-repaso.html", "Repaso general de Artes del Lenguaje"];
 
     const RECURSOS = {
-      // --- Comprensión de lectura ---
-      // "Idea principal y detalles":                        [BASE_RLA + "", ""],
-      // "Determinar la idea principal y los detalles":      [BASE_RLA + "", ""],
-      // "Determinar el propósito del autor":                [BASE_RLA + "", ""],
-      // "Determinar la secuencia de eventos":               [BASE_RLA + "", ""],
-      // "Hacer inferencias en la no ficción":               [BASE_RLA + "", ""],
-      // "Sacar conclusiones":                               [BASE_RLA + "", ""],
-      // "Sacar conclusiones en textos de no ficción":       [BASE_RLA + "", ""],
-      // "Comparar y contrastar en la no ficción":           [BASE_RLA + "", ""],
-      // "Identificar el tema":                              [BASE_RLA + "", ""],
-      // "Analizar los personajes":                          [BASE_RLA + "", ""],
-      // "Analizar el estilo y el tono":                     [BASE_RLA + "", ""],
-      // "Interpretar el lenguaje figurado":                 [BASE_RLA + "", ""],
-      // "Connotaciones y selección de palabras":            [BASE_RLA + "", ""],
-      // "Organización de párrafos":                         [BASE_RLA + "", ""],
+      // ── Comprensión de lectura ──
+      "Localizar detalles explícitos en el texto":      [3, "3.2", "Lo explícito y lo inferido",          "clase_3-2.html#s-2-explicito",      "n3-l3-2.html"],
+      "Determinar la idea principal y los detalles":    [2, "4.1", "¿Dónde está la idea principal?",      "clase_4-1.html#s-2-donde",          "n2-l4-1.html"],
+      "Determinar el propósito del autor":              [2, "4.2", "El propósito del autor",              "clase_4-2.html#s-3-proposito",      "n2-l4-2.html"],
+      "Determinar la secuencia de eventos":             [1, "5.4", "Seguir instrucciones paso a paso",    "clase_5-4.html#s-2-metodo",         "n1-l5-4.html"],
+      "Hacer inferencias en la no ficción":             [3, "3.3", "¿Inferencia válida o no?",            "clase_3-3.html#s-3-valida",         "n3-l3-3.html"],
+      "Sacar conclusiones":                             [4, "3.2", "Integrar las pistas",                 "clase_3-2.html#s-4-integrar",       "n4-l3-2.html"],
+      "Comparar y contrastar en la no ficción":         [2, "5.1", "Comparar y contrastar",               "clase_5-1.html#s-1-comparar",       "n2-l5-1.html"],
+      "Identificar el tema":                            [3, "3.1", "Tema, tema central e ideas principales", "clase_3-1.html#s-2-tema",        "n3-l3-1.html"],
+      "Analizar los personajes":                        [1, "5.1", "Roles, rasgos y conflictos",          "clase_5-1.html#s-2-roles",          "n1-l5-1.html"],
+      "Analizar el estilo y el tono":                   [4, "4.2", "Del recurso al tono y al propósito",  "clase_4-2.html#s-4-tono",           "n4-l4-2.html"],
+      "Interpretar el lenguaje figurado":               [3, "4.3", "Símiles, metáforas y modismos",       "clase_4-3.html#s-1-repaso",         "n3-l4-3.html"],
+      "Connotaciones y selección de palabras":          [4, "2.3", "Positiva, neutra o negativa",         "clase_2-3.html#s-2-valoracion",     "n4-l2-3.html"],
+      "Organización de párrafos":                       [1, "7.2", "Ordena un párrafo",                   "clase_7-2.html#s-3-ordenar",        "n1-l7-2.html"],
 
-      // --- Análisis de argumentos ---
-      // "Analizar la estructura de los argumentos":         [BASE_RLA + "", ""],
-      // "Analizar los elementos de la persuasión":          [BASE_RLA + "", ""],
-      // "Afirmaciones en textos persuasivos":               [BASE_RLA + "", ""],
-      // "Clasificar evidencia como válida o inválida":      [BASE_RLA + "", ""],
-      // "Identificar la evidencia incorrecta o inválida":   [BASE_RLA + "", ""],
-      // "Comparar y contrastar argumentos":                 [BASE_RLA + "", ""],
+      // ── Análisis de argumentos ──
+      "Afirmaciones en textos persuasivos":             [3, "5.1", "Las tres partes de un argumento",     "clase_5-1.html#s-1-partes",         "n3-l5-1.html"],
+      "Analizar la estructura de los argumentos":       [3, "5.1", "El esquema del argumento",            "clase_5-1.html#s-5-esquema",        "n3-l5-1.html"],
+      "Analizar los elementos de la persuasión":        [4, "4.3", "Las tres apelaciones",                "clase_4-3.html#s-2-apelaciones",    "n4-l4-3.html"],
+      "Clasificar evidencia como válida o inválida":    [4, "5.1", "Relevancia y suficiencia de la evidencia", "clase_5-1.html#s-3-relevancia", "n4-l5-1.html"],
+      "Identificar la evidencia incorrecta o inválida": [3, "5.1", "¿La evidencia apoya la afirmación?",  "clase_5-1.html#s-3-evaluar",        "n3-l5-1.html"],
+      "Comparar y contrastar argumentos":               [3, "5.2", "Tres relaciones entre dos textos",    "clase_5-2.html#s-2-relaciones",     "n3-l5-2.html"],
 
-      // --- Gramática y lenguaje ---
-      // "Concordancia entre sujeto y verbo":                [BASE_RLA + "", ""],
-      // "Tiempos verbales simples":                         [BASE_RLA + "", ""],
-      // "Pronombres personales y posesivos":                [BASE_RLA + "", ""],
-      // "Modificadores mal colocados":                      [BASE_RLA + "", ""],
-      // "Conjunciones para combinar oraciones":             [BASE_RLA + "", ""],
-      // "Comas con cláusulas dependientes":                 [BASE_RLA + "", ""],
-      // "Comillas y puntuación de diálogo":                 [BASE_RLA + "", ""],
-      // "Puntuación: dos puntos y punto y coma":            [BASE_RLA + "", ""],
-      // "Convenciones y puntuación (apóstrofos)":           [BASE_RLA + "", ""]
+      // ── Gramática y lenguaje ──
+      "Tiempos verbales simples":                       [1, "3.4", "La línea de tiempo en acción",        "clase_3-4.html#s-2-linea-de-tiempo", "n1-l3-4.html"],
+      "Concordancia entre sujeto y verbo":              [2, "2.2", "La concordancia en toda la oración",  "clase_2-2.html#s-4-concordancia",   "n2-l2-2.html"],
+      "Pronombres personales y posesivos":              [2, "2.2", "La concordancia en toda la oración",  "clase_2-2.html#s-4-concordancia",   "n2-l2-2.html"],
+      "Uso incorrecto del gerundio":                    [3, "1.2", "El gerundio que viene del inglés",    "clase_1-2.html#s-5-gerundio",       "n3-l1-2.html"],
+      "Conjunciones para combinar oraciones":           [2, "2.3", "La oración compuesta",                "clase_2-3.html#s-2-compuesta",      "n2-l2-3.html"],
+      "Comas con cláusulas dependientes":               [2, "3.1", "La coma",                             "clase_3-1.html#s-2-coma",           "n2-l3-1.html"],
+      "La raya y la puntuación del diálogo":            [2, "3.1", "La raya en el diálogo",               "clase_3-1.html#s-4-raya",           "n2-l3-1.html"],
+      "Puntuación: dos puntos y punto y coma":          [3, "2.1", "El punto y coma",                     "clase_2-1.html#s-5-punto-coma",     "n3-l2-1.html"],
+      "Ortografía: la tilde diacrítica":                [2, "3.2", "La tilde diacrítica",                 "clase_3-2.html#s-3-diacritica",     "n2-l3-2.html"]
     };
 
-    // Enlace listo para el informe. Si el tema no está en el mapa, se
-    // devuelven las páginas del libro para no dejar al alumno sin referencia.
-    function recursoHTML(tema, paginasLibro) {
+    // Datos ya armados de un tema: URL de la lección, del interactivo y rótulos.
+    function datosRecurso(tema) {
       const r = RECURSOS[tema];
-      if (!r || !r[0]) { return escaparHTML(paginasLibro || ""); }
-      return '<a href="' + r[0] + '" target="_blank" rel="noopener" style="color:#0056b3;">' +
-             escaparHTML(r[1] || tema) + '</a>';
+      if (!r) { return null; }
+      return {
+        referencia: "Nivel " + r[0] + " · Lección " + r[1],
+        titulo: r[2],
+        leccion: BASE_SITIO + REPO_NIVEL[r[0]] + r[3],
+        practica: r[4] ? (/^https?:/.test(r[4]) ? r[4] : BASE_INTERACTIVO + r[4]) : ""
+      };
     }
 
-    function recursoTexto(tema, paginasLibro) {
-      const r = RECURSOS[tema];
-      return (r && r[0]) ? ((r[1] || tema) + " — " + r[0]) : (paginasLibro || "");
+    // Enlaces listos para el informe del alumno (pantalla, correo y descarga).
+    // El segundo parámetro (páginas del libro) ya no se usa; se mantiene para
+    // no tener que cambiar las llamadas.
+    function recursoHTML(tema) {
+      const d = datosRecurso(tema);
+      const estilo = 'style="color:#0056b3;font-weight:bold;"';
+      if (!d) {
+        return '<a href="' + RECURSO_GENERAL[0] + '" target="_blank" rel="noopener noreferrer" ' + estilo + '>' +
+               escaparHTML(RECURSO_GENERAL[1]) + '</a>';
+      }
+      let h = '<a href="' + d.leccion + '" target="_blank" rel="noopener noreferrer" ' + estilo + '>' +
+              escaparHTML(d.referencia + ": " + d.titulo) + '</a>';
+      if (d.practica) {
+        h += ' · <a href="' + d.practica + '" target="_blank" rel="noopener noreferrer" style="color:#0056b3;" ' +
+             'aria-label="Practicar: ' + escaparHTML(d.titulo) + '" title="Interactivo para practicar">Practicar</a>';
+      }
+      return h;
     }
+
+    function recursoTexto(tema) {
+      const d = datosRecurso(tema);
+      if (!d) { return RECURSO_GENERAL[1] + " — " + RECURSO_GENERAL[0]; }
+      return d.referencia + " (" + d.titulo + ") — " + d.leccion +
+             (d.practica ? " | Practicar: " + d.practica : "");
+    }
+
+    // Referencia corta para el bloque de datos del docente: "N2 L4.1".
+    function recursoCorto(tema) {
+      const r = RECURSOS[tema];
+      return r ? ("N" + r[0] + " L" + r[1]) : "sin lección";
+    }
+
+    // Control de calidad: avisa en la consola si algún tema del examen
+    // se quedó sin lección asignada (por ejemplo, tras renombrar un tema).
+    (function () {
+      const faltan = questions.map(function (q) { return q.topic; })
+        .filter(function (t, i, a) { return a.indexOf(t) === i && !RECURSOS[t]; });
+      if (faltan.length) { console.warn("Temas sin lección en RECURSOS:", faltan); }
+    })();
 
     // ---------- CAPTURA DE DATOS AL FINALIZAR ----------
     // Se invoca desde endExam(). Guarda TODO el informe en memoria,
@@ -1898,7 +1941,7 @@
         const e = d.estadisticas[tema];
         L.push(limpiarCampo(tema) + "|" + limpiarCampo(nombreDestreza(e.skill)) + "|" +
                nivelTema(e) + "|" + e.correct + "|" + e.total + "|" +
-               limpiarCampo(e.pages || e.bookPages || ""));
+               limpiarCampo(recursoCorto(tema)));
       });
 
       L.push("--errores--");
