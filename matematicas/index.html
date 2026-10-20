@@ -306,57 +306,7 @@
       </div>
     </div>
 
-    <!-- Modal Fórmulas -->
-    <div id="formulaModal" class="modal">
-      <div class="modal-content">
-        <span class="close-button" onclick="toggleFormulaSheet()">&times;</span>
-        <h2>Hoja de Fórmulas de Matemáticas del GED</h2>
-        <div class="formula-sheet">
-          <div><h3>Área</h3><ul><li>Cuadrado: <code>A = s²</code></li><li>Rectángulo: <code>A = l × w</code></li><li>Paralelogramo: <code>A = b × h</code></li><li>Triángulo: <code>A = ½ × b × h</code></li><li>Trapecio: <code>A = ½ × h(b₁ + b₂)</code></li><li>Círculo: <code>A = πr²</code></li></ul></div>
-          <div><h3>Perímetro y Circunferencia</h3><ul><li>Cuadrado: <code>P = 4s</code></li><li>Rectángulo: <code>P = 2l + 2w</code></li><li>Triángulo: <code>P = s₁ + s₂ + s₃</code></li><li>Circunferencia: <code>C = 2πr</code> o <code>C = πd</code></li></ul></div>
-          <div><h3>Superficie y Volumen</h3><ul><li>Prisma: <code>SA = 2lw + 2lh + 2wh</code>, <code>V = lwh</code></li><li>Cilindro: <code>SA = 2πrh + 2πr²</code>, <code>V = πr²h</code></li><li>Pirámide: <code>V = ⅓Bh</code></li><li>Cono: <code>V = ⅓πr²h</code></li><li>Esfera: <code>SA = 4πr²</code>, <code>V = (4/3)πr³</code></li></ul></div>
-          <div><h3>Álgebra</h3><ul><li>Pendiente: <code>m = (y₂ - y₁) / (x₂ - x₁)</code></li><li>Pendiente-intercepto: <code>y = mx + b</code></li><li>Fórmula cuadrática: <code>x = [-b ± √(b²-4ac)] / 2a</code></li><li>Pitágoras: <code>a² + b² = c²</code></li><li>Interés Simple: <code>I = prt</code></li></ul></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Calculadora -->
-    <div id="calculatorModal" class="calculator-modal">
-      <div class="calculator">
-        <div class="calculator-header" id="calculatorModalHeader">
-          <span>Calculadora TI-30XS</span>
-          <span class="close-calc-button" onclick="toggleCalculator()">&times;</span>
-        </div>
-        <div class="header">
-          <div class="brand">🎯 Simulador Parcial</div>
-          <div class="model">TI-30XS MultiView</div>
-          <div style="font-size: 10px; color: #666">Versión de Práctica</div>
-        </div>
-        <div class="display" id="calcDisplay">
-          <div class="display-line" id="calcInputLine"></div>
-          <div class="display-line" id="calcResultLine"></div>
-        </div>
-        <div class="keyboard">
-          <button class="btn btn-2nd" onclick="calcToggle2nd()">2nd</button>
-          <button class="btn btn-inactive">mode</button><button class="btn btn-inactive">delete</button><button class="btn btn-inactive">◄</button><button class="btn btn-inactive">►</button>
-          <button class="btn btn-inactive">log</button><button class="btn btn-function" onclick="calcOpenProbMenu()">prb</button><button class="btn btn-inactive">data</button><button class="btn btn-inactive">▲</button><button class="btn btn-inactive">▼</button>
-          <button class="btn btn-inactive row-3">ln</button><button class="btn btn-function row-3" onclick="calcHandleFraction()"><div class="secondary-label">U n/d</div>n/d</button><button class="btn btn-function row-3" onclick="calcScientificNotation()">×10^n</button><button class="btn btn-inactive row-3">table</button><button class="btn btn-function row-3" onclick="calcClearDisplay()">clear</button>
-          <button class="btn btn-inactive">π</button><button class="btn btn-inactive">sin</button><button class="btn btn-inactive">cos</button><button class="btn btn-inactive">tan</button><button class="btn btn-operation" onclick="calcAppendOperator('/')">÷</button>
-          <button class="btn btn-function row-5" onclick="calcHandleSquareRoot()"><div class="secondary-label">x√</div>^</button><button class="btn btn-function row-5" onclick="calcReciprocal()">x⁻¹</button><button class="btn btn-function row-5" onclick="calcAppendOperator('(')">(</button><button class="btn btn-function row-5" onclick="calcAppendOperator(')')">)</button><button class="btn btn-operation row-5" onclick="calcAppendOperator('*')">×</button>
-          <button class="btn btn-function row-6" onclick="calcHandleSquare()"><div class="secondary-label">√</div>x²</button><button class="btn btn-number row-6" onclick="calcAppendNumber('7')">7</button><button class="btn btn-number row-6" onclick="calcAppendNumber('8')">8</button><button class="btn btn-number row-6" onclick="calcAppendNumber('9')">9</button><button class="btn btn-operation row-6" onclick="calcAppendOperator('-')">−</button>
-          <button class="btn btn-inactive">x√abc</button><button class="btn btn-number" onclick="calcAppendNumber('4')">4</button><button class="btn btn-number" onclick="calcAppendNumber('5')">5</button><button class="btn btn-number" onclick="calcAppendNumber('6')">6</button><button class="btn btn-operation" onclick="calcAppendOperator('+')">+</button>
-          <button class="btn btn-inactive">sto→</button><button class="btn btn-number" onclick="calcAppendNumber('1')">1</button><button class="btn btn-number" onclick="calcAppendNumber('2')">2</button><button class="btn btn-number" onclick="calcAppendNumber('3')">3</button><button class="btn btn-inactive">⟷</button>
-          <button class="btn btn-inactive">on</button><button class="btn btn-number" onclick="calcAppendNumber('0')">0</button><button class="btn btn-number" onclick="calcAppendNumber('.')">.</button><button class="btn btn-number" onclick="calcNegative()">(−)</button><button class="btn btn-number" onclick="calcCalculate()">enter</button>
-        </div>
-      </div>
-    </div>
-    <div class="prob-overlay" onclick="calcCloseProbMenu()"></div>
-    <div class="prob-menu" id="probMenu">
-      <h3>Probabilidad</h3>
-      <button class="prob-option" onclick="calcSelectProb('nPr')">1: nPr (Permutación)</button>
-      <button class="prob-option" onclick="calcSelectProb('nCr')">2: nCr (Combinación)</button>
-      <button class="prob-option" onclick="calcSelectProb('!')">3: ! (Factorial)</button>
-    </div>
+    <!-- Calculadora y hoja de fórmulas: calculadora-gph.js (simulador de la TI-30XS MultiView), cargada al final de la página -->
 
     <!-- Ventana de envío del informe por correo -->
     <div id="emailModal" class="email-modal" role="dialog" aria-modal="true"
@@ -1426,6 +1376,8 @@
       document.getElementById("questionCard").innerHTML = html;
       const calcBtn = document.getElementById("calcBtn");
       if (calcBtn) calcBtn.style.display = q.calculator ? "inline-block" : "none";
+      // En las preguntas sin calculadora, la calculadora se cierra (como en el examen oficial).
+      if (!q.calculator && window.CalculadoraGPH) CalculadoraGPH.cerrar();
       document.getElementById("prevBtn").disabled = index === 0;
       document.getElementById("nextBtn").textContent = index === totalQuestionsInSim - 1 ? "Finalizar Examen" : "Siguiente ➡️";
       if (answers[index] !== undefined) restoreAnswer(q, index);
@@ -1660,66 +1612,12 @@
       document.getElementById("startScreen").style.display = "block";
     }
 
-    function toggleFormulaSheet() {
-      const m = document.getElementById("formulaModal");
-      m.style.display = m.style.display === "block" ? "none" : "block";
-    }
-    window.onclick = function(e) { if (e.target == document.getElementById("formulaModal")) document.getElementById("formulaModal").style.display = "none"; };
-
     // ===================================================
-    // CALCULADORA
+    // CALCULADORA Y HOJA DE FÓRMULAS
+    // Las da calculadora-gph.js (simulador de la TI-30XS MultiView).
     // ===================================================
-    let calcDisplayStr = "", calcResult = "", calcSecondMode = false, calcWaitingForOperand = false;
-    const calcInputLine = document.getElementById("calcInputLine");
-    const calcResultLine = document.getElementById("calcResultLine");
-    function calcUpdateDisplay() { calcInputLine.textContent = calcDisplayStr || "0"; calcResultLine.textContent = calcResult; }
-    function calcToggle2nd() { calcSecondMode = !calcSecondMode; const b = document.querySelector(".calculator .btn-2nd"); calcSecondMode ? b.classList.add("btn-active") : b.classList.remove("btn-active"); }
-    function calcAppendNumber(n) { if (calcWaitingForOperand) { calcDisplayStr = n; calcWaitingForOperand = false; } else { calcDisplayStr = calcDisplayStr === "0" ? n : calcDisplayStr + n; } calcUpdateDisplay(); }
-    function calcAppendOperator(o) { calcDisplayStr += o; calcUpdateDisplay(); }
-    function calcNegative() { calcDisplayStr += "−"; calcUpdateDisplay(); }
-    function calcScientificNotation() { calcDisplayStr += "E"; calcUpdateDisplay(); }
-    function calcHandleFraction() { if (calcSecondMode) { calcDisplayStr += " U "; calcToggle2nd(); } else { calcDisplayStr += " / "; } calcUpdateDisplay(); }
-    function calcHandleSquare() { if (calcSecondMode) { calcDisplayStr = "√(" + (calcDisplayStr||"") + ")"; calcToggle2nd(); } else { calcDisplayStr += "²"; } calcUpdateDisplay(); }
-    function calcHandleSquareRoot() { if (calcSecondMode) { calcDisplayStr += "√("; calcToggle2nd(); } else { calcDisplayStr += "^"; } calcUpdateDisplay(); }
-    function calcReciprocal() { if (calcDisplayStr) { try { let v = eval(calcDisplayStr.replace(/×/g,"*").replace(/÷/g,"/").replace(/−/g,"-").replace(/E/g,"*10^")); calcResult = (1/v).toString(); calcDisplayStr = calcResult; calcUpdateDisplay(); } catch(e) { calcResult = "Error"; calcUpdateDisplay(); } } }
-    function calcOpenProbMenu() { document.querySelector(".prob-overlay").style.display = "block"; document.getElementById("probMenu").style.display = "block"; }
-    function calcCloseProbMenu() { document.querySelector(".prob-overlay").style.display = "none"; document.getElementById("probMenu").style.display = "none"; }
-    function calcSelectProb(t) { calcDisplayStr += (t==="!"?"!":t); calcCloseProbMenu(); calcUpdateDisplay(); }
-    function calcClearDisplay() { calcDisplayStr = ""; calcResult = ""; calcUpdateDisplay(); }
-    function factorial(n) { if(n<0) return NaN; if(n<=1) return 1; return n*factorial(n-1); }
-    function combination(n,r) { return factorial(n)/(factorial(r)*factorial(n-r)); }
-    function permutation(n,r) { return factorial(n)/factorial(n-r); }
-    function calcCalculate() {
-      try {
-        let e = calcDisplayStr;
-        e = e.replace(/(\d+)nCr(\d+)/g,(_,n,r)=>combination(+n,+r));
-        e = e.replace(/(\d+)nPr(\d+)/g,(_,n,r)=>permutation(+n,+r));
-        e = e.replace(/(\d+)!/g,(_,n)=>factorial(+n));
-        e = e.replace(/(\d+\.?\d*)²/g,(_,b)=>Math.pow(+b,2));
-        e = e.replace(/(\d+\.?\d*)\^(\d+\.?\d*)/g,(_,b,x)=>Math.pow(+b,+x));
-        e = e.replace(/√\(([^)]+)\)/g,(_,c)=>Math.sqrt(eval(c.replace(/×/g,"*").replace(/÷/g,"/").replace(/−/g,"-"))));
-        e = e.replace(/×/g,"*").replace(/÷/g,"/").replace(/−/g,"-");
-        if(e.includes("E")){e=e.replace(/E/g,"*Math.pow(10,");e+=")";}
-        calcResult = eval(e).toString();
-        let nr = parseFloat(calcResult);
-        if(Math.abs(nr)>=1e10||(Math.abs(nr)<1e-4&&nr!==0)) calcResult = nr.toExponential(6);
-        calcWaitingForOperand = true; calcUpdateDisplay();
-      } catch(ex) { calcResult = "Error"; calcUpdateDisplay(); setTimeout(()=>{calcDisplayStr="";calcResult="";calcUpdateDisplay();},2000); }
-    }
-    function toggleCalculator() { const m = document.getElementById("calculatorModal"); m.style.display = m.style.display === "block" ? "none" : "block"; }
-
-    // Arrastrar calculadora
-    (function() {
-      const el = document.getElementById("calculatorModal");
-      const hd = document.getElementById("calculatorModalHeader");
-      let p1=0,p2=0,p3=0,p4=0;
-      hd.onmousedown = function(e) { e.preventDefault(); p3=e.clientX; p4=e.clientY;
-        document.onmouseup = function(){document.onmouseup=null;document.onmousemove=null;};
-        document.onmousemove = function(e2) { e2.preventDefault(); p1=p3-e2.clientX;p2=p4-e2.clientY;p3=e2.clientX;p4=e2.clientY;
-          el.style.top=(el.offsetTop-p2)+"px"; el.style.left=(el.offsetLeft-p1)+"px"; };
-      };
-    })();
-    calcUpdateDisplay();
+    function toggleFormulaSheet() { if (window.CalculadoraGPH) CalculadoraGPH.alternarHoja("formulas"); }
+    function toggleCalculator() { if (window.CalculadoraGPH) CalculadoraGPH.alternar(); }
 /* ============================================================
        INFORME: DATOS, CONSTRUCCIÓN Y ENVÍO
        José M. Fernández — GEDparaHispanos
@@ -2719,5 +2617,7 @@ cuandoEmailjsEsteListo(procesarCola);
         '</div>';
     }
     </script>
+    <!-- Simulador de la TI-30XS MultiView y hoja de fórmulas (sin botones propios: los abren los del examen) -->
+    <script src="https://zhemaria.github.io/algebra/calculadora-gph.js" data-boton="no" data-hoja="no" data-pistas="no" defer></script>
   </body>
 </html>
