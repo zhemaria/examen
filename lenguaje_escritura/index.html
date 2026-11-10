@@ -1,1805 +1,1292 @@
 <!DOCTYPE html>
+<!--
+  Práctica de la respuesta extendida del GED (RLA)
+  Autor: José M. Fernández, ABE/ASE Math Master Teacher,
+         Harry S. Truman College — City Colleges of Chicago.
+  Compañera del Evaluador de la respuesta extendida: al terminar, envía la
+  consigna, los dos textos fuente y la respuesta al evaluador, que la
+  califica en vivo con la rúbrica oficial.
+  Licencia: Creative Commons Atribución-NoComercial-CompartirIgual 4.0 Internacional
+            (CC BY-NC-SA 4.0) — https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+-->
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Examen y Evaluador GED - Respuesta Extendida (Rúbrica Oficial)</title>
-    
-    <!-- Configuración optimizada de MathJax -->
-    <script>
-      window.MathJax = {
-        tex: {
-          inlineMath: [["$", "$"], ["\\(", "\\)"]],
-          displayMath: [["$$", "$$"], ["\\[", "\\]"]]
-        },
-        options: {
-          enableMenu: false,
-          processHtmlClass: "tex2jax_process",
-          ignoreHtmlClass: "tex2jax_ignore"
-        },
-        startup: {
-          pageReady: () => {
-            return MathJax.startup.defaultPageReady();
-          }
-        }
-      };
-    </script>
-    <script id="MathJax-script" defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.min.js"></script>
-    
-    <!-- FontAwesome para iconos -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-      /* Estilos básicos */
-      * {
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        margin: 0;
-        padding: 20px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-      }
-
-      .container {
-        max-width: 1400px;
-        margin: 0 auto;
-        background: white;
-        border-radius: 15px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        overflow: hidden;
-      }
-
-      /* Estilos del examen */
-      .exam-section {
-        display: block;
-      }
-
-      .evaluator-section {
-        display: none;
-      }
-
-      .exam-header {
-        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        color: white;
-        text-align: center;
-        padding: 30px;
-        margin: 0;
-      }
-
-      .exam-header h1 {
-        font-size: 28px;
-        margin: 0 0 10px 0;
-        font-weight: 700;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-      }
-
-      .exam-header p {
-        font-size: 18px;
-        margin: 0;
-        opacity: 0.9;
-      }
-
-      .timer-container {
-        text-align: center;
-        padding: 20px;
-        font-size: 24px;
-        font-weight: bold;
-        color: #ff6b6b;
-        background: #fff3cd;
-        border-bottom: 3px solid #ffc107;
-        display: none;
-      }
-
-      .exam-content {
-        display: flex;
-        gap: 20px;
-        padding: 20px;
-        min-height: 800px;
-      }
-
-      .text-section {
-        flex: 1;
-        background: #f8f9fa;
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-      }
-
-      .tab-header {
-        display: flex;
-        background: #e9ecef;
-      }
-
-      .tab-button {
-        flex: 1;
-        padding: 15px 20px;
-        border: none;
-        background: transparent;
-        cursor: pointer;
-        font-size: 16px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        border-bottom: 3px solid transparent;
-      }
-
-      .tab-button:hover {
-        background: #dee2e6;
-      }
-
-      .tab-button.active {
-        background: white;
-        border-bottom-color: #4facfe;
-        color: #4facfe;
-      }
-
-      .tab-content {
-        display: none;
-        padding: 30px;
-        height: 700px;
-        overflow-y: auto;
-      }
-
-      .tab-content.active {
-        display: block;
-      }
-
-      .passage {
-        line-height: 1.8;
-        color: #333;
-      }
-
-      .passage h3 {
-        color: #4facfe;
-        margin-bottom: 20px;
-        font-size: 20px;
-        border-bottom: 2px solid #e9ecef;
-        padding-bottom: 10px;
-      }
-
-      .passage p {
-        margin-bottom: 15px;
-        text-align: justify;
-      }
-
-      .writing-section {
-        flex: 1;
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .prompt-section {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 20px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-      }
-
-      .prompt-section h3 {
-        margin: 0 0 15px 0;
-        font-size: 18px;
-      }
-
-      .prompt-section ul {
-        margin: 10px 0;
-        padding-left: 20px;
-      }
-
-      .prompt-section li {
-        margin: 8px 0;
-      }
-
-      .writing-controls {
-        display: flex;
-        gap: 15px;
-        margin-bottom: 15px;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-
-      .btn {
-        padding: 12px 20px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-      }
-
-      .btn-instructions {
-        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-        color: white;
-      }
-
-      .btn-symbols {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-      }
-
-      .btn-submit {
-        background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
-        color: white;
-        padding: 15px 30px;
-        font-size: 16px;
-        margin-top: 20px;
-      }
-
-      .btn-submit:disabled {
-        background: #ccc;
-        cursor: not-allowed;
-        transform: none;
-      }
-
-      .word-count {
-        color: #666;
-        font-size: 14px;
-        font-weight: 600;
-        padding: 8px 15px;
-        background: #f8f9fa;
-        border-radius: 20px;
-      }
-
-      .word-count.warning {
-        color: white;
-        background: #ff6b6b;
-      }
-
-      .essay-area {
-        flex: 1;
-        width: 100%;
-        padding: 20px;
-        border: 2px solid #e9ecef;
-        border-radius: 10px;
-        font-size: 16px;
-        resize: none;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        line-height: 1.6;
-        transition: border-color 0.3s ease;
-        min-height: 400px;
-      }
-
-      .essay-area:focus {
-        outline: none;
-        border-color: #4facfe;
-        box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
-      }
-
-      /* Estilos del evaluador */
-      .evaluator-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        text-align: center;
-        padding: 30px;
-        position: relative;
-      }
-
-      .evaluator-header h1 {
-        margin: 0;
-        font-size: 28px;
-        font-weight: 700;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-      }
-
-      .help-btn {
-        position: absolute;
-        right: 30px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
-        border: none;
-        font-size: 24px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-
-      .help-btn:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: translateY(-50%) scale(1.1);
-      }
-
-      #chatbox {
-        max-width: 1000px;
-        height: 500px;
-        border: 1px solid #e9ecef;
-        overflow-y: auto;
-        padding: 20px;
-        margin: 20px auto;
-        background: #f8f9fa;
-        border-radius: 15px;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-      }
-
-      .message {
-        display: flex;
-        align-items: flex-start;
-        gap: 15px;
-        animation: slideIn 0.3s ease;
-      }
-
-      @keyframes slideIn {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .emoji-avatar {
-        font-size: 40px;
-        min-width: 40px;
-        text-align: center;
-      }
-
-      .text-bubble {
-        background: white;
-        padding: 20px;
-        border-radius: 15px;
-        max-width: 85%;
-        word-wrap: break-word;
-        position: relative;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        border: 1px solid #e9ecef;
-      }
-
-      .user .text-bubble {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        margin-left: auto;
-      }
-
-      .bot .text-bubble {
-        background: white;
-      }
-
-      /* Estilos para evaluaciones - ACTUALIZADOS PARA RÚBRICA OFICIAL */
-      .evaluation-container {
-        margin: 20px 0;
-        padding: 25px;
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        border-radius: 15px;
-        border: 2px solid #4facfe;
-      }
-
-      .evaluation-container h3 {
-        color: #4facfe;
-        margin: 0 0 20px 0;
-        font-size: 22px;
-        text-align: center;
-        border-bottom: 2px solid #4facfe;
-        padding-bottom: 10px;
-      }
-
-      .trait-evaluation {
-        margin: 20px 0;
-        padding: 20px;
-        background: white;
-        border-radius: 10px;
-        border-left: 5px solid #4facfe;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      }
-
-      .trait-title {
-        font-weight: bold;
-        color: #333;
-        margin-bottom: 15px;
-        font-size: 18px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-
-      .score-badge {
-        padding: 5px 15px;
-        border-radius: 20px;
-        font-weight: bold;
-        font-size: 14px;
-        color: white;
-      }
-
-      /* PUNTUACIÓN ACTUALIZADA PARA SISTEMA 0-2 */
-      .score-0 { background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); }
-      .score-1 { background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%); }
-      .score-2 { background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%); }
-
-      .total-score {
-        font-size: 20px;
-        font-weight: bold;
-        text-align: center;
-        margin: 25px 0;
-        padding: 20px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border-radius: 15px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-      }
-
-      .warning-box {
-        background-color: #fff3cd;
-        border: 1px solid #ffeaa7;
-        color: #856404;
-        padding: 15px;
-        border-radius: 10px;
-        margin: 15px 0;
-        border-left: 4px solid #ffc107;
-      }
-
-      .error-box {
-        background-color: #f8d7da;
-        border: 1px solid #f5c6cb;
-        color: #721c24;
-        padding: 15px;
-        border-radius: 10px;
-        margin: 15px 0;
-        border-left: 4px solid #dc3545;
-      }
-
-      .copy-btn {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        background: #4facfe;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        width: 35px;
-        height: 35px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      }
-
-      .copy-btn:hover {
-        background: #357abd;
-        transform: scale(1.1);
-      }
-
-      /* Formulario del evaluador */
-      #text-form {
-        display: flex;
-        flex-direction: column;
-        max-width: 1000px;
-        margin: 20px auto;
-        gap: 20px;
-      }
-
-      #user-input {
-        padding: 20px;
-        font-size: 16px;
-        border: 2px solid #e9ecef;
-        border-radius: 15px;
-        min-height: 200px;
-        resize: vertical;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        transition: border-color 0.3s ease;
-      }
-
-      #user-input:focus {
-        outline: none;
-        border-color: #4facfe;
-        box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
-      }
-
-      #evaluate-btn {
-        padding: 18px 30px;
-        font-size: 18px;
-        border: none;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border-radius: 15px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: all 0.3s ease;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-      }
-
-      #evaluate-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-      }
-
-      .loading-indicator {
-        margin: 20px 0;
-        text-align: center;
-        color: #4facfe;
-        display: none;
-        font-size: 18px;
-        font-weight: bold;
-      }
-
-      .loading-indicator::after {
-        content: '';
-        animation: dots 1.5s steps(5, end) infinite;
-      }
-
-      @keyframes dots {
-        0%, 20% { content: ''; }
-        40% { content: '.'; }
-        60% { content: '..'; }
-        80%, 100% { content: '...'; }
-      }
-
-      /* Modal de ayuda */
-      .help-modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.7);
-        z-index: 1000;
-        justify-content: center;
-        align-items: center;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-      }
-
-      .help-modal.active {
-        display: flex;
-        opacity: 1;
-      }
-
-      .help-content {
-        width: 90%;
-        max-width: 800px;
-        background: white;
-        border-radius: 20px;
-        padding: 30px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        position: relative;
-        max-height: 85vh;
-        overflow-y: auto;
-      }
-
-      .close-help {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        background: none;
-        border: none;
-        font-size: 28px;
-        cursor: pointer;
-        color: #666;
-        transition: color 0.3s ease;
-      }
-
-      .close-help:hover {
-        color: #4facfe;
-      }
-
-      /* Modal de instrucciones */
-      .modal {
-        display: none;
-        position: fixed;
-        z-index: 1001;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.7);
-        justify-content: center;
-        align-items: center;
-      }
-
-      .modal.show {
-        display: flex;
-      }
-
-      .modal-content {
-        background: white;
-        padding: 30px;
-        border-radius: 20px;
-        width: 90%;
-        max-width: 700px;
-        position: relative;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        max-height: 85vh;
-        overflow-y: auto;
-      }
-
-      .modal-close {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-        color: #666;
-        transition: color 0.3s ease;
-      }
-
-      .modal-close:hover {
-        color: #4facfe;
-      }
-
-      .instructions {
-        line-height: 1.6;
-      }
-
-      .instructions h4 {
-        color: #4facfe;
-        margin: 20px 0 15px 0;
-        font-size: 20px;
-      }
-
-      .instructions ul {
-        margin: 15px 0;
-        padding-left: 25px;
-      }
-
-      .instructions li {
-        margin: 10px 0;
-      }
-
-      /* Responsive design */
-      @media (max-width: 1024px) {
-        .exam-content {
-          flex-direction: column;
-        }
-        
-        .text-section,
-        .writing-section {
-          height: auto;
-          min-height: 400px;
-        }
-
-        .tab-content {
-          height: 400px;
-        }
-
-        .essay-area {
-          min-height: 300px;
-        }
-      }
-
-      @media (max-width: 768px) {
-        body {
-          padding: 10px;
-        }
-
-        .exam-content {
-          padding: 15px;
-          gap: 15px;
-        }
-
-        .writing-controls {
-          flex-direction: column;
-          align-items: stretch;
-        }
-
-        .help-btn {
-          right: 15px;
-          width: 40px;
-          height: 40px;
-          font-size: 20px;
-        }
-      }
-
-      /* Popup de símbolos */
-      .symbol-popup {
-        display: none;
-        position: absolute;
-        width: 400px;
-        background: white;
-        border: 2px solid #4facfe;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        z-index: 1000;
-        padding: 20px;
-      }
-
-      .symbol-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-        font-weight: bold;
-        font-size: 18px;
-        color: #4facfe;
-      }
-
-      .close-btn {
-        cursor: pointer;
-        font-size: 20px;
-        background: none;
-        border: none;
-        color: #666;
-        transition: color 0.3s ease;
-      }
-
-      .close-btn:hover {
-        color: #4facfe;
-      }
-
-      .symbol-grid {
-        display: grid;
-        grid-template-columns: repeat(10, 1fr);
-        gap: 5px;
-        margin-bottom: 15px;
-      }
-
-      .symbol-btn {
-        background: #f8f9fa;
-        border: 1px solid #e9ecef;
-        padding: 10px;
-        text-align: center;
-        cursor: pointer;
-        font-size: 16px;
-        border-radius: 5px;
-        transition: all 0.3s ease;
-      }
-
-      .symbol-btn:hover {
-        background: #4facfe;
-        color: white;
-      }
-
-      .action-buttons {
-        display: flex;
-        justify-content: space-between;
-        gap: 10px;
-      }
-
-      .action-btn {
-        flex: 1;
-        background: #4facfe;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        cursor: pointer;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-      }
-
-      .action-btn:hover {
-        background: #357abd;
-        transform: translateY(-2px);
-      }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Práctica de la respuesta extendida del GED</title>
+<meta name="description" content="Práctica guiada de la respuesta extendida del GED: lectura de dos textos, planificación, redacción por párrafos y evaluación con la rúbrica oficial.">
+<meta name="author" content="José M. Fernández, Harry S. Truman College — City Colleges of Chicago">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%230f5c63'/%3E%3Ctext x='32' y='45' font-family='Georgia,serif' font-size='34' fill='%23ffffff' text-anchor='middle'%3ERE%3C/text%3E%3C/svg%3E">
+<style>
+  /* Paleta y tipografía idénticas a las del Evaluador de la respuesta extendida */
+  :root{
+    --acento:#0f5c63;
+    --acento-oscuro:#0a4249;
+    --acento-tenue:#e2f0f1;
+    --tinta:#16283a;
+    --papel:#ffffff;
+    --fondo:#eceff3;
+    --borde:#c9d3dc;
+    --borde-suave:#e2e8ee;
+    --texto:#1b2a36;
+    --texto-sec:#4a5b68;
+    --n0:#a4262c;
+    --n1:#5C3900;
+    --n2:#1c6b3f;
+    --n0-fondo:#fbeceb;
+    --n1-fondo:#fbf3e2;
+    --n2-fondo:#e8f4ec;
+    --sombra:0 1px 2px rgba(22,40,58,.08), 0 4px 14px rgba(22,40,58,.06);
+    --radio:10px;
+    --serif:Georgia,"Iowan Old Style","Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Consolas,"Liberation Mono",monospace;
+    --escala:1;
+  }
+  body.oscuro{
+    --papel:#16202b;--fondo:#0e161e;--borde:#31414f;--borde-suave:#26333f;
+    --texto:#e6edf3;--texto-sec:#adbcc8;--tinta:#0b1219;--acento-tenue:#25303a;
+    --n0:#ff9a94;--n1:#f0c46a;--n2:#79d4a0;
+    --n0-fondo:#2c1a1c;--n1-fondo:#2c2416;--n2-fondo:#162b21;
+    --sombra:0 1px 2px rgba(0,0,0,.4);
+  }
+  body.contraste{
+    --papel:#ffffff;--fondo:#ffffff;--borde:#000000;--borde-suave:#000000;
+    --texto:#000000;--texto-sec:#000000;--acento:#000000;--acento-oscuro:#000000;
+    --acento-tenue:#ffffff;--sombra:none;
+  }
+  body.contraste .tarjeta,body.contraste textarea,body.contraste select{border-width:2px!important}
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:70px}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+  body{margin:0;background:var(--fondo);color:var(--texto);font-family:var(--sans);
+    font-size:calc(16px * var(--escala));line-height:1.6}
+  .lienzo{max-width:1180px;margin:0 auto;padding:0 16px 64px}
+
+  /* ── Encabezado ── */
+  .cabecera{background:var(--tinta);color:#ffffff;border-bottom:4px solid var(--acento)}
+  .cabecera-int{max-width:1180px;margin:0 auto;padding:20px 16px;display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;justify-content:space-between}
+  .marca{display:flex;gap:14px;align-items:flex-start;min-width:0}
+  .escudo{flex:none;width:46px;height:46px;border-radius:8px;background:var(--acento);
+    display:flex;align-items:center;justify-content:center;font-family:var(--serif);
+    font-size:1.15rem;color:#ffffff;letter-spacing:.5px}
+  .cabecera h1{font-family:var(--serif);font-size:1.5rem;line-height:1.25;margin:0 0 4px;font-weight:600;color:#ffffff}
+  .cabecera p{margin:0;color:#c6d3de;font-size:.86rem;max-width:58ch}
+  .herramientas{display:flex;flex-wrap:wrap;gap:8px}
+  .btn-icono{background:rgba(255,255,255,.10);color:#ffffff;border:1px solid rgba(255,255,255,.28);
+    border-radius:8px;padding:7px 12px;font-size:.82rem;font-family:inherit;cursor:pointer;line-height:1.3}
+  .btn-icono:hover{background:rgba(255,255,255,.22)}
+  .btn-icono[aria-pressed="true"]{background:#ffffff;color:var(--tinta);border-color:#ffffff;font-weight:600}
+
+  .btn-guia{background:rgba(126,206,213,.16);border-color:#7eced5;font-weight:600}
+  .btn-guia:hover{background:rgba(126,206,213,.30)}
+
+  /* ── Barra de pasos (enlaces internos) ── */
+  .barra-pasos{background:var(--papel);border-bottom:1px solid var(--borde);position:sticky;top:0;z-index:20}
+  .barra-int{max-width:1180px;margin:0 auto;padding:0 16px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 14px}
+  .barra-pasos ol{margin:0;padding:8px 0;list-style:none;display:flex;flex-wrap:wrap;gap:6px 8px;counter-reset:paso}
+  .estado-barra{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:.85rem;color:var(--texto-sec);padding:4px 0}
+  .estado-barra b{font-family:var(--mono);font-size:.98rem;color:var(--texto)}
+  .estado-barra .alerta b{color:var(--n0)}
+  .estado-barra .fuera b{color:var(--n1)}
+  .barra-pasos li{counter-increment:paso}
+  .barra-pasos a{display:inline-flex;align-items:center;gap:7px;text-decoration:none;color:var(--texto-sec);
+    font-size:.84rem;font-weight:600;padding:4px 12px 4px 4px;border-radius:999px;border:1px solid var(--borde)}
+  .barra-pasos a::before{content:counter(paso);display:inline-flex;align-items:center;justify-content:center;
+    width:22px;height:22px;border-radius:50%;background:var(--acento-tenue);color:var(--acento-oscuro);
+    border:1px solid var(--acento);font-family:var(--serif);font-size:.8rem}
+  body.oscuro .barra-pasos a::before{color:#ffffff}
+  .barra-pasos a:hover{background:var(--fondo);color:var(--texto)}
+  .barra-pasos a[aria-disabled="true"]{opacity:.5;pointer-events:none}
+  @media (max-width:640px){
+    .barra-int{padding:0 12px}
+    .barra-pasos ol{flex-wrap:nowrap;overflow-x:auto;padding:6px 0;scrollbar-width:thin;max-width:100%}
+    .estado-barra{padding:0 0 6px}
+    .barra-pasos a{white-space:nowrap;font-size:.8rem}
+  }
+  .barra-pasos a.hecho::before{content:"✓";background:var(--n2);border-color:var(--n2);color:#ffffff}
+
+  /* ── Estructura ── */
+  .rejilla{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:20px;margin-top:20px;align-items:start}
+  @media (max-width:900px){.rejilla{grid-template-columns:1fr}}
+  .lateral{position:sticky;top:64px}
+  @media (max-width:900px){.lateral{position:static}}
+  .tarjeta{background:var(--papel);border:1px solid var(--borde);border-radius:var(--radio);
+    box-shadow:var(--sombra);padding:18px;margin-bottom:18px}
+  .tarjeta > h2{font-family:var(--serif);font-size:1.15rem;margin:0 0 4px;font-weight:600;display:flex;gap:10px;align-items:center}
+  .tarjeta > .pie-titulo{margin:0 0 14px;color:var(--texto-sec);font-size:.87rem}
+  .num-paso{flex:none;width:30px;height:30px;border-radius:50%;background:var(--acento);color:#ffffff;
+    font-family:var(--serif);font-size:.95rem;display:inline-flex;align-items:center;justify-content:center}
+  [hidden]{display:none!important}
+
+  .etiqueta{display:block;font-weight:600;font-size:.87rem;margin:0 0 5px;color:var(--texto)}
+  .ayuda{display:block;font-size:.8rem;color:var(--texto-sec);margin:-2px 0 7px}
+  textarea,select{width:100%;font-family:inherit;font-size:.95rem;color:var(--texto);background:var(--papel);
+    border:1px solid var(--borde);border-radius:8px;padding:10px 12px;line-height:1.6}
+  textarea{resize:vertical;min-height:190px;font-size:1rem;line-height:1.75}
+  select{cursor:pointer}
+  :focus-visible{outline:3px solid var(--acento);outline-offset:2px}
+  body.oscuro :focus-visible{outline-color:#ffffff}
+  .fila{display:flex;flex-wrap:wrap;gap:10px;align-items:stretch}
+  .fila > *{flex:1 1 200px;min-width:0}
+
+  /* ── Botones ── */
+  .btn{font-family:inherit;font-size:1rem;font-weight:600;border-radius:8px;padding:12px 20px;
+    border:1px solid transparent;cursor:pointer;line-height:1.3}
+  .btn-principal{background:var(--acento);color:#ffffff}
+  .btn-principal:hover:not(:disabled){background:var(--acento-oscuro)}
+  .btn-principal:disabled{background:var(--texto-sec);cursor:not-allowed}
+  .btn-ancho{width:100%}
+  body.contraste .btn-principal{background:#000000;color:#ffffff;border-color:#000000}
+  .btn-sec{background:var(--papel);color:var(--texto);border-color:var(--borde);font-size:.88rem;padding:9px 14px;font-weight:500}
+  .btn-sec:hover:not(:disabled){background:var(--fondo)}
+  .btn-sec:disabled{opacity:.5;cursor:not-allowed}
+  .grupo-botones{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+
+  /* ── Avisos ── */
+  .aviso{border-left:5px solid var(--n1);background:var(--n1-fondo);color:var(--texto);
+    padding:12px 14px;border-radius:6px;font-size:.9rem;margin:14px 0}
+  .aviso.error{border-left-color:var(--n0);background:var(--n0-fondo)}
+  .aviso.exito{border-left-color:var(--n2);background:var(--n2-fondo)}
+  .aviso.info{border-left-color:var(--acento);background:var(--acento-tenue)}
+  .aviso strong{display:block;margin-bottom:3px}
+  .aviso ul,.aviso ol{margin:6px 0 0;padding-left:20px}
+
+  /* ── Consigna ── */
+  .consigna{border:1px solid var(--acento);border-left:5px solid var(--acento);background:var(--acento-tenue);
+    border-radius:8px;padding:13px 15px;font-family:var(--serif);font-size:1rem}
+  .consigna .rotulo{display:block;font-family:var(--sans);font-size:.75rem;text-transform:uppercase;
+    letter-spacing:.07em;font-weight:700;color:var(--acento-oscuro);margin-bottom:4px}
+  body.oscuro .consigna .rotulo{color:#9fdbe0}
+
+  /* ── Textos fuente ── */
+  .fuentes{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media (max-width:760px){.fuentes{grid-template-columns:1fr}}
+  details.fuente{border:1px solid var(--borde);border-radius:8px;background:var(--papel);overflow:hidden}
+  details.fuente > summary{cursor:pointer;padding:12px 14px;background:var(--fondo);list-style:none;display:flex;gap:10px;align-items:flex-start}
+  details.fuente > summary::-webkit-details-marker{display:none}
+  details.fuente > summary::before{content:"▸";flex:none;color:var(--acento);font-size:1rem;line-height:1.5;transition:transform .2s}
+  details.fuente[open] > summary::before{transform:rotate(90deg)}
+  details.fuente > summary:hover{background:var(--borde-suave)}
+  .fuente-letra{flex:none;font-family:var(--mono);font-weight:700;font-size:.78rem;background:var(--acento);color:#ffffff;border-radius:4px;padding:2px 7px;margin-top:2px}
+  .fuente-titulo{font-family:var(--serif);font-weight:600;font-size:.98rem;line-height:1.4}
+  .fuente-meta{font-size:.8rem;color:var(--texto-sec);padding:10px 14px 0;margin:0}
+  .fuente-meta b{color:var(--texto)}
+  .fuente-cuerpo{padding:8px 14px 14px;font-family:var(--serif);font-size:.98rem;line-height:1.8;max-height:460px;overflow-y:auto}
+  .fuente-cuerpo p{margin:0 0 .9em}
+
+  /* ── Plan previo ── */
+  .lista-plan{list-style:none;margin:0;padding:0}
+  .lista-plan li{border-bottom:1px solid var(--borde-suave)}
+  .lista-plan li:last-child{border-bottom:none}
+  .lista-plan label{display:flex;gap:11px;align-items:flex-start;padding:9px 4px;cursor:pointer;font-size:.93rem}
+  .lista-plan input{flex:none;width:19px;height:19px;margin-top:3px;accent-color:var(--acento)}
+  .lista-plan input:checked + span{color:var(--texto-sec);text-decoration:line-through}
+
+  /* ── Escritura por párrafos ── */
+  .pestanas{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+  .pestana{font-family:inherit;font-size:.84rem;font-weight:600;border:1px solid var(--borde);background:var(--papel);
+    color:var(--texto-sec);border-radius:8px;padding:7px 11px;cursor:pointer;display:inline-flex;gap:7px;align-items:center}
+  .pestana:hover{background:var(--fondo)}
+  .pestana[aria-selected="true"]{background:var(--acento);border-color:var(--acento);color:#ffffff}
+  .pestana .estado{width:9px;height:9px;border-radius:50%;background:var(--borde);flex:none}
+  .pestana .estado.lleno{background:var(--n2)}
+  .pestana[aria-selected="true"] .estado{outline:2px solid #ffffff}
+  .pista-parrafo{border:1px solid var(--borde-suave);border-left:5px solid var(--acento);border-radius:8px;
+    padding:11px 14px;margin-bottom:12px;background:var(--fondo);font-size:.9rem}
+  .pista-parrafo h3{margin:0 0 5px;font-family:var(--serif);font-size:1.02rem;font-weight:600}
+  .pista-parrafo ul{margin:0;padding-left:20px}
+  .pista-parrafo li{margin-bottom:2px}
+  .conteo-parrafo{font-size:.8rem;color:var(--texto-sec);margin:6px 0 0;text-align:right}
+  .navegacion{display:flex;justify-content:space-between;gap:8px;margin-top:12px;flex-wrap:wrap}
+
+  /* ── Caracteres especiales ── */
+  .herr-escritura{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin:0 0 8px}
+  .paleta{border:1px solid var(--borde);border-radius:8px;background:var(--papel);box-shadow:var(--sombra);padding:12px;margin:0 0 10px}
+  .paleta p{margin:0 0 8px;font-size:.82rem;color:var(--texto-sec)}
+  .paleta-rejilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:6px}
+  .paleta-rejilla button{font-family:var(--serif);font-size:1.1rem;padding:7px 0;border:1px solid var(--borde);
+    border-radius:6px;background:var(--fondo);color:var(--texto);cursor:pointer}
+  .paleta-rejilla button:hover{background:var(--acento);color:#ffffff;border-color:var(--acento)}
+
+  /* ── Presentación e instrucciones (mismo estilo que la guía del evaluador) ── */
+  .velo{position:fixed;inset:0;background:rgba(11,18,25,.62);z-index:60;display:none;align-items:flex-start;justify-content:center;padding:22px 14px;overflow-y:auto}
+  .velo.abierto{display:flex}
+  .panel-guia{background:var(--papel);color:var(--texto);border:1px solid var(--borde);border-radius:12px;
+    box-shadow:0 12px 40px rgba(0,0,0,.35);max-width:760px;width:100%;padding:0 0 22px;position:relative}
+  .guia-cab{background:var(--tinta);color:#ffffff;border-radius:11px 11px 0 0;padding:16px 20px;display:flex;gap:14px;
+    align-items:flex-start;justify-content:space-between;border-bottom:3px solid var(--acento)}
+  .guia-cab h2{font-family:var(--serif);font-size:1.2rem;margin:0;font-weight:600;color:#ffffff}
+  .guia-cab p{margin:3px 0 0;font-size:.82rem;color:#c6d3de}
+  .cerrar{flex:none;background:rgba(255,255,255,.12);color:#ffffff;border:1px solid rgba(255,255,255,.3);
+    border-radius:8px;font-size:.82rem;font-family:inherit;padding:7px 12px;cursor:pointer}
+  .cerrar:hover{background:rgba(255,255,255,.26)}
+  .guia-cuerpo{padding:20px}
+  .guia-cuerpo > p{margin:0 0 14px}
+  .paso-guia{display:flex;gap:14px;align-items:flex-start;padding:13px 0;border-top:1px solid var(--borde-suave)}
+  .paso-guia .num{flex:none;width:34px;height:34px;border-radius:50%;background:var(--acento);color:#ffffff;
+    font-family:var(--serif);font-size:1rem;font-weight:600;display:flex;align-items:center;justify-content:center}
+  .paso-guia h3{margin:2px 0 5px;font-size:1rem;font-family:var(--serif);font-weight:600}
+  .paso-guia ul{margin:0;padding-left:20px;font-size:.92rem}
+  .paso-guia li{margin-bottom:3px}
+  .cuenta-guia{text-align:center;margin:16px 0 0;font-size:.9rem;color:var(--texto-sec)}
+  .cuenta-guia b{font-family:var(--mono);font-size:1.15rem;color:var(--texto)}
+
+  /* ── Medidor (igual que el evaluador) ── */
+  .medidor{margin-top:12px;border:1px solid var(--borde-suave);border-radius:8px;padding:11px 13px;background:var(--fondo)}
+  .medidor-cifras{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:.84rem;color:var(--texto-sec)}
+  .medidor-cifras b{font-family:var(--mono);font-size:1.02rem;color:var(--texto);font-weight:600}
+  .pista{position:relative;height:9px;background:var(--borde-suave);border-radius:5px;margin-top:10px;overflow:hidden}
+  .pista span{position:absolute;inset:0 auto 0 0;width:0;background:var(--n1);transition:width .3s ease}
+  .pista span.bien{background:var(--n2)}
+  .zona{position:absolute;top:0;bottom:0;border-left:2px dashed var(--texto-sec);opacity:.45}
+  .nota-medidor{font-size:.8rem;margin:8px 0 0;color:var(--texto-sec)}
+
+  /* ── Revisión ── */
+  .borrador{border:1px solid var(--borde);border-radius:8px;padding:18px 20px;background:var(--papel);
+    font-family:var(--serif);font-size:1.02rem;line-height:1.85;max-height:560px;overflow-y:auto}
+  .borrador p{margin:0 0 1em;text-indent:1.5em}
+  .borrador .vacio{color:var(--texto-sec);font-style:italic;text-indent:0}
+
+  /* ── Cronómetro ── */
+  .reloj{font-family:var(--mono);font-size:2.3rem;font-weight:600;text-align:center;margin:4px 0 2px;letter-spacing:.02em}
+  .reloj.alerta{color:var(--n0)}
+  .reloj-pie{text-align:center;font-size:.8rem;color:var(--texto-sec);margin:0 0 12px}
+
+  .rubrica-breve{margin:0;padding:0;list-style:none;font-size:.88rem}
+  .rubrica-breve li{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--borde-suave)}
+  .rubrica-breve li:last-child{border-bottom:none}
+  .rubrica-breve .r{flex:none;width:26px;height:26px;border-radius:50%;background:var(--acento-tenue);border:1px solid var(--acento);
+    color:var(--acento-oscuro);font-family:var(--serif);font-weight:600;display:flex;align-items:center;justify-content:center;font-size:.85rem}
+  body.oscuro .rubrica-breve .r{color:#ffffff}
+
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--borde);font-size:.8rem;color:var(--texto-sec);text-align:center}
+  footer a{color:var(--acento-oscuro)}
+  body.oscuro footer a{color:#9fc9e8}
+
+  @media print{
+    body{background:#ffffff}
+    .cabecera,.barra-pasos,.lateral,.no-imprimir{display:none!important}
+    .rejilla{display:block}
+    .tarjeta{box-shadow:none;border:1px solid #999}
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <!-- Sección del Examen -->
-        <div class="exam-section" id="examSection">
-            <div class="exam-header">
-                <h1>Examen de Respuesta Extendida 🎓  GED RLA</h1>
-                <p id="timerLabel">Tiempo para revisar instrucciones: <span id="instructionTime">3:00</span></p>
-            </div>
 
-            <div class="timer-container" id="mainTimer">
-                ⏰ Tiempo restante: <span id="timer">45:00</span>
-            </div>
+<header class="cabecera">
+  <div class="cabecera-int">
+    <div class="marca">
+      <div class="escudo" aria-hidden="true">RE</div>
+      <div>
+        <h1>Práctica de la respuesta extendida del GED</h1>
+        <p>Razonamiento a través de las artes del lenguaje · lee dos textos, planifica, escribe tu respuesta y evalúala con la rúbrica oficial</p>
+      </div>
+    </div>
+    <div class="herramientas">
+      <button type="button" class="btn-icono btn-guia" id="btn-instrucciones" aria-expanded="false" aria-controls="velo-instr">Instrucciones</button>
+      <button type="button" class="btn-icono" id="btn-tema" aria-pressed="false">Modo oscuro</button>
+      <button type="button" class="btn-icono" id="btn-contraste" aria-pressed="false">Alto contraste</button>
+      <button type="button" class="btn-icono" id="btn-texto">Texto: normal</button>
+    </div>
+  </div>
+</header>
 
-            <div class="exam-content">
-                <!-- Sección de textos -->
-                <div class="text-section">
-                    <div class="tab-header">
-                        <button class="tab-button active" onclick="showTab('text1', this)">
-                            📄 Texto 1
-                        </button>
-                        <button class="tab-button" onclick="showTab('text2', this)">
-                            📄 Texto 2
-                        </button>
-                    </div>
+<nav class="barra-pasos" aria-label="Pasos de la práctica">
+  <div class="barra-int">
+  <ol>
+    <li><a href="#paso-tema" id="nav-tema">Tema</a></li>
+    <li><a href="#paso-textos" id="nav-textos" aria-disabled="true">Textos</a></li>
+    <li><a href="#paso-plan" id="nav-plan" aria-disabled="true">Plan</a></li>
+    <li><a href="#paso-escritura" id="nav-escritura" aria-disabled="true">Escritura</a></li>
+    <li><a href="#paso-revision" id="nav-revision" aria-disabled="true">Revisión y evaluación</a></li>
+  </ol>
+  <div class="estado-barra">
+    <span id="estado-tiempo">Tiempo restante <b id="barra-reloj">45:00</b></span>
+    <span>Palabras <b id="barra-palabras">0</b> / 300–500</span>
+  </div>
+  </div>
+</nav>
 
-                    <!-- Texto 1 -->
-                    <div id="text1" class="tab-content active">
-                        <div class="passage">
-                            <h3>Texto 1: Carta al Editor - La importancia del arte en la educación</h3>
-                            <p>Estimado Editor:</p>
-                            <p>Como educadora con más de veinte años de experiencia, me siento obligada a responder al reciente artículo publicado en su periódico sobre los recortes propuestos a los programas de arte en nuestras escuelas públicas. La propuesta de reducir las clases de arte, música y teatro para aumentar el tiempo dedicado a matemáticas y ciencias es un grave error que afectará negativamente el desarrollo integral de nuestros estudiantes.</p>
-                            <p>Las investigaciones demuestran consistentemente que la educación artística mejora el rendimiento académico general. Un estudio de 2019 realizado por la Universidad de Yale encontró que los estudiantes que participan regularmente en actividades artísticas tienen un promedio de calificaciones 15% más alto que aquellos que no lo hacen. Además, estos estudiantes muestran mejores habilidades de pensamiento crítico y resolución de problemas, competencias esenciales para el éxito en todas las áreas académicas.</p>
-                            <p>El arte no es simplemente un "extra" o un lujo en la educación; es una herramienta fundamental para el desarrollo cognitivo y emocional. A través del arte, los estudiantes aprenden a expresarse, a interpretar el mundo que los rodea y a desarrollar la creatividad necesaria para la innovación en cualquier campo. Las empresas tecnológicas más exitosas del mundo, como Apple y Google, valoran enormemente a los empleados con formación artística porque entienden que la creatividad es clave para la innovación.</p>
-                            <p>Además, para muchos estudiantes, especialmente aquellos con dificultades en materias tradicionales, las clases de arte pueden ser el único lugar donde experimentan el éxito académico. Eliminar estos programas sería privar a estos estudiantes de oportunidades cruciales para desarrollar confianza y encontrar su pasión.</p>
-                            <p>Insto a la junta escolar a reconsiderar esta propuesta miope. En lugar de ver el arte y las ciencias como competidores por recursos limitados, deberíamos reconocer su naturaleza complementaria. Los grandes científicos de la historia, desde Leonardo da Vinci hasta Albert Einstein, fueron también artistas que entendían que la creatividad y el pensamiento analítico van de la mano.</p>
-                            <p>Atentamente,<br>María González<br>Profesora de Arte, Escuela Secundaria Central</p>
-                        </div>
-                    </div>
+<main class="lienzo">
+  <div class="rejilla">
 
-                    <!-- Texto 2 -->
-                    <div id="text2" class="tab-content">
-                        <div class="passage">
-                            <h3>Texto 2: Editorial - Prioridades en la educación del siglo XXI</h3>
-                            <p>La reciente controversia sobre los recortes propuestos a los programas de arte en nuestras escuelas públicas ha generado un debate apasionado pero, en mi opinión, mal enfocado. Como sociedad, debemos enfrentar la realidad de que nuestros estudiantes están quedando rezagados en matemáticas y ciencias comparados con sus pares internacionales, y es hora de tomar decisiones difíciles pero necesarias.</p>
-                            <p>Los datos son claros: según el último informe PISA (Programa Internacional para la Evaluación de Estudiantes), los estudiantes estadounidenses ocupan el puesto 38 de 71 países en matemáticas y el 24 en ciencias. En un mundo cada vez más dominado por la tecnología y la innovación científica, estas estadísticas son alarmantes. No podemos permitirnos el lujo de mantener el status quo cuando nuestros estudiantes no están preparados para competir en la economía global del conocimiento.</p>
-                            <p>Aunque aprecio el valor del arte y la cultura, debemos ser pragmáticos sobre las limitaciones de recursos y tiempo. Cada hora dedicada a clases de arte es una hora menos para fortalecer las habilidades matemáticas y científicas fundamentales. Los trabajos del futuro requerirán competencias en codificación, análisis de datos, ingeniería y ciencias aplicadas. ¿Estamos realmente preparando a nuestros estudiantes para estos desafíos si priorizamos la pintura sobre la programación?</p>
-                            <p>Algunos argumentan que el arte fomenta la creatividad, pero la creatividad también se puede desarrollar a través de las ciencias. Resolver problemas matemáticos complejos o diseñar experimentos científicos requiere tanto pensamiento creativo como pintar un cuadro. La diferencia es que las habilidades STEM (Ciencia, Tecnología, Ingeniería y Matemáticas) tienen una aplicación directa y medible en el mercado laboral actual.</p>
-                            <p>No estoy sugiriendo la eliminación completa de los programas de arte, sino una redistribución más estratégica de recursos. Las actividades artísticas pueden continuar como programas extracurriculares opcionales, permitiendo que los estudiantes interesados las persigan sin comprometer el tiempo de instrucción esencial en materias fundamentales.</p>
-                            <p>En conclusión, aunque el arte tiene su lugar en una educación completa, en un mundo de recursos limitados, debemos priorizar las habilidades que mejor prepararán a nuestros estudiantes para el éxito en el siglo XXI. La elección es clara: podemos aferrarnos a tradiciones románticas o podemos adaptarnos a las realidades del mundo moderno.</p>
-                            <p>Dr. Roberto Chen<br>Director, Instituto de Política Educativa</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sección de escritura -->
-                <div class="writing-section">
-                    <div class="prompt-section">
-                        <h3>📝 Tarea de Escritura</h3>
-                        <p>Los textos presentan dos perspectivas diferentes sobre la importancia de los programas de arte en la educación. Analice ambos argumentos y escriba un ensayo en el que:</p>
-                        <ul>
-                            <li>Explique las posiciones principales de cada autor</li>
-                            <li>Evalúe la evidencia presentada en cada texto</li>
-                            <li>Determine cuál argumento está mejor respaldado</li>
-                            <li>Justifique su análisis con evidencia específica de los textos</li>
-                        </ul>
-                    </div>
-
-                    <div class="writing-controls">
-                        <button class="btn btn-instructions" id="showInstructions">
-                            📋 Instrucciones
-                        </button>
-                        <button class="btn btn-symbols" id="showSymbols">
-                            Æ Caracteres Especiales (F7)
-                        </button>
-                        <span class="word-count" id="wordCount">
-                            Palabras: 0 / 300-500
-                        </span>
-                    </div>
-
-                    <textarea id="essayArea" class="essay-area" placeholder="Escriba su respuesta aquí..." disabled></textarea>
-
-                    <div class="submit-section">
-                        <button class="btn btn-submit" id="submitBtn" disabled>
-                            📋 Completar y Evaluar
-                        </button>
-                    </div>
-                </div>
-            </div>
+    <div>
+      <!-- ══ 1. Tema ══ -->
+      <section class="tarjeta" id="paso-tema" aria-labelledby="t-tema">
+        <h2 id="t-tema"><span class="num-paso" aria-hidden="true">1</span>Elige el tema</h2>
+        <p class="pie-titulo">Cada tema trae dos textos con posturas opuestas. Puedes escoger uno o dejar que el azar decida.</p>
+        <label class="etiqueta" for="sel-tema">Tema de la práctica</label>
+        <div class="fila">
+          <select id="sel-tema">
+            <option value="">— Selecciona un tema —</option>
+          </select>
+          <button type="button" class="btn btn-sec" id="btn-azar" style="flex:0 0 auto">Tema al azar</button>
         </div>
-
-        <!-- Sección del Evaluador -->
-        <div class="evaluator-section" id="evaluatorSection">
-            <div class="evaluator-header">
-                <h1>🤖 Evaluador GED Rúbrica Oficial<br><span style="font-size: 16px; font-weight: normal;">Sistema de Evaluación con 41 Subdimensiones Oficiales</span></h1>
-                <button class="help-btn" onclick="toggleHelp()">
-                    <i class="fas fa-question"></i>
-                </button>
-            </div>
-
-            <!-- Modal de Ayuda ACTUALIZADO -->
-            <div class="help-modal" id="helpModal">
-                <div class="help-content">
-                    <button class="close-help" onclick="toggleHelp()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <h3>📚 Evaluador GED con Rúbrica Oficial (Versión Corregida)</h3>
-                    <p><strong>Esta versión implementa la rúbrica oficial del GED Testing Service</strong></p>
-                    <p><strong style="color: #ff6b35;">SISTEMA ACTUALIZADO:</strong> Esta versión aplica los criterios oficiales de manera estricta y realista.</p>
-                    
-                    <h4>Sistema de Evaluación Oficial</h4>
-                    
-                    <h5>🎯 Característica 1: Argumentación y Uso de Evidencia (12 subdimensiones)</h5>
-                    <ul>
-                        <li><strong>Requisito obligatorio:</strong> Debe citar evidencia específica de AMBOS textos fuente</li>
-                        <li>Generar un argumento claro basado en los textos</li>
-                        <li>Analizar cuál posición está mejor sustentada</li>
-                        <li>Distinguir entre afirmaciones fundamentadas y no fundamentadas</li>
-                    </ul>
-                    
-                    <h5>📊 Característica 2: Desarrollo de Ideas y Estructura (15 subdimensiones)</h5>
-                    <ul>
-                        <li>Ideas bien desarrolladas y lógicas</li>
-                        <li>Progresión clara de ideas</li>
-                        <li>Estructura organizacional efectiva</li>
-                        <li>Uso apropiado de transiciones</li>
-                        <li>Estilo formal y tono académico</li>
-                    </ul>
-                    
-                    <h5>✏️ Característica 3: Claridad y Dominio del Español (14 subdimensiones)</h5>
-                    <ul>
-                        <li>Estructura correcta de oraciones</li>
-                        <li>Aplicación de convenciones gramaticales</li>
-                        <li>Puntuación y mayúsculas apropiadas</li>
-                        <li>Legibilidad general</li>
-                    </ul>
-                    
-                    <h4>Requisitos Mínimos (CRÍTICOS)</h4>
-                    <div style="background-color: #fff3cd; padding: 15px; border-radius: 10px; margin: 15px 0;">
-                        <ul>
-                            <li><strong>Longitud:</strong> 300-500 palabras (menos de 300 = penalización severa)</li>
-                            <li><strong>Estructura:</strong> 4-7 párrafos organizados</li>
-                            <li><strong>Evidencia textual:</strong> Citas específicas de AMBOS textos</li>
-                            <li><strong>Análisis comparativo:</strong> Determinar cuál argumento está mejor sustentado</li>
-                        </ul>
-                    </div>
-                    
-                    <h4>Sistema de Puntuación Oficial</h4>
-                    <p>Cada característica se evalúa usando subdimensiones con puntuación 0-2:</p>
-                    <ul>
-                        <li><strong>0 puntos:</strong> No demuestra la habilidad</li>
-                        <li><strong>1 punto:</strong> Nivel mínimo/inadecuado</li>
-                        <li><strong>2 puntos:</strong> Nivel adecuado/efectivo</li>
-                    </ul>
-                    <p><strong>Fórmula:</strong> (Suma de puntos de subdimensiones) ÷ (Número de subdimensiones) = Puntuación de característica</p>
-                    <p>Puntuación máxima total: <strong>6 puntos (2+2+2)</strong></p>
-                </div>
-            </div>
-
-            <div id="chatbox"></div>
-            <div id="loading" class="loading-indicator">🔍 Aplicando rúbrica oficial del GED Testing Service</div>
-
-            <form id="text-form">
-                <textarea id="user-input" placeholder="Su respuesta extendida se cargará automáticamente aquí..." autocomplete="off" required></textarea>
-                <button type="submit" id="evaluate-btn">🎯 Evaluar con Rúbrica Oficial GED</button>
-            </form>
+        <div id="bloque-consigna" hidden>
+          <div class="consigna" style="margin-top:14px" id="consigna" aria-live="polite"></div>
         </div>
+        <div id="aviso-tema"></div>
+      </section>
+
+      <!-- ══ 2. Textos ══ -->
+      <section class="tarjeta" id="paso-textos" aria-labelledby="t-textos" hidden>
+        <h2 id="t-textos"><span class="num-paso" aria-hidden="true">2</span>Lee los dos textos fuente</h2>
+        <p class="pie-titulo">Léelos completos. Fíjate en qué afirma cada autor y con qué lo respalda: datos, expertos o experiencias personales.</p>
+        <div class="fuentes">
+          <details class="fuente" id="det-a">
+            <summary><span class="fuente-letra">A</span><span class="fuente-titulo" id="a-titulo"></span></summary>
+            <p class="fuente-meta" id="a-meta"></p>
+            <div class="fuente-cuerpo" id="a-cuerpo"></div>
+          </details>
+          <details class="fuente" id="det-b">
+            <summary><span class="fuente-letra">B</span><span class="fuente-titulo" id="b-titulo"></span></summary>
+            <p class="fuente-meta" id="b-meta"></p>
+            <div class="fuente-cuerpo" id="b-cuerpo"></div>
+          </details>
+        </div>
+        <div class="grupo-botones">
+          <button type="button" class="btn btn-sec" id="btn-abrir-textos">Abrir ambos textos</button>
+          <button type="button" class="btn btn-sec" id="btn-cerrar-textos">Cerrar ambos textos</button>
+        </div>
+      </section>
+
+      <!-- ══ 3. Plan previo ══ -->
+      <section class="tarjeta" id="paso-plan" aria-labelledby="t-plan" hidden>
+        <h2 id="t-plan"><span class="num-paso" aria-hidden="true">3</span>Planifica antes de escribir</h2>
+        <p class="pie-titulo">Anota en tu libreta cada punto y márcalo al terminarlo. Unos diez minutos de plan ahorran mucho tiempo al escribir.</p>
+        <ul class="lista-plan" id="lista-plan"></ul>
+      </section>
+
+      <!-- ══ 4. Escritura ══ -->
+      <section class="tarjeta" id="paso-escritura" aria-labelledby="t-escritura" hidden>
+        <h2 id="t-escritura"><span class="num-paso" aria-hidden="true">4</span>Escribe tu respuesta, párrafo por párrafo</h2>
+        <p class="pie-titulo">Tu trabajo se guarda solo en este navegador mientras escribes. Puedes moverte entre los párrafos cuando quieras.</p>
+        <div class="pestanas" role="tablist" aria-label="Párrafos de la respuesta" id="pestanas"></div>
+        <div class="herr-escritura">
+          <button type="button" class="btn btn-sec" id="btn-caracteres" aria-expanded="false" aria-controls="paleta">Caracteres especiales (F7)</button>
+          <span class="ayuda" style="margin:0">Total: <b id="total-escritura">0</b> palabras · recomendado de 300 a 500</span>
+        </div>
+        <div class="paleta" id="paleta" hidden>
+          <p>Pulsa un carácter para insertarlo donde está el cursor. F7 o Esc para cerrar.</p>
+          <div class="paleta-rejilla" id="paleta-rejilla"></div>
+        </div>
+        <div id="paneles"></div>
+        <div class="navegacion">
+          <button type="button" class="btn btn-sec" id="btn-anterior">← Párrafo anterior</button>
+          <button type="button" class="btn btn-principal" id="btn-siguiente">Siguiente párrafo →</button>
+        </div>
+      </section>
+
+      <!-- ══ 5. Revisión y evaluación ══ -->
+      <section class="tarjeta" id="paso-revision" aria-labelledby="t-revision" hidden>
+        <h2 id="t-revision"><span class="num-paso" aria-hidden="true">5</span>Revisa y evalúa tu respuesta</h2>
+        <p class="pie-titulo">Así queda tu respuesta completa. Si quieres cambiar algo, vuelve al párrafo desde la barra de arriba o con el botón «Editar».</p>
+        <div class="borrador" id="borrador" tabindex="0" aria-label="Tu respuesta extendida completa"></div>
+        <div class="medidor">
+          <div class="medidor-cifras">
+            <span>Palabras <b id="c-palabras">0</b></span>
+            <span>Párrafos <b id="c-parrafos">0</b></span>
+            <span>Oraciones <b id="c-oraciones">0</b></span>
+          </div>
+          <div class="pista" aria-hidden="true">
+            <span id="barra-ext"></span>
+            <i class="zona" style="left:50%"></i>
+            <i class="zona" style="left:83.3%"></i>
+          </div>
+          <p class="nota-medidor" id="medidor-desc" role="status">Extensión recomendada: de 300 a 500 palabras, en 4 a 7 párrafos.</p>
+        </div>
+        <div style="margin-top:16px">
+          <button type="button" class="btn btn-principal btn-ancho" id="btn-evaluar">Evaluar con la rúbrica oficial</button>
+        </div>
+        <p class="ayuda" style="margin-top:8px">Se abrirá el evaluador en otra pestaña con tu respuesta, la consigna y los dos textos ya cargados, y la evaluación comenzará sola.</p>
+        <div class="grupo-botones no-imprimir">
+          <button type="button" class="btn btn-sec" id="btn-editar">Editar la respuesta</button>
+          <button type="button" class="btn btn-sec" id="btn-copiar">Copiar la respuesta</button>
+          <button type="button" class="btn btn-sec" id="btn-imprimir">Imprimir o guardar en PDF</button>
+          <button type="button" class="btn btn-sec" id="btn-nueva">Nueva práctica</button>
+        </div>
+        <div id="aviso-revision"></div>
+      </section>
     </div>
 
-    <!-- Popup de símbolos -->
-    <div class="symbol-popup" id="symbolPopup">
-        <div class="symbol-header">
-            <span>Æ Caracteres Especiales</span>
-            <button class="close-btn" id="closeSymbol">✖</button>
+    <!-- ══ Columna lateral ══ -->
+    <aside class="lateral" aria-label="Herramientas de apoyo">
+      <section class="tarjeta">
+        <h2>Cronómetro de práctica</h2>
+        <p class="pie-titulo">La tarea real concede 45 minutos.</p>
+        <p class="reloj" id="reloj" role="timer" aria-live="off">45:00</p>
+        <p class="reloj-pie" id="reloj-pie">Detenido</p>
+        <select id="duracion" aria-label="Duración del cronómetro">
+          <option value="45">45 minutos (tiempo estándar)</option>
+          <option value="67">67 minutos (tiempo y medio)</option>
+          <option value="90">90 minutos (tiempo doble)</option>
+        </select>
+        <div class="grupo-botones">
+          <button type="button" class="btn btn-sec" id="btn-reloj">Iniciar</button>
+          <button type="button" class="btn btn-sec" id="btn-reloj-reset">Reiniciar</button>
         </div>
-        <div class="symbol-grid" id="symbolGrid">
-            <!-- Los caracteres serán insertados por JavaScript -->
-        </div>
-        <div class="action-buttons">
-            <button class="action-btn" id="cancelBtn">Cerrar</button>
-        </div>
+      </section>
+
+      <section class="tarjeta">
+        <h2>Lo que mide la rúbrica</h2>
+        <p class="pie-titulo">Tres rasgos, cada uno de 0 a 2 puntos.</p>
+        <ul class="rubrica-breve">
+          <li><span class="r">1</span><span><b>Argumentación y evidencia.</b> Una tesis clara sobre qué postura está mejor fundamentada, con evidencia de <b>ambos</b> textos.</span></li>
+          <li><span class="r">2</span><span><b>Desarrollo y estructura.</b> Ideas explicadas a fondo, párrafos ordenados y transiciones claras.</span></li>
+          <li><span class="r">3</span><span><b>Claridad y dominio del español.</b> Oraciones variadas, vocabulario preciso y pocas faltas.</span></li>
+        </ul>
+      </section>
+    </aside>
+  </div>
+
+  <footer>
+    Práctica de la respuesta extendida del GED · José M. Fernández, Harry S. Truman College — City Colleges of Chicago ·
+    Compañera del <a href="https://zhemaria.github.io/evaluador-texto/" target="_blank" rel="noopener noreferrer">Evaluador de la respuesta extendida</a> ·
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a>
+  </footer>
+</main>
+
+<!-- ══ Presentación e instrucciones ══ -->
+<div class="velo" id="velo-instr" role="dialog" aria-modal="true" aria-labelledby="instr-titulo">
+  <div class="panel-guia">
+    <div class="guia-cab">
+      <div>
+        <h2 id="instr-titulo">Instrucciones para la respuesta extendida</h2>
+        <p>Léelas con calma. Igual que en el examen, tienes 3 minutos antes de que empiece el tiempo.</p>
+      </div>
+      <button type="button" class="cerrar" data-cierra-instr>Cerrar</button>
     </div>
-
-    <!-- Modal de instrucciones -->
-    <div class="modal" id="instructionsModal">
-        <div class="modal-content">
-            <span class="modal-close" id="closeInstructions">×</span>
-            <div class="instructions">
-                <h4>📋 Instrucciones para la Respuesta Extendida</h4>
-                <p style="color: #ff0000; font-weight: bold;">Al completar su ensayo, haga clic en <strong>"Completar y Evaluar"</strong> para enviar automáticamente su respuesta al evaluador con <strong>rúbrica oficial</strong>.</p>
-                
-                <h4>⏱️ Tiempo y Formato</h4>
-                <ul>
-                    <li><strong>Tiempo:</strong> 45 minutos para completar el ensayo</li>
-                    <li><strong>Extensión:</strong> 300-500 palabras recomendadas</li>
-                    <li><strong>Formato:</strong> Ensayo formal y académico</li>
-                </ul>
-                
-                <h4>📖 Proceso de Análisis</h4>
-                <ul>
-                    <li><strong>Lectura:</strong> Lea cuidadosamente ambos textos antes de escribir</li>
-                    <li><strong>Análisis:</strong> Identifique los argumentos principales de cada autor</li>
-                    <li><strong>Evaluación:</strong> Determine cuál posición está mejor respaldada</li>
-                    <li><strong>Evidencia:</strong> Use citas específicas de AMBOS textos</li>
-                </ul>
-                
-                <h4>🏗️ Estructura Recomendada</h4>
-                <ul>
-                    <li><strong>Introducción:</strong> Presente ambas posiciones y su tesis</li>
-                    <li><strong>Desarrollo:</strong> Analice cada texto por separado</li>
-                    <li><strong>Comparación:</strong> Compare la calidad de la evidencia</li>
-                    <li><strong>Conclusión:</strong> Resuma su análisis y justificación</li>
-                </ul>
-                
-                <div style="background-color: #fff3cd; padding: 15px; border-radius: 10px; margin: 20px 0;">
-                    <h4 style="color: #856404; margin-top: 0;">⚠️ IMPORTANTE - Rúbrica Oficial</h4>
-                    <p style="color: #856404; margin-bottom: 0;">El evaluador aplica los <strong>criterios oficiales del GED Testing Service</strong> con 41 subdimensiones específicas. Las puntuaciones serán realistas según los estándares reales del examen.</p>
-                </div>
-                
-                <div style="text-align: center; margin-top: 30px;">
-                    <button class="btn btn-submit" id="startExam">
-                        🚀 Comenzar Examen
-                    </button>
-                </div>
-            </div>
-        </div>
+    <div class="guia-cuerpo">
+      <p>En el examen de Razonamiento a través de las artes del lenguaje leerás dos textos con posturas opuestas sobre un mismo tema y escribirás una respuesta en la que analizas cuál está mejor fundamentada. Esta práctica te lleva paso a paso y, al final, envía tu respuesta al evaluador, que la califica con la rúbrica oficial.</p>
+      <div class="paso-guia"><div class="num" aria-hidden="true">1</div><div>
+        <h3>Tiempo y formato</h3>
+        <ul>
+          <li><b>Tiempo:</b> 45 minutos para planificar, escribir y revisar (puedes elegir tiempo y medio o tiempo doble en el cronómetro).</li>
+          <li><b>Extensión:</b> de 300 a 500 palabras, en 4 a 7 párrafos.</li>
+          <li><b>Registro:</b> formal y académico.</li>
+        </ul></div></div>
+      <div class="paso-guia"><div class="num" aria-hidden="true">2</div><div>
+        <h3>Proceso de análisis</h3>
+        <ul>
+          <li><b>Lectura:</b> lee con cuidado los dos textos antes de escribir.</li>
+          <li><b>Análisis:</b> identifica la postura y los argumentos principales de cada autor.</li>
+          <li><b>Evaluación:</b> decide qué postura está mejor respaldada.</li>
+          <li><b>Evidencia:</b> usa citas o datos específicos de <b>ambos</b> textos.</li>
+        </ul></div></div>
+      <div class="paso-guia"><div class="num" aria-hidden="true">3</div><div>
+        <h3>Estructura recomendada</h3>
+        <ul>
+          <li><b>Introducción:</b> presenta ambas posturas y tu tesis.</li>
+          <li><b>Desarrollo:</b> tres párrafos, uno por aspecto, comparando la evidencia de cada texto.</li>
+          <li><b>Conclusión:</b> resume tu análisis y confirma tu tesis.</li>
+        </ul></div></div>
+      <div class="paso-guia"><div class="num" aria-hidden="true">4</div><div>
+        <h3>Herramientas de esta pantalla</h3>
+        <ul>
+          <li>Arriba verás siempre el <b>tiempo restante</b> y tus <b>palabras</b>.</li>
+          <li>El botón <b>Caracteres especiales</b> (o la tecla F7) inserta á, é, ñ, ¿, ¡ y otros signos, como en el examen.</li>
+          <li>Tu trabajo se guarda solo en este navegador.</li>
+          <li>Al terminar, <b>Evaluar con la rúbrica oficial</b> envía tu respuesta, la consigna y los dos textos al evaluador.</li>
+        </ul></div></div>
+      <p class="cuenta-guia" id="cuenta-instr" role="timer" aria-live="off">El tiempo empezará en <b id="instr-reloj">3:00</b></p>
+      <div style="text-align:center;margin-top:14px">
+        <button type="button" class="btn btn-principal" id="btn-comenzar">Comenzar la práctica</button>
+      </div>
     </div>
-
-    <script>
-        // Variables globales
-        let instructionTime = 3 * 60; // 3 minutos para instrucciones
-        let timeRemaining = 45 * 60; // 45 minutos para el examen
-        let instructionInterval;
-        let timerInterval;
-        let examStarted = false;
-        let essayResponse = "";
-
-        // Caché para respuestas del evaluador
-        const evaluatorCache = {
-            responses: {},
-        };
-
-        // Caracteres especiales en español
-        const specialChars = [
-            "Á", "É", "Í", "Ó", "Ú", "Ñ", "Ü", "¿", "¡",
-            "á", "é", "í", "ó", "ú", "ñ", "ü", "«", "»",
-            '"', '"', "—", "–", "°", "²", "³", "½", "¼", "¾"
-        ];
-
-        // Inicializar la aplicación
-        document.addEventListener('DOMContentLoaded', function() {
-            setupInstructionsModal();
-            setupSymbolPopup();
-            setupWordCounter();
-            setupEventListeners();
-            setupEvaluator();
-
-            // Inicializar el grid de símbolos
-            const symbolGrid = document.getElementById('symbolGrid');
-            specialChars.forEach(char => {
-                const charBtn = document.createElement('div');
-                charBtn.className = 'symbol-btn';
-                charBtn.textContent = char;
-                charBtn.addEventListener('click', function() {
-                    insertCharacter(char);
-                });
-                symbolGrid.appendChild(charBtn);
-            });
-
-            // Iniciar contador de instrucciones
-            startInstructionTimer();
-        });
-
-        // Configurar modal de instrucciones
-        function setupInstructionsModal() {
-            const modal = document.getElementById('instructionsModal');
-            const showBtn = document.getElementById('showInstructions');
-            const closeBtn = document.getElementById('closeInstructions');
-            const startBtn = document.getElementById('startExam');
-
-            showBtn.addEventListener('click', function() {
-                modal.classList.add('show');
-            });
-
-            closeBtn.addEventListener('click', function() {
-                modal.classList.remove('show');
-            });
-
-            startBtn.addEventListener('click', function() {
-                modal.classList.remove('show');
-                startExam();
-            });
-
-            // Cerrar al hacer clic fuera del modal
-            window.addEventListener('click', function(event) {
-                if (event.target === modal && examStarted) {
-                    modal.classList.remove('show');
-                }
-            });
-
-            // Mostrar instrucciones al iniciar
-            modal.classList.add('show');
-        }
-
-        // Timer para las instrucciones
-        function startInstructionTimer() {
-            updateInstructionDisplay();
-            instructionInterval = setInterval(function() {
-                instructionTime--;
-                updateInstructionDisplay();
-
-                if (instructionTime <= 0) {
-                    clearInterval(instructionInterval);
-                    startExam();
-                }
-            }, 1000);
-        }
-
-        function updateInstructionDisplay() {
-            const minutes = Math.floor(instructionTime / 60);
-            const seconds = instructionTime % 60;
-            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            document.getElementById('instructionTime').textContent = display;
-        }
-
-        // Iniciar el examen
-        function startExam() {
-            examStarted = true;
-            clearInterval(instructionInterval);
-
-            // Ocultar modal de instrucciones
-            document.getElementById('instructionsModal').classList.remove('show');
-
-            // Cambiar etiqueta del timer
-            document.getElementById('timerLabel').style.display = 'none';
-
-            // Mostrar timer principal
-            document.getElementById('mainTimer').style.display = 'block';
-
-            // Habilitar el área de escritura
-            document.getElementById('essayArea').disabled = false;
-            document.getElementById('essayArea').focus();
-
-            // Iniciar timer del examen
-            setupTimer();
-        }
-
-        // Configurar el temporizador del examen
-        function setupTimer() {
-            updateTimerDisplay();
-            timerInterval = setInterval(function() {
-                timeRemaining--;
-                updateTimerDisplay();
-
-                if (timeRemaining <= 0) {
-                    clearInterval(timerInterval);
-                    finishExam();
-                }
-            }, 1000);
-        }
-
-        // Finalizar el examen
-        function finishExam() {
-            const essayArea = document.getElementById('essayArea');
-            essayArea.disabled = true;
-
-            alert('⏰ El tiempo del examen ha finalizado. Su respuesta se enviará automáticamente al evaluador.');
-
-            // Forzar envío si hay texto
-            if (essayArea.value.trim().length > 0) {
-                submitAndShowEvaluator();
-            }
-        }
-
-        function updateTimerDisplay() {
-            const minutes = Math.floor(timeRemaining / 60);
-            const seconds = timeRemaining % 60;
-            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            document.getElementById('timer').textContent = display;
-        }
-
-        // Configurar el popup de símbolos
-        function setupSymbolPopup() {
-            const essayArea = document.getElementById('essayArea');
-            const symbolPopup = document.getElementById('symbolPopup');
-            const showSymbols = document.getElementById('showSymbols');
-            const closeSymbol = document.getElementById('closeSymbol');
-            const cancelBtn = document.getElementById('cancelBtn');
-
-            // Mostrar popup con el botón
-            showSymbols.addEventListener('click', function() {
-                const rect = essayArea.getBoundingClientRect();
-                showSymbolPopup(rect.left + rect.width / 2, rect.top + rect.height / 2);
-            });
-
-            // Mostrar popup con F7
-            document.addEventListener('keydown', function(event) {
-                if (event.key === 'F7') {
-                    event.preventDefault();
-                    const rect = essayArea.getBoundingClientRect();
-                    showSymbolPopup(rect.left + rect.width / 2, rect.top + rect.height / 2);
-                }
-            });
-
-            // Cerrar popup
-            closeSymbol.addEventListener('click', closePopup);
-            cancelBtn.addEventListener('click', closePopup);
-
-            // Click derecho en el área de texto
-            essayArea.addEventListener('contextmenu', function(event) {
-                event.preventDefault();
-                showSymbolPopup(event.clientX, event.clientY);
-            });
-        }
-
-        function showSymbolPopup(x, y) {
-            const symbolPopup = document.getElementById('symbolPopup');
-            symbolPopup.style.display = 'block';
-
-            // Ajustar posición para que no se salga de la pantalla
-            const popupRect = symbolPopup.getBoundingClientRect();
-            const maxX = window.innerWidth - popupRect.width;
-            const maxY = window.innerHeight - popupRect.height;
-
-            symbolPopup.style.left = Math.min(x, maxX) + 'px';
-            symbolPopup.style.top = Math.min(y, maxY) + 'px';
-        }
-
-        function closePopup() {
-            const symbolPopup = document.getElementById('symbolPopup');
-            symbolPopup.style.display = 'none';
-            document.getElementById('essayArea').focus();
-        }
-
-        function insertCharacter(char) {
-            const essayArea = document.getElementById('essayArea');
-            const cursorPos = essayArea.selectionStart;
-            const textBefore = essayArea.value.substring(0, cursorPos);
-            const textAfter = essayArea.value.substring(essayArea.selectionEnd);
-
-            essayArea.value = textBefore + char + textAfter;
-
-            // Colocar el cursor después del carácter insertado
-            essayArea.selectionStart = cursorPos + 1;
-            essayArea.selectionEnd = cursorPos + 1;
-            essayArea.focus();
-
-            // Actualizar contador de palabras
-            updateWordCount();
-        }
-
-        // Configurar contador de palabras
-        function setupWordCounter() {
-            const essayArea = document.getElementById('essayArea');
-            essayArea.addEventListener('input', updateWordCount);
-        }
-
-        function updateWordCount() {
-            const essayArea = document.getElementById('essayArea');
-            const wordCount = document.getElementById('wordCount');
-            const submitBtn = document.getElementById('submitBtn');
-
-            const text = essayArea.value.trim();
-            const words = text.split(/\s+/).filter(word => word.length > 0);
-            const count = words.length;
-
-            wordCount.textContent = `Palabras: ${count} / 300-500`;
-
-            // Habilitar el botón si hay texto y el examen ha comenzado
-            if (text.length > 0 && examStarted) {
-                submitBtn.disabled = false;
-            } else {
-                submitBtn.disabled = true;
-            }
-
-            // Cambiar color según el conteo
-            if (count < 300) {
-                wordCount.className = 'word-count warning';
-            } else if (count > 500) {
-                wordCount.className = 'word-count warning';
-            } else {
-                wordCount.className = 'word-count';
-            }
-        }
-
-        // Cambiar entre pestañas
-        function showTab(tabId, button) {
-            const container = button.closest('.text-section');
-
-            // Ocultar todos los contenidos
-            container.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-
-            // Desactivar todos los botones
-            container.querySelectorAll('.tab-button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-
-            // Mostrar contenido seleccionado
-            document.getElementById(tabId).classList.add('active');
-            button.classList.add('active');
-        }
-
-        // Configurar eventos
-        function setupEventListeners() {
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.addEventListener('click', submitAndShowEvaluator);
-        }
-
-        // Enviar respuesta y mostrar evaluador
-        function submitAndShowEvaluator() {
-            const essayArea = document.getElementById('essayArea');
-            essayResponse = essayArea.value.trim();
-
-            if (essayResponse.length === 0) {
-                alert('⚠️ Por favor, escriba una respuesta antes de continuar.');
-                return;
-            }
-
-            // Mostrar el evaluador con la respuesta
-            showEvaluator();
-        }
-
-        function getTimeUsed() {
-            const totalTime = 45 * 60;
-            const used = totalTime - timeRemaining;
-            const minutes = Math.floor(used / 60);
-            const seconds = used % 60;
-            return `${minutes} minutos y ${seconds} segundos`;
-        }
-
-        function showEvaluator() {
-            // Ocultar sección del examen
-            document.getElementById('examSection').style.display = 'none';
-            
-            // Mostrar sección del evaluador
-            document.getElementById('evaluatorSection').style.display = 'block';
-            
-            // Cargar la respuesta en el evaluador
-            const userInput = document.getElementById('user-input');
-            userInput.value = essayResponse;
-            
-            // Mostrar mensaje de bienvenida en el chatbox
-            const wordCount = essayResponse.split(/\s+/).filter(word => word.length > 0).length;
-            addMessage(
-                `✅ <strong>Tu respuesta extendida ha sido cargada correctamente.</strong><br><br>` +
-                `📊 <strong>Estadísticas:</strong><br>` +
-                `• Número de palabras: ${wordCount}<br>` +
-                `• Tiempo utilizado: ${getTimeUsed()}<br><br>` +
-                `🎯 Ahora puedes hacer clic en <strong>"Evaluar con Rúbrica Oficial GED"</strong> para recibir una evaluación estricta según los criterios oficiales del GED Testing Service.<br><br>` +
-                `<div class="warning-box">⚠️ <strong>RÚBRICA OFICIAL:</strong> Esta versión aplica las 41 subdimensiones específicas del documento oficial. Las puntuaciones serán realistas y estrictas.</div><br>` +
-                `💡 <strong>El evaluador analizará:</strong><br>` +
-                `• Característica 1: Argumentación y Uso de Evidencia (12 subdimensiones)<br>` +
-                `• Característica 2: Desarrollo de Ideas y Estructura (15 subdimensiones)<br>` +
-                `• Característica 3: Claridad y Dominio del Español (14 subdimensiones)`,
-                'bot',
-                '🤖'
-            );
-            
-            // Hacer scroll al principio de la página
-            window.scrollTo(0, 0);
-        }
-
-        // ==================== EVALUADOR CON RÚBRICA OFICIAL ====================
-        // Función para análisis preliminar del texto
-        function analyzeTextStructure(texto) {
-            const numPalabras = texto.split(/\s+/).filter(p => p.length > 0).length;
-            const numParrafos = texto.split(/\n\n+|\.\s*\n/).filter(p => p.trim().length > 0).length;
-            
-            // Buscar referencias a textos fuente
-            const referenciaTextos = /texto|pasaje|autor|fuente|artículo|documento|gonzález|chen|carta|editorial/gi.test(texto);
-            const citasDirectas = /"[^"]+"/g.test(texto) || /según|cita|menciona|afirma|sostiene|argumenta/gi.test(texto);
-            
-            // Buscar estructura argumentativa
-            const argumentativo = /por tanto|en conclusión|sin embargo|además|por otro lado|en contraste|mientras que|aunque/gi.test(texto);
-            
-            // Buscar evidencia específica de ambos textos
-            const evidenciaAmbosTextos = (texto.toLowerCase().includes('gonzález') || texto.toLowerCase().includes('maría')) && 
-                                        (texto.toLowerCase().includes('chen') || texto.toLowerCase().includes('roberto'));
-            
-            return {
-                numPalabras,
-                numParrafos,
-                referenciaTextos,
-                citasDirectas,
-                argumentativo,
-                evidenciaAmbosTextos,
-                longitudAdecuada: numPalabras >= 300 && numPalabras <= 500,
-                estructuraAdecuada: numParrafos >= 4 && numParrafos <= 7
-            };
-        }
-
-        // Configurar el evaluador
-        function setupEvaluator() {
-            const form = document.getElementById('text-form');
-            const userInput = document.getElementById('user-input');
-            const loadingIndicator = document.getElementById('loading');
-
-            // Configurar el formulario
-            form.addEventListener('submit', handleSendMessage);
-
-            async function handleSendMessage(e) {
-                e.preventDefault();
-                const userText = userInput.value.trim();
-                if (!userText) {
-                    alert('⚠️ Por favor, ingrese un texto para evaluar.');
-                    return;
-                }
-
-                // Mostrar mensaje del usuario
-                addMessage(userText, 'user', '📝');
-
-                // Mostrar indicador de carga
-                loadingIndicator.style.display = 'block';
-
-                try {
-                    // Obtener respuesta del evaluador
-                    let botResponse = await getBotResponse(userText);
-                    
-                    // Ocultar indicador de carga
-                    loadingIndicator.style.display = 'none';
-
-                    // Mostrar respuesta del bot
-                    addMessage(botResponse, 'bot', '🎓');
-                } catch (error) {
-                    console.error('Error al procesar la respuesta:', error);
-                    loadingIndicator.style.display = 'none';
-                    
-                    // Mostrar evaluación de respaldo
-                    const fallbackEvaluation = generateFallbackEvaluation(userText);
-                    addMessage(fallbackEvaluation, 'bot', '🎓');
-                }
-            }
-
-            async function getBotResponse(ensayo) {
-                // Verificar caché primero
-                if (evaluatorCache.responses[ensayo]) {
-                    return evaluatorCache.responses[ensayo];
-                }
-
-                // Análisis preliminar
-                const analisis = analyzeTextStructure(ensayo);
-                
-                // Si el texto es demasiado corto, dar evaluación automática negativa
-                if (analisis.numPalabras < 200) {
-                    return `
-                    <div class="evaluation-container">
-                        <div class="error-box">
-                            <strong>⚠️ EVALUACIÓN AUTOMÁTICA: INSUFICIENTE</strong><br>
-                            El texto es demasiado corto (${analisis.numPalabras} palabras). El GED requiere mínimo 300 palabras para una respuesta extendida adecuada.
-                        </div>
-                        
-                        <h3>Evaluación Basada en Rúbrica Oficial GED</h3>
-                        
-                        <div class="trait-evaluation">
-                            <div class="trait-title">Característica 1: Argumentación y Uso de Evidencia <span class="score-badge score-0">0/2</span></div>
-                            <p><strong>Evaluación:</strong> Texto insuficiente para demostrar argumentación basada en textos fuente.</p>
-                            <p><strong>Problemas críticos:</strong> Longitud inadecuada impide evaluación de evidencias textuales.</p>
-                        </div>
-                        
-                        <div class="trait-evaluation">
-                            <div class="trait-title">Característica 2: Desarrollo de Ideas y Estructura <span class="score-badge score-0">0/2</span></div>
-                            <p><strong>Evaluación:</strong> Desarrollo insuficiente de ideas por limitación de longitud.</p>
-                            <p><strong>Problemas críticos:</strong> No permite demostrar estructura organizacional adecuada.</p>
-                        </div>
-                        
-                        <div class="trait-evaluation">
-                            <div class="trait-title">Característica 3: Claridad y Dominio del Español <span class="score-badge score-0">0/2</span></div>
-                            <p><strong>Evaluación:</strong> Muestra insuficiente para evaluar dominio del español estándar.</p>
-                        </div>
-                        
-                        <div class="total-score">Puntuación Total: 0/6</div>
-                        
-                        <h4>Recomendaciones Críticas</h4>
-                        <ol>
-                            <li><strong>Ampliar significativamente el texto</strong> hasta alcanzar 300-500 palabras.</li>
-                            <li>Incluir introducción, desarrollo con evidencias textuales, y conclusión.</li>
-                            <li>Citar evidencia específica de ambos textos fuente.</li>
-                        </ol>
-                    </div>`;
-                }
-
-                // Prompt mejorado con rúbrica oficial estricta
-                const promptMejorado = encodeURIComponent(`
-INSTRUCCIÓN CRÍTICA: Eres un evaluador certificado del GED Testing Service. Debes aplicar ESTRICTAMENTE la rúbrica oficial con las 41 subdimensiones específicas. NO seas permisivo - aplica los criterios reales del examen.
-
-TEXTO A EVALUAR: ${ensayo}
-
-INFORMACIÓN DEL ANÁLISIS PRELIMINAR:
-- Palabras: ${analisis.numPalabras}
-- Párrafos: ${analisis.numParrafos}
-- Referencias a textos: ${analisis.referenciaTextos ? 'Detectadas' : 'No detectadas'}
-- Citas directas: ${analisis.citasDirectas ? 'Presentes' : 'Ausentes'}
-- Evidencia de ambos textos: ${analisis.evidenciaAmbosTextos ? 'Detectada' : 'NO DETECTADA'}
-
-RÚBRICA OFICIAL A APLICAR (SISTEMA 0-2 PUNTOS):
-
-CARACTERÍSTICA 1: ARGUMENTACIÓN Y USO DE EVIDENCIA (12 subdimensiones)
-Evalúa cada subdimensión con puntuación 0, 1, o 2:
-- Afirmaciones claras y explícitas
-- Afirmaciones lógicas basadas en lectura detallada del texto
-- Afirmaciones que apoyan una postura clara
-- Criterio evidente para analizar el asunto
-- Postura relacionada con el tema y enfocada
-- OBLIGATORIO: Citar evidencias de MÚLTIPLES textos fuente
-- Evidencias que apoyan las afirmaciones
-- Comentarios apropiados sobre las evidencias
-- Análisis profundo del asunto descrito
-- Evaluación de la argumentación desarrollada
-- Comprensión clara de los argumentos en los textos
-
-CARACTERÍSTICA 2: DESARROLLO DE IDEAS Y ESTRUCTURA (15 subdimensiones)
-Evalúa cada subdimensión con puntuación 0, 1, o 2:
-- Ideas bien desarrolladas y múltiples extensiones
-- Ideas lógicas en relación con los textos
-- Mayoría de ideas elaboradas
-- Serie progresiva de ideas notoria
-- Detalles relacionados claramente con ideas principales
-- Detalles seleccionados cuidadosamente
-- Estructura organizacional claramente establecida
-- Estructura que realza el mensaje
-- Uso apropiado de frases de transición
-- Estilo formal mantenido
-- Tono apropiado académico
-- Conciencia del público y propósito
-- Selección específica de palabras
-- Uso apropiado del lenguaje (evitar coloquial)
-- Ideas expresadas clara y específicamente
-
-CARACTERÍSTICA 3: CLARIDAD Y DOMINIO DEL ESPAÑOL (14 subdimensiones)
-Evalúa cada subdimensión con puntuación 0, 1, o 2:
-- Estructura variada en oraciones
-- Subordinación, coordinación y paralelismo correctos
-- Evita palabras excesivas y estructuras confusas
-- Uso apropiado de términos de transición
-- Evita oraciones incompletas y mal puntuadas
-- Uso correcto de modos verbales
-- Concordancia sujeto-verbo apropiada
-- Uso apropiado de pronombres
-- Orden correcto de palabras
-- Uso apropiado de mayúsculas
-- Uso correcto de contracciones
-- Puntuación apropiada
-- Errores que no interfieren en comprensión
-- Uso estándar apropiado para borrador académico
-
-PENALIZACIONES AUTOMÁTICAS:
-- Si no hay evidencia de AMBOS textos (González Y Chen): Característica 1 máximo 1/2
-- Si menos de 300 palabras: Todas las características penalizadas
-- Si no hay análisis comparativo: Característica 1 máximo 1/2
-- Si estructura inadecuada (menos de 4 párrafos): Característica 2 penalizada
-
-FORMATO DE RESPUESTA OBLIGATORIO:
-<div class="evaluation-container">
-  <h3>Evaluación Oficial GED - Rúbrica Certificada</h3>
-  
-  [Si hay problemas críticos, incluir caja de advertencia]
-  
-  <div class="trait-evaluation">
-    <div class="trait-title">Característica 1: Argumentación y Uso de Evidencia <span class="score-badge score-[X]">[X]/2</span></div>
-    <p><strong>Subdimensiones evaluadas:</strong> [Listar específicamente cuáles cumplen y cuáles no]</p>
-    <p><strong>Puntuación promedio:</strong> [Suma de subdimensiones] ÷ 12 = [resultado redondeado]</p>
-    <p><strong>Problemas detectados:</strong> [Problemas específicos según rúbrica]</p>
   </div>
-  
-  <div class="trait-evaluation">
-    <div class="trait-title">Característica 2: Desarrollo de Ideas y Estructura <span class="score-badge score-[Y]">[Y]/2</span></div>
-    <p><strong>Subdimensiones evaluadas:</strong> [Listar específicamente cuáles cumplen y cuáles no]</p>
-    <p><strong>Puntuación promedio:</strong> [Suma de subdimensiones] ÷ 15 = [resultado redondeado]</p>
-    <p><strong>Problemas detectados:</strong> [Problemas específicos según rúbrica]</p>
-  </div>
-  
-  <div class="trait-evaluation">
-    <div class="trait-title">Característica 3: Claridad y Dominio del Español <span class="score-badge score-[Z]">[Z]/2</span></div>
-    <p><strong>Subdimensiones evaluadas:</strong> [Listar específicamente cuáles cumplen y cuáles no]</p>
-    <p><strong>Puntuación promedio:</strong> [Suma de subdimensiones] ÷ 14 = [resultado redondeado]</p>
-    <p><strong>Problemas detectados:</strong> [Problemas específicos según rúbrica]</p>
-  </div>
-  
-  <div class="total-score">Puntuación Total: [X+Y+Z]/6</div>
-  
-  <h4>Veredicto Final</h4>
-  <p>[Evaluación honesta del nivel de la respuesta según estándares GED reales]</p>
 </div>
 
-IMPORTANTE: 
-- NO seas condescendiente ni inflaciones las puntuaciones
-- Aplica la rúbrica oficial sin modificaciones
-- Una respuesta sin citas de ambos textos NO puede obtener más de 1 punto en Característica 1
-- Una respuesta de menos de 300 palabras automáticamente recibe puntuaciones bajas
-- Se honesto sobre las deficiencias detectadas
-                `);
+<script>
+"use strict";
 
-                const url = `https://text.pollinations.ai/${promptMejorado}`;
+/* ════════════════════════════════════════════════════════════════════
+   1. DATOS: temas, textos fuente y consignas
+   ════════════════════════════════════════════════════════════════════ */
+const TEMAS = [
+ {
+  "id": "tecnologia",
+  "name": "Tecnología e inteligencia artificial en la educación",
+  "text1": {
+   "title": "La revolución educativa digital",
+   "source": "Revista Educación del Futuro - Investigación Académica",
+   "enfoque": "A favor de la integración de IA en educación",
+   "content": "La inteligencia artificial (IA) está transformando radicalmente el panorama educativo mundial, ofreciendo oportunidades sin precedentes para personalizar el aprendizaje y democratizar el acceso a una educación de calidad. Según el estudio \"Educational AI Impact 2024\" realizado por el Instituto Global de Tecnología Educativa, las instituciones que han implementado sistemas de IA han reportado un incremento del 34% en el rendimiento académico de sus estudiantes y una reducción del 28% en las tasas de deserción escolar.\n\nLos sistemas de tutoría inteligente, como los desarrollados por la Universidad de Stanford, pueden adaptar automáticamente el ritmo y el estilo de enseñanza a las necesidades individuales de cada estudiante. El Dr. Michael Chen, director del Centro de Innovación Educativa de MIT, explica: \"La IA no reemplaza al maestro, sino que lo potencia, proporcionándole herramientas para identificar exactamente dónde cada estudiante necesita apoyo adicional.\"\n\nLa personalización del aprendizaje mediante algoritmos adaptativos ha demostrado ser particularmente efectiva en matemáticas y ciencias. Un estudio longitudinal de cinco años realizado en 847 escuelas públicas de Estados Unidos mostró que los estudiantes que utilizaron plataformas de aprendizaje adaptativo mejoraron sus puntuaciones en exámenes estandarizados en un promedio de 23 puntos, comparado con aquellos que siguieron métodos tradicionales.\n\nAdemás, la IA está eliminando barreras geográficas y económicas. Las plataformas de aprendizaje automático pueden ofrecer educación de alta calidad a estudiantes en áreas rurales o de bajos recursos, donde tradicionalmente el acceso a maestros especializados ha sido limitado. El programa \"AI for All\" implementado en 12 países en desarrollo ha logrado que más de 2.3 millones de estudiantes accedan a contenido educativo personalizado en sus idiomas nativos.\n\nLa retroalimentación instantánea es otro beneficio crucial. Los sistemas de IA pueden evaluar respuestas de estudiantes en tiempo real, proporcionando correcciones inmediatas y explicaciones detalladas. Esto acelera significativamente el proceso de aprendizaje, permitiendo que los estudiantes corrijan errores antes de que se conviertan en malentendidos persistentes.\n\nFinalmente, la IA está preparando a los estudiantes para el futuro laboral. Según el Foro Económico Mundial, el 65% de los trabajos que realizarán los estudiantes actuales aún no existen. La familiarización temprana con tecnologías de IA les proporcionará las habilidades necesarias para prosperar en una economía cada vez más digital y automatizada."
+  },
+  "text2": {
+   "title": "Carta al editor: los peligros de la educación robotizada",
+   "source": "Periódico La Voz Comunitaria - Sección Opinión de Lectores",
+   "enfoque": "En contra de la dependencia excesiva de IA en educación",
+   "content": "Estimado editor,\n\nComo madre de tres hijos y ex-maestra con 25 años de experiencia, me siento obligada a expresar mi profunda preocupación sobre la creciente dependencia de la inteligencia artificial en nuestras escuelas. Lo que vemos hoy no es progreso educativo, sino una peligrosa deshumanización del proceso de aprendizaje.\n\nMi hija mayor, que ahora cursa el noveno grado, me comenta constantemente cómo sus compañeros han perdido la capacidad de pensar de forma independiente. Cuando enfrentan un problema matemático complejo, inmediatamente recurren a aplicaciones de IA para obtener la respuesta, sin siquiera intentar resolver el problema por sí mismos. ¿Dónde está el desarrollo del pensamiento crítico en todo esto?\n\nDurante mis años como educadora, fui testigo de cómo los momentos más significativos de aprendizaje ocurrían en las interacciones humanas genuinas: cuando un estudiante tímido finalmente se animaba a hacer una pregunta, cuando veía ese destello de comprensión en los ojos de un alumno que había estado luchando con un concepto, o cuando los estudiantes colaboraban para resolver un problema complejo. Estas experiencias formativas simplemente no pueden ser replicadas por una máquina, sin importar cuán sofisticada sea.\n\nLos costos económicos también son alarmantes. Nuestra escuela local gastó $2.3 millones en tabletas y software de IA el año pasado, dinero que podría haberse usado para contratar más maestros, mejorar las instalaciones o comprar libros actualizados. En su lugar, tenemos aulas llenas de estudiantes mirando pantallas, con un solo maestro tratando de supervisar 30 dispositivos diferentes.\n\nTambién me preocupa la privacidad de nuestros hijos. Estas plataformas de IA recopilan datos masivos sobre los patrones de aprendizaje, errores y comportamientos de nuestros estudiantes. ¿Quién tiene acceso a esta información? ¿Cómo se utilizará en el futuro? Como padres, estamos entregando los datos más íntimos sobre el desarrollo intelectual de nuestros hijos a corporaciones cuyas motivaciones principales son las ganancias, no el bienestar educativo.\n\nInsto a otros padres y educadores a reconsiderar esta prisa por digitalizar todo aspecto de la educación. Nuestros hijos necesitan más interacción humana, no menos.\n\nAtentamente,\nMaría González\nMadre y ex-educadora preocupada"
+  }
+ },
+ {
+  "id": "salud",
+  "name": "Medicina moderna frente a medicina tradicional",
+  "text1": {
+   "title": "Avances revolucionarios en medicina de precisión",
+   "source": "Diario Médico Internacional - Investigación Científica",
+   "enfoque": "A favor de la medicina moderna y tecnológica",
+   "content": "La medicina de precisión, también conocida como medicina personalizada, está redefiniendo fundamentalmente cómo diagnosticamos y tratamos las enfermedades, marcando el inicio de una nueva era en la atención sanitaria. Según el Instituto Nacional de Salud de Estados Unidos, esta aproximación médica que considera las diferencias individuales en genes, ambiente y estilo de vida, ha logrado incrementar las tasas de curación en ciertos tipos de cáncer hasta en un 67% en los últimos cinco años.\n\nEl Dr. Robert Martinez, oncólogo líder del Hospital Johns Hopkins, reporta casos extraordinarios: \"Hemos tratado a pacientes con melanoma metastásico que, bajo protocolos tradicionales, tenían una expectativa de vida de 6 meses. Con terapias génicas personalizadas, algunos de estos pacientes están completamente libres de cáncer tres años después del diagnóstico.\"\n\nLa secuenciación genética completa, que en el año 2003 costaba 3 mil millones de dólares, ahora puede realizarse por menos de $1,000 y en tan solo 24 horas. Esta democratización de la información genética permite a los médicos identificar predisposiciones a enfermedades antes de que se manifiesten síntomas, facilitando intervenciones preventivas que pueden salvar vidas y reducir costos sanitarios significativamente.\n\nUn estudio multicéntrico publicado en la revista Nature Medicine en 2024, que siguió a 45,000 pacientes durante siete años, demostró que aquellos que recibieron tratamientos basados en análisis farmacogenómicos tuvieron 34% menos efectos adversos y 42% mejor respuesta terapéutica.\n\nLa telemedicina, acelerada por la pandemia de COVID-19, ha demostrado ser igual de efectiva que las consultas presenciales para el 73% de las condiciones médicas comunes, según un análisis de 2.1 millones de consultas virtuales realizado por Kaiser Permanente. Esto ha permitido acceso a atención especializada para pacientes en áreas rurales que anteriormente quedaban desatendidas."
+  },
+  "text2": {
+   "title": "Testimonio: cuando la medicina ancestral sí funciona",
+   "source": "Revista Vida Natural - Columna de Experiencias Personales",
+   "enfoque": "A favor de la medicina tradicional y natural",
+   "content": "Estimado editor,\n\nComo alguien que ha vivido en carne propia tanto los fracasos de la medicina moderna como los éxitos de la medicina tradicional, siento la necesidad de compartir mi testimonio y el de mi familia sobre por qué las prácticas ancestrales siguen siendo relevantes y efectivas en nuestros días.\n\nMi historia comenzó hace cinco años cuando mi esposo fue diagnosticado con artritis reumatoide severa. Los medicamentos recetados por el reumatólogo le causaron efectos secundarios devastadores: úlceras estomacales, depresión severa, pérdida de cabello y una infección pulmonar grave que casi le cuesta la vida. Después de 18 meses de tratamiento, su dolor articular había empeorado y su calidad de vida era deplorable.\n\nDesesperados, decidimos consultar a mi abuela, una curandera tradicional de origen zapoteco que ha tratado problemas articulares durante más de 50 años. Su enfoque fue completamente diferente: cambios dietéticos específicos eliminando alimentos inflamatorios, uso de plantas medicinales como la cola de caballo y el temazcal, y técnicas de relajación transmitidas por generaciones.\n\nEn seis meses, mi esposo experimentó una mejoría que sus médicos calificaron como \"extraordinaria e inexplicable\". Sus marcadores inflamatorios disminuyeron significativamente, recuperó movilidad en sus articulaciones y se sintió como él mismo nuevamente.\n\nLo que más me ha impactado es la diferencia en el enfoque. La medicina moderna trata síntomas aislados con píldoras, mientras que la medicina tradicional ve a la persona completa: cuerpo, mente y espíritu. Los curanderos dedican tiempo a entender el contexto de vida, las emociones y el entorno social del paciente.\n\nCon respeto y gratitud hacia nuestros ancestros,\nCarmen Flores\nMadre, hija y defensora de la medicina tradicional"
+  }
+ },
+ {
+  "id": "ambiente",
+  "name": "Energías renovables frente a combustibles fósiles",
+  "text1": {
+   "title": "La transición energética: datos y realidades económicas",
+   "source": "Análisis Económico Global - Instituto de Investigación Energética",
+   "enfoque": "A favor de la transición a energías renovables",
+   "content": "La transición hacia energías renovables ha alcanzado un punto de inflexión histórico, transformando no solo el panorama energético mundial sino también las estructuras económicas fundamentales de las naciones. Según el Reporte Global de Energías Renovables 2024, las inversiones en tecnologías limpias superaron por primera vez los $2.8 billones de dólares, representando el 73% del total de inversiones energéticas mundiales.\n\nLa Dra. Elena Rodríguez, economista energética del Instituto Tecnológico de Massachusetts, presenta datos reveladores: \"El costo de la energía solar ha disminuido un 89% en la última década, mientras que la eólica ha bajado 70%. Esto ha convertido a las renovables en la opción más económica para nuevos proyectos energéticos en 140 países.\"\n\nLos beneficios ambientales son indiscutibles. Las energías renovables han evitado la emisión de 2.1 mil millones de toneladas de CO2 en 2023, equivalente a retirar 450 millones de automóviles de las carreteras durante un año completo. Países como Dinamarca han demostrado que es posible mantener una economía robusta mientras se reduce las emisiones en más del 35%.\n\nLa seguridad energética nacional se ve fortalecida significativamente. Estados Unidos ha reducido sus importaciones de petróleo del 60% en 2005 al 19% en 2024, principalmente debido al crecimiento de la producción doméstica de energías renovables. Esta independencia energética proporciona mayor estabilidad de precios y reduce la vulnerabilidad a crisis geopolíticas.\n\nLas comunidades rurales han experimentado revitalización económica significativa a través de parques eólicos y solares. En Texas, los pagos anuales a propietarios de tierras por arrendamiento de espacios para turbinas eólicas superan los $760 millones, proporcionando ingresos estables a agricultores y ganaderos en regiones económicamente deprimidas."
+  },
+  "text2": {
+   "title": "Carta al editor: la realidad de un trabajador petrolero",
+   "source": "Diario Regional del Golfo - Sección Opinión Ciudadana",
+   "enfoque": "Perspectiva de trabajadores afectados por la transición energética",
+   "content": "Estimado editor,\n\nMi nombre es Roberto Sánchez y durante los últimos 22 años he trabajado como supervisor de plataforma petrolera en el Golfo de México. Escribo esta carta porque siento que las voces de trabajadores como yo están siendo ignoradas en el debate sobre la transición energética.\n\nEl año pasado, mi compañía anunció el cierre de tres plataformas donde he trabajado durante la mayor parte de mi carrera. Más de 840 trabajadores perdimos nuestros empleos. Nos dijeron que era parte de la \"transición verde\" y que deberíamos capacitarnos para trabajos en energía renovable. Suena bonito en papel, pero la realidad es muy diferente.\n\nTengo 48 años y toda mi experiencia está en petróleo y gas. He intentado aplicar a trabajos en parques eólicos, pero me dicen que necesito certificaciones completamente nuevas que toman años obtener. Mientras tanto, tengo una hipoteca, dos hijos en universidad y gastos médicos de mi esposa que tiene diabetes.\n\nLo que más me frustra es cómo los políticos y activistas hablan de \"empleos verdes\" como si fuera tan fácil como cambiar de camisa. Los trabajos en energía renovable pagan significativamente menos: el salario promedio en la industria eólica es $52,000 al año, mientras que en petróleo ganaba $87,000. Esa no es una diferencia pequeña cuando tienes una familia que mantener.\n\nMi comunidad en Louisiana ha dependido de la industria petrolera durante más de 100 años. Cuando cierran las operaciones petroleras, toda la economía local colapsa: el mecánico, el restaurante, la tienda, las escuelas financiadas por impuestos petroleros. Nuestro distrito escolar anunció el cierre de dos escuelas el próximo año por reducción en ingresos tributarios.\n\nNo estoy en contra de la energía limpia, pero necesitamos planes reales para trabajadores como yo, no solo promesas vagas sobre capacitación.\n\nAtentamente,\nRoberto Sánchez\nTrabajador petrolero, padre de familia\nHouma, Louisiana"
+  }
+ },
+ {
+  "id": "economia",
+  "name": "Trabajo remoto frente a trabajo presencial",
+  "text1": {
+   "title": "El futuro del trabajo: evidencia científica del trabajo remoto",
+   "source": "Harvard Business Review - Investigación Organizacional",
+   "enfoque": "A favor del trabajo remoto basado en datos",
+   "content": "El trabajo remoto ha demostrado ser significativamente más efectivo que el modelo presencial tradicional en múltiples métricas de desempeño organizacional, según el estudio longitudinal más amplio realizado hasta la fecha por la Universidad de Harvard en colaboración con MIT. La investigación, que analizó 847 empresas durante cuatro años, revela que las organizaciones con modelos de trabajo remoto reportan un incremento promedio del 22% en productividad y una reducción del 31% en costos operativos.\n\nLa Dra. Patricia Williams, directora del Instituto de Investigación Laboral de Stanford, presenta datos contundentes: \"Empleados que trabajan remotamente completan un 13% más de llamadas por hora, procesan 19% más solicitudes diarias y muestran niveles de satisfacción laboral 27% superiores comparado con sus contrapartes en oficina.\"\n\nLa retención de talento se ha mejorado dramáticamente. Empresas como GitLab, Buffer y Zapier, que operan completamente remotas, reportan tasas de rotación de personal 40% inferiores al promedio de la industria. El ahorro en costos de reclutamiento y entrenamiento alcanza los $47,000 por empleado anualmente.\n\nEl equilibrio vida-trabajo ha mostrado mejorías cuantificables. Un estudio de 12,000 empleados remotos de la Universidad de Chicago demostró que trabajadores remotos duermen en promedio 47 minutos adicionales por noche, ejercitan 23% más frecuentemente y reportan 34% menos episodios de estrés severo.\n\nLos beneficios ambientales son substanciales: la Agencia de Protección Ambiental calculó que el trabajo remoto ha reducido las emisiones de carbono relacionadas con transporte en 54 millones de toneladas anuales solo en Estados Unidos."
+  },
+  "text2": {
+   "title": "Testimonio: lo que perdemos trabajando desde casa",
+   "source": "Revista Gestión Empresarial - Columna Ejecutiva",
+   "enfoque": "En contra del trabajo remoto por aspectos humanos",
+   "content": "Estimado editor,\n\nComo CEO de una empresa de consultoría con 150 empleados, he experimentado directamente tanto los beneficios como los costos ocultos del trabajo remoto durante los últimos cuatro años.\n\nMi experiencia personal ilustra las limitaciones del trabajo remoto. Durante 2022, dirigí completamente desde casa una negociación crítica con nuestro cliente más importante. A pesar de tener todas las herramientas tecnológicas disponibles, perdimos el contrato. Semanas después, el CEO del cliente me confesó que habían elegido a nuestro competidor porque \"sentían una conexión más genuina durante las reuniones presenciales.\"\n\nEl desarrollo profesional de empleados jóvenes se ha visto significativamente afectado. Una recién graduada brillante que contratamos en 2021 trabajó remotamente durante sus primeros dos años. Aunque era técnicamente competente, le faltaban habilidades de comunicación interpersonal y el conocimiento tácito que se adquiere por observación directa.\n\nLa innovación espontánea se ha reducido dramáticamente. Nuestros mejores productos han surgido históricamente de conversaciones casuales en pasillos y sesiones improvisadas de lluvia de ideas que ocurrían naturalmente en espacios físicos compartidos. Las reuniones virtuales programadas no replican esa serendipia creativa.\n\nEl aislamiento social ha afectado particularmente a empleados que viven solos. Una de nuestras analistas más talentosas me confesó que algunos días la única interacción humana real que tenía eran nuestras reuniones de trabajo. \"La oficina era mi lugar de socialización principal\", me dijo.\n\nNo abogo por eliminar la flexibilidad, pero hemos perdido elementos esenciales de la experiencia humana laboral: conexión, crecimiento, mentoría y camaradería que se cultivan mejor en espacios físicos compartidos.\n\nAtentamente,\nEduardo Martínez\nCEO, Consulting Solutions Group"
+  }
+ },
+ {
+  "id": "arte",
+  "name": "Programas de arte frente a materias STEM en la escuela",
+  "text1": {
+   "title": "Carta al editor: la importancia del arte en la educación",
+   "source": "Periódico local - Sección Cartas al Editor",
+   "enfoque": "A favor de mantener los programas de arte",
+   "content": "Estimado Editor:\n\nComo educadora con más de veinte años de experiencia, me siento obligada a responder al reciente artículo publicado en su periódico sobre los recortes propuestos a los programas de arte en nuestras escuelas públicas. La propuesta de reducir las clases de arte, música y teatro para aumentar el tiempo dedicado a matemáticas y ciencias es un grave error que afectará negativamente el desarrollo integral de nuestros estudiantes.\n\nLas investigaciones demuestran consistentemente que la educación artística mejora el rendimiento académico general. Un estudio de 2019 realizado por la Universidad de Yale encontró que los estudiantes que participan regularmente en actividades artísticas tienen un promedio de calificaciones 15% más alto que aquellos que no lo hacen. Además, estos estudiantes muestran mejores habilidades de pensamiento crítico y resolución de problemas, competencias esenciales para el éxito en todas las áreas académicas.\n\nEl arte no es simplemente un \"extra\" o un lujo en la educación; es una herramienta fundamental para el desarrollo cognitivo y emocional. A través del arte, los estudiantes aprenden a expresarse, a interpretar el mundo que los rodea y a desarrollar la creatividad necesaria para la innovación en cualquier campo. Las empresas tecnológicas más exitosas del mundo, como Apple y Google, valoran enormemente a los empleados con formación artística porque entienden que la creatividad es clave para la innovación.\n\nAdemás, para muchos estudiantes, especialmente aquellos con dificultades en materias tradicionales, las clases de arte pueden ser el único lugar donde experimentan el éxito académico. Eliminar estos programas sería privar a estos estudiantes de oportunidades cruciales para desarrollar confianza y encontrar su pasión.\n\nInsto a la junta escolar a reconsiderar esta propuesta miope. En lugar de ver el arte y las ciencias como competidores por recursos limitados, deberíamos reconocer su naturaleza complementaria. Los grandes científicos de la historia, desde Leonardo da Vinci hasta Albert Einstein, fueron también artistas que entendían que la creatividad y el pensamiento analítico van de la mano.\n\nAtentamente,\nMaría González\nProfesora de Arte, Escuela Secundaria Central"
+  },
+  "text2": {
+   "title": "Editorial: prioridades en la educación del siglo XXI",
+   "source": "Instituto de Política Educativa - Editorial",
+   "enfoque": "A favor de priorizar las materias STEM",
+   "content": "La reciente controversia sobre los recortes propuestos a los programas de arte en nuestras escuelas públicas ha generado un debate apasionado pero, en mi opinión, mal enfocado. Como sociedad, debemos enfrentar la realidad de que nuestros estudiantes están quedando rezagados en matemáticas y ciencias comparados con sus pares internacionales, y es hora de tomar decisiones difíciles pero necesarias.\n\nLos datos son claros: según el último informe PISA (Programa Internacional para la Evaluación de Estudiantes), los estudiantes estadounidenses ocupan el puesto 38 de 71 países en matemáticas y el 24 en ciencias. En un mundo cada vez más dominado por la tecnología y la innovación científica, estas estadísticas son alarmantes. No podemos permitirnos el lujo de mantener el status quo cuando nuestros estudiantes no están preparados para competir en la economía global del conocimiento.\n\nAunque aprecio el valor del arte y la cultura, debemos ser pragmáticos sobre las limitaciones de recursos y tiempo. Cada hora dedicada a clases de arte es una hora menos para fortalecer las habilidades matemáticas y científicas fundamentales. Los trabajos del futuro requerirán competencias en codificación, análisis de datos, ingeniería y ciencias aplicadas. ¿Estamos realmente preparando a nuestros estudiantes para estos desafíos si priorizamos la pintura sobre la programación?\n\nAlgunos argumentan que el arte fomenta la creatividad, pero la creatividad también se puede desarrollar a través de las ciencias. Resolver problemas matemáticos complejos o diseñar experimentos científicos requiere tanto pensamiento creativo como pintar un cuadro. La diferencia es que las habilidades STEM (Ciencia, Tecnología, Ingeniería y Matemáticas) tienen una aplicación directa y medible en el mercado laboral actual.\n\nNo estoy sugiriendo la eliminación completa de los programas de arte, sino una redistribución más estratégica de recursos. Las actividades artísticas pueden continuar como programas extracurriculares opcionales, permitiendo que los estudiantes interesados las persigan sin comprometer el tiempo de instrucción esencial en materias fundamentales.\n\nEn conclusión, aunque el arte tiene su lugar en una educación completa, en un mundo de recursos limitados, debemos priorizar las habilidades que mejor prepararán a nuestros estudiantes para el éxito en el siglo XXI. La elección es clara: podemos aferrarnos a tradiciones románticas o podemos adaptarnos a las realidades del mundo moderno.\n\nDr. Roberto Chen\nDirector, Instituto de Política Educativa"
+  }
+ }
+];
 
-                try {
-                    const response = await fetch(url);
-                    let data = await response.text();
-                    data = data.trim();
+const SOBRE = {
+  tecnologia: "la integración de la inteligencia artificial en la educación",
+  salud: "la medicina moderna de precisión frente a la medicina tradicional",
+  ambiente: "la transición de los combustibles fósiles a las energías renovables",
+  economia: "el trabajo remoto frente al trabajo presencial",
+  arte: "la importancia de los programas de arte frente a las materias STEM en la escuela"
+};
 
-                    // Validar que la respuesta tenga contenido
-                    if (data && data.length > 100) {
-                        // Guardar en caché
-                        evaluatorCache.responses[ensayo] = data;
-                        return data;
-                    } else {
-                        throw new Error('Respuesta de API muy corta o vacía');
-                    }
-                } catch (error) {
-                    console.error('Error en la solicitud:', error);
-                    return generateFallbackEvaluation(ensayo);
-                }
-            }
+const CARACTERES = ["á", "é", "í", "ó", "ú", "ñ", "ü", "Á", "É", "Í", "Ó", "Ú", "Ñ", "Ü",
+  "¿", "¡", "«", "»", "“", "”", "—", "–", "…", "°", "²", "³", "½", "¼", "¾"];
+function consignaDe(t) {
+  return "Los dos textos presentan posturas opuestas sobre " + (SOBRE[t.id] || t.name.toLowerCase()) +
+    ". En tu respuesta, analiza ambas posturas para determinar cuál está mejor fundamentada. " +
+    "Usa evidencia pertinente y específica de ambos textos para respaldar tu respuesta. " +
+    "Dispones de aproximadamente 45 minutos para planificar, escribir y revisar.";
+}
 
-            function generateFallbackEvaluation(ensayo) {
-                const analisis = analyzeTextStructure(ensayo);
-                
-                // Puntuaciones estrictas basadas en análisis
-                let score1 = 0; // Argumentación
-                let score2 = 0; // Desarrollo
-                let score3 = 0; // Claridad
+const PLAN = [
+  "Identifica la postura de cada texto: ¿qué defiende el texto A y qué defiende el texto B?",
+  "Busca puntos en los que ambos textos coinciden.",
+  "Señala las fortalezas y debilidades de cada argumento.",
+  "Distingue hechos (datos, estudios, expertos) de opiniones y experiencias personales.",
+  "Escoge los TRES aspectos que vas a desarrollar.",
+  "Prepara un gancho efectivo para empezar tu introducción.",
+  "Escribe tu TESIS: qué postura está mejor fundamentada y por qué."
+];
 
-                // Característica 1: Argumentación
-                if (analisis.evidenciaAmbosTextos && analisis.citasDirectas) {
-                    score1 = 2;
-                } else if (analisis.referenciaTextos || analisis.citasDirectas) {
-                    score1 = 1;
-                }
+const PARRAFOS = [
+  { titulo: "Párrafo 1: Introducción", corto: "Introducción", pistas: [
+    "Empieza con el gancho que preparaste.",
+    "Indica de dónde provienen los dos textos.",
+    "Menciona los tres aspectos que vas a desarrollar.",
+    "Termina con tu TESIS, clara y específica."] },
+  { titulo: "Párrafo 2: Primer aspecto", corto: "Aspecto 1", pistas: [
+    "Expresa la postura de cada autor sobre este aspecto.",
+    "Parafrasea: no copies textualmente párrafos enteros.",
+    "Argumenta cuál de los dos presenta mejor evidencia.",
+    "Haz referencia específica a esa evidencia."] },
+  { titulo: "Párrafo 3: Segundo aspecto", corto: "Aspecto 2", pistas: [
+    "Empieza con una transición que conecte con el párrafo anterior.",
+    "Expresa la postura de cada autor sobre este aspecto.",
+    "Argumenta cuál presenta mejor evidencia y cítala con precisión."] },
+  { titulo: "Párrafo 4: Tercer aspecto", corto: "Aspecto 3", pistas: [
+    "Empieza con una transición.",
+    "Expresa la postura de cada autor sobre este aspecto.",
+    "Argumenta cuál presenta mejor evidencia y cítala con precisión."] },
+  { titulo: "Párrafo 5: Conclusión", corto: "Conclusión", pistas: [
+    "Retoma el gancho inicial desde una nueva perspectiva.",
+    "Resume tu argumentación sin repetir la introducción palabra por palabra.",
+    "Deja claro que demostraste tu tesis y cierra con firmeza."] }
+];
 
-                // Característica 2: Desarrollo
-                if (analisis.estructuraAdecuada && analisis.argumentativo && analisis.longitudAdecuada) {
-                    score2 = 2;
-                } else if (analisis.argumentativo || (analisis.numParrafos >= 3 && analisis.numPalabras >= 250)) {
-                    score2 = 1;
-                }
+const URL_EVALUADOR = "https://zhemaria.github.io/evaluador-texto/";
+const ORIGEN_EVALUADOR = "https://zhemaria.github.io";
+const PAQUETE_ALM = "ged_re_paquete";       // lo lee el evaluador (mismo sitio)
+const PRACTICA_ALM = "ged_re_practica";     // borrador de esta práctica
+const PREF_ALM = "ged_re_preferencias";     // compartido con el evaluador
 
-                // Característica 3: Claridad
-                if (analisis.longitudAdecuada && analisis.numPalabras >= 300) {
-                    score3 = 2;
-                } else if (analisis.numPalabras >= 200) {
-                    score3 = 1;
-                }
+/* ════════════════════════════════════════════════════════════════════
+   2. UTILIDADES
+   ════════════════════════════════════════════════════════════════════ */
+const $ = (s) => document.querySelector(s);
 
-                // Penalizaciones por deficiencias críticas
-                if (analisis.numPalabras < 250) {
-                    score1 = Math.max(score1 - 1, 0);
-                    score2 = Math.max(score2 - 1, 0);
-                    score3 = Math.max(score3 - 1, 0);
-                }
+function alm(clave, valor) {
+  try {
+    if (valor === undefined) return localStorage.getItem(clave);
+    if (valor === null) { localStorage.removeItem(clave); return null; }
+    localStorage.setItem(clave, valor);
+    return valor;
+  } catch (e) { return null; }
+}
 
-                const totalScore = score1 + score2 + score3;
+function crear(etiqueta, clases, texto) {
+  const el = document.createElement(etiqueta);
+  if (clases) el.className = clases;
+  if (texto !== undefined && texto !== null) el.textContent = String(texto);
+  return el;
+}
 
-                return `
-                <div class="evaluation-container">
-                    <h3>Evaluación Basada en Rúbrica Oficial GED</h3>
-                    
-                    <div class="warning-box">
-                        <strong>⚠️ Evaluación Local (Servicio no disponible)</strong><br>
-                        Aplicando criterios básicos de la rúbrica oficial GED con 41 subdimensiones.
-                    </div>
-                    
-                    <div class="trait-evaluation">
-                        <div class="trait-title">Característica 1: Argumentación y Uso de Evidencia <span class="score-badge score-${score1}">${score1}/2</span></div>
-                        <p><strong>Análisis automático:</strong> ${analisis.evidenciaAmbosTextos ? 
-                            'Se detectan referencias a ambos autores (González y Chen).' : 
-                            'NO se detectan referencias claras a ambos textos fuente. Esto es un requisito obligatorio.'}</p>
-                        <p><strong>Evidencia textual:</strong> ${analisis.citasDirectas ? 'Presente' : 'Ausente o insuficiente'}</p>
-                        <p><strong>Problemas detectados:</strong> ${!analisis.evidenciaAmbosTextos ? 'Falta evidencia de ambos textos. ' : ''}${!analisis.citasDirectas ? 'Sin citas directas específicas.' : ''}</p>
-                    </div>
-                    
-                    <div class="trait-evaluation">
-                        <div class="trait-title">Característica 2: Desarrollo de Ideas y Estructura <span class="score-badge score-${score2}">${score2}/2</span></div>
-                        <p><strong>Análisis automático:</strong> ${analisis.estructuraAdecuada ? 
-                            `Estructura de ${analisis.numParrafos} párrafos es adecuada (4-7 requeridos).` : 
-                            `Estructura de ${analisis.numParrafos} párrafos no cumple el rango recomendado de 4-7.`}</p>
-                        <p><strong>Elementos argumentativos:</strong> ${analisis.argumentativo ? 'Detectados conectores argumentativos' : 'Faltan elementos argumentativos claros'}</p>
-                        <p><strong>Problemas detectados:</strong> ${!analisis.estructuraAdecuada ? 'Estructura organizacional inadecuada. ' : ''}${!analisis.argumentativo ? 'Falta progresión argumentativa clara.' : ''}</p>
-                    </div>
-                    
-                    <div class="trait-evaluation">
-                        <div class="trait-title">Característica 3: Claridad y Dominio del Español <span class="score-badge score-${score3}">${score3}/2</span></div>
-                        <p><strong>Análisis automático:</strong> ${analisis.longitudAdecuada ? 
-                            'Longitud apropiada permite demostrar dominio del idioma.' : 
-                            'Longitud insuficiente para evaluar completamente el dominio del español.'}</p>
-                        <p><strong>Extensión:</strong> ${analisis.numPalabras} palabras ${analisis.longitudAdecuada ? '(Adecuada: 300-500)' : '(Requiere: 300-500)'}</p>
-                        <p><strong>Problemas detectados:</strong> ${!analisis.longitudAdecuada ? 'Longitud inadecuada impide evaluación completa.' : 'Requiere revisión gramatical manual.'}</p>
-                    </div>
-                    
-                    <div class="total-score">Puntuación Total: ${totalScore}/6</div>
-                    
-                    <h4>Problemas Críticos Detectados</h4>
-                    ${!analisis.longitudAdecuada ? `<p>❌ <strong>Longitud inadecuada:</strong> ${analisis.numPalabras} palabras (requiere 300-500)</p>` : ''}
-                    ${!analisis.evidenciaAmbosTextos ? `<p>❌ <strong>Sin evidencia de ambos textos:</strong> Debe referenciar tanto a González como a Chen</p>` : ''}
-                    ${!analisis.citasDirectas ? `<p>❌ <strong>Sin citas textuales:</strong> No se detectan citas directas o referencias específicas</p>` : ''}
-                    ${!analisis.estructuraAdecuada ? `<p>❌ <strong>Estructura inadecuada:</strong> ${analisis.numParrafos} párrafos (requiere 4-7)</p>` : ''}
-                    
-                    <h4>Recomendaciones según Rúbrica Oficial</h4>
-                    <ol>
-                        <li><strong>Evidencia obligatoria:</strong> Incluir citas específicas de AMBOS textos (González y Chen)</li>
-                        <li><strong>Estructura requerida:</strong> Organizar en 4-7 párrafos (introducción, análisis, comparación, conclusión)</li>
-                        <li><strong>Longitud mínima:</strong> Expandir a 300-500 palabras para demostrar dominio completo</li>
-                        <li><strong>Análisis comparativo:</strong> Determinar explícitamente cuál argumento está mejor respaldado</li>
-                        <li><strong>Tono académico:</strong> Mantener estilo formal y objetivo durante todo el ensayo</li>
-                    </ol>
-                    
-                    <div class="error-box">
-                        <strong>RECORDATORIO IMPORTANTE:</strong> Esta evaluación aplica los criterios oficiales del GED Testing Service. Las puntuaciones reflejan los estándares reales del examen, que son estrictos y exigentes.
-                    </div>
-                </div>`;
-            }
-        }
+function mostrarAviso(contenedor, tipo, titulo, cuerpo) {
+  const cont = $(contenedor);
+  cont.innerHTML = "";
+  const caja = crear("div", "aviso " + (tipo || ""));
+  caja.setAttribute("role", tipo === "error" ? "alert" : "status");
+  if (titulo) caja.appendChild(crear("strong", null, titulo));
+  if (cuerpo) caja.appendChild(document.createTextNode(cuerpo));
+  cont.appendChild(caja);
+  return caja;
+}
 
-        // Función para agregar mensajes al chatbox
-        function addMessage(text, className, emoji) {
-            const chatbox = document.getElementById('chatbox');
-            const message = document.createElement('div');
-            message.className = `message ${className}`;
+// Confirmación dentro de la página (sin cuadros del navegador)
+function confirmarEnPagina(contenedor, titulo, cuerpo, textoSi, alAceptar) {
+  const caja = mostrarAviso(contenedor, "error", titulo, cuerpo);
+  caja.setAttribute("role", "alertdialog");
+  const fila = crear("div", "grupo-botones");
+  const si = crear("button", "btn btn-principal", textoSi);
+  const no = crear("button", "btn btn-sec", "Cancelar");
+  si.type = no.type = "button";
+  si.addEventListener("click", () => { $(contenedor).innerHTML = ""; alAceptar(); });
+  no.addEventListener("click", () => { $(contenedor).innerHTML = ""; });
+  fila.appendChild(si); fila.appendChild(no);
+  caja.appendChild(fila);
+  no.focus();
+}
 
-            const emojiSpan = document.createElement('span');
-            emojiSpan.className = 'emoji-avatar';
-            emojiSpan.textContent = emoji;
+function contar(texto) {
+  const limpio = (texto || "").trim();
+  if (!limpio) return { palabras: 0, parrafos: 0, oraciones: 0 };
+  return {
+    palabras: limpio.split(/\s+/).filter(Boolean).length,
+    parrafos: limpio.split(/\n+/).map((p) => p.trim()).filter(Boolean).length,
+    oraciones: (limpio.match(/[^.!?…]+[.!?…]+(\s|$)/g) || []).length || 1
+  };
+}
 
-            const bubble = document.createElement('div');
-            bubble.className = 'text-bubble tex2jax_process';
-            bubble.innerHTML = text;
+/* ════════════════════════════════════════════════════════════════════
+   3. PREFERENCIAS DE PRESENTACIÓN (DUA) — compartidas con el evaluador
+   ════════════════════════════════════════════════════════════════════ */
+const ESCALAS = [{ v: 1, t: "normal" }, { v: 1.15, t: "grande" }, { v: 1.32, t: "muy grande" }];
+let iEscala = 0;
 
-            message.appendChild(emojiSpan);
-            message.appendChild(bubble);
+function guardarPreferencias() {
+  alm(PREF_ALM, JSON.stringify({
+    oscuro: document.body.classList.contains("oscuro"),
+    contraste: document.body.classList.contains("contraste"),
+    escala: iEscala
+  }));
+}
+function aplicarPreferencias() {
+  let p = {};
+  try { p = JSON.parse(alm(PREF_ALM) || "{}"); } catch (e) { p = {}; }
+  if (p.oscuro) { document.body.classList.add("oscuro"); $("#btn-tema").setAttribute("aria-pressed", "true"); $("#btn-tema").textContent = "Modo claro"; }
+  if (p.contraste) { document.body.classList.add("contraste"); $("#btn-contraste").setAttribute("aria-pressed", "true"); }
+  iEscala = Number(p.escala) || 0;
+  if (!ESCALAS[iEscala]) iEscala = 0;
+  document.documentElement.style.setProperty("--escala", ESCALAS[iEscala].v);
+  $("#btn-texto").textContent = "Texto: " + ESCALAS[iEscala].t;
+}
+$("#btn-tema").addEventListener("click", function () {
+  const oscuro = document.body.classList.toggle("oscuro");
+  this.setAttribute("aria-pressed", String(oscuro));
+  this.textContent = oscuro ? "Modo claro" : "Modo oscuro";
+  guardarPreferencias();
+});
+$("#btn-contraste").addEventListener("click", function () {
+  const alto = document.body.classList.toggle("contraste");
+  this.setAttribute("aria-pressed", String(alto));
+  guardarPreferencias();
+});
+$("#btn-texto").addEventListener("click", function () {
+  iEscala = (iEscala + 1) % ESCALAS.length;
+  document.documentElement.style.setProperty("--escala", ESCALAS[iEscala].v);
+  this.textContent = "Texto: " + ESCALAS[iEscala].t;
+  guardarPreferencias();
+});
 
-            // Añadir botón de copiar solo a mensajes del bot
-            if (className === 'bot') {
-                const copyBtn = document.createElement('button');
-                copyBtn.className = 'copy-btn';
-                copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
-                copyBtn.title = 'Copiar evaluación';
+/* ════════════════════════════════════════════════════════════════════
+   4. ESTADO Y BORRADOR
+   ════════════════════════════════════════════════════════════════════ */
+let estado = { tema: "", parrafos: ["", "", "", "", ""], plan: [] };
+let actual = 0;
 
-                // Añadir función de copiar al botón
-                copyBtn.addEventListener('click', function() {
-                    copyTextToClipboard(text);
-                    copyBtn.innerHTML = '<i class="fas fa-check"></i>';
-                    copyBtn.style.background = '#28a745';
-                    setTimeout(() => {
-                        copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
-                        copyBtn.style.background = '#4facfe';
-                    }, 2000);
-                });
+function guardarPractica() { alm(PRACTICA_ALM, JSON.stringify(estado)); }
 
-                bubble.appendChild(copyBtn);
-            }
+function temaActual() { return TEMAS.find((t) => t.id === estado.tema) || null; }
 
-            chatbox.appendChild(message);
-            chatbox.scrollTop = chatbox.scrollHeight;
+function hayEscritura() { return estado.parrafos.some((p) => p.trim()); }
 
-            // Renderizar MathJax si está disponible
-            if (window.MathJax && window.MathJax.typeset) {
-                window.MathJax.typeset([bubble]);
-            }
-        }
+/* ════════════════════════════════════════════════════════════════════
+   5. TEMA Y TEXTOS
+   ════════════════════════════════════════════════════════════════════ */
+TEMAS.forEach((t) => {
+  const o = crear("option", null, t.name);
+  o.value = t.id;
+  $("#sel-tema").appendChild(o);
+});
 
-        // Función para copiar texto al portapapeles
-        function copyTextToClipboard(text) {
-            // Eliminar las etiquetas HTML y mantener solo el texto
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = text;
-            const plainText = tempDiv.textContent || tempDiv.innerText || '';
+function pintarFuente(letra, f) {
+  $("#" + letra + "-titulo").textContent = f.title;
+  const meta = $("#" + letra + "-meta");
+  meta.innerHTML = "";
+  meta.appendChild(crear("b", null, "Fuente: "));
+  meta.appendChild(document.createTextNode(f.source));
+  meta.appendChild(crear("br"));
+  meta.appendChild(crear("b", null, "Enfoque: "));
+  meta.appendChild(document.createTextNode(f.enfoque));
+  const cuerpo = $("#" + letra + "-cuerpo");
+  cuerpo.innerHTML = "";
+  f.content.split(/\n\s*\n/).forEach((p) => {
+    // Las líneas sueltas (firmas de cartas) conservan su salto
+    const parr = crear("p");
+    p.trim().split("\n").forEach((linea, i) => {
+      if (i) parr.appendChild(crear("br"));
+      parr.appendChild(document.createTextNode(linea));
+    });
+    cuerpo.appendChild(parr);
+  });
+}
 
-            // Copiar al portapapeles
-            navigator.clipboard.writeText(plainText).then(() => {
-                console.log('Texto copiado correctamente');
-            }).catch(err => {
-                console.error('Error al copiar texto: ', err);
-                // Fallback para navegadores más antiguos
-                fallbackCopyTextToClipboard(plainText);
-            });
-        }
+function mostrarTema(abrirTextos) {
+  const t = temaActual();
+  const visible = !!t;
+  ["#paso-textos", "#paso-plan", "#paso-escritura", "#paso-revision"].forEach((s) => { $(s).hidden = !visible; });
+  ["#nav-textos", "#nav-plan", "#nav-escritura", "#nav-revision"].forEach((s) =>
+    visible ? $(s).removeAttribute("aria-disabled") : $(s).setAttribute("aria-disabled", "true"));
+  $("#bloque-consigna").hidden = !visible;
+  if (!t) return;
+  $("#sel-tema").value = t.id;
+  const c = $("#consigna");
+  c.innerHTML = "";
+  c.appendChild(crear("span", "rotulo", "Consigna"));
+  c.appendChild(document.createTextNode(consignaDe(t)));
+  pintarFuente("a", t.text1);
+  pintarFuente("b", t.text2);
+  if (abrirTextos) { $("#det-a").open = true; $("#det-b").open = true; }
+  actualizarRevision();
+}
 
-        // Método alternativo para copiar texto
-        function fallbackCopyTextToClipboard(text) {
-            const textArea = document.createElement('textarea');
-            textArea.value = text;
-            textArea.style.top = '0';
-            textArea.style.left = '0';
-            textArea.style.position = 'fixed';
-            textArea.style.opacity = '0';
+function elegirTema(id) {
+  if (id === estado.tema) return;
+  if (hayEscritura()) {
+    $("#sel-tema").value = estado.tema;
+    const t = TEMAS.find((x) => x.id === id);
+    confirmarEnPagina("#aviso-tema", "¿Cambiar de tema?",
+      "Si cambias a «" + (t ? t.name : "otro tema") + "», se borrará lo que llevas escrito.",
+      "Sí, cambiar de tema", () => aplicarTema(id));
+    return;
+  }
+  aplicarTema(id);
+}
 
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
+function aplicarTema(id) {
+  estado = { tema: id, parrafos: ["", "", "", "", ""], plan: [] };
+  document.querySelectorAll(".panel textarea").forEach((ta) => { ta.value = ""; });
+  pintarPlan();
+  irAParrafo(0, false);
+  guardarPractica();
+  mostrarTema(true);
+  if (id) {
+    mostrarAviso("#aviso-tema", "exito", "Tema listo: " + temaActual().name + ".",
+      " Lee la consigna y después los dos textos del paso 2.");
+  } else {
+    $("#aviso-tema").innerHTML = "";
+  }
+}
 
-            try {
-                const successful = document.execCommand('copy');
-                if (!successful) console.error('No se pudo copiar el texto');
-            } catch (err) {
-                console.error('Error en fallback: ', err);
-            }
+$("#sel-tema").addEventListener("change", function () { elegirTema(this.value); });
+$("#btn-azar").addEventListener("click", () => {
+  const otros = TEMAS.filter((t) => t.id !== estado.tema);
+  elegirTema(otros[Math.floor(Math.random() * otros.length)].id);
+});
+$("#btn-abrir-textos").addEventListener("click", () => { $("#det-a").open = true; $("#det-b").open = true; });
+$("#btn-cerrar-textos").addEventListener("click", () => { $("#det-a").open = false; $("#det-b").open = false; });
 
-            document.body.removeChild(textArea);
-        }
+/* ════════════════════════════════════════════════════════════════════
+   6. PLAN PREVIO
+   ════════════════════════════════════════════════════════════════════ */
+function pintarPlan() {
+  const ul = $("#lista-plan");
+  ul.innerHTML = "";
+  PLAN.forEach((txt, i) => {
+    const li = crear("li");
+    const lab = crear("label");
+    const cb = crear("input");
+    cb.type = "checkbox";
+    cb.checked = estado.plan.indexOf(i) !== -1;
+    cb.addEventListener("change", () => {
+      estado.plan = estado.plan.filter((n) => n !== i);
+      if (cb.checked) estado.plan.push(i);
+      guardarPractica();
+      marcarNav();
+    });
+    lab.appendChild(cb);
+    lab.appendChild(crear("span", null, txt));
+    li.appendChild(lab);
+    ul.appendChild(li);
+  });
+}
 
-        // Función para mostrar/ocultar el modal de ayuda
-        function toggleHelp() {
-            const helpModal = document.getElementById('helpModal');
-            helpModal.classList.toggle('active');
-        }
+/* ════════════════════════════════════════════════════════════════════
+   7. ESCRITURA POR PÁRRAFOS (pestañas accesibles)
+   ════════════════════════════════════════════════════════════════════ */
+PARRAFOS.forEach((p, i) => {
+  const tab = crear("button", "pestana");
+  tab.type = "button";
+  tab.id = "tab-" + i;
+  tab.setAttribute("role", "tab");
+  tab.setAttribute("aria-controls", "panel-" + i);
+  tab.appendChild(crear("span", "estado"));
+  tab.appendChild(document.createTextNode((i + 1) + ". " + p.corto));
+  tab.addEventListener("click", () => irAParrafo(i, true));
+  tab.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight") { e.preventDefault(); irAParrafo((i + 1) % PARRAFOS.length, false); $("#tab-" + actual).focus(); }
+    if (e.key === "ArrowLeft") { e.preventDefault(); irAParrafo((i + PARRAFOS.length - 1) % PARRAFOS.length, false); $("#tab-" + actual).focus(); }
+  });
+  $("#pestanas").appendChild(tab);
 
-        // Cerrar modal haciendo clic fuera del contenido
-        document.addEventListener('DOMContentLoaded', function() {
-            const helpModal = document.getElementById('helpModal');
-            if (helpModal) {
-                helpModal.addEventListener('click', function(event) {
-                    if (event.target === helpModal) {
-                        toggleHelp();
-                    }
-                });
-            }
-        });
-    </script>
+  const panel = crear("div", "panel");
+  panel.id = "panel-" + i;
+  panel.setAttribute("role", "tabpanel");
+  panel.setAttribute("aria-labelledby", "tab-" + i);
+  const pista = crear("div", "pista-parrafo");
+  pista.appendChild(crear("h3", null, p.titulo));
+  const ul = crear("ul");
+  p.pistas.forEach((x) => ul.appendChild(crear("li", null, x)));
+  pista.appendChild(ul);
+  panel.appendChild(pista);
+  const lab = crear("label", "etiqueta", "Escribe aquí tu " + p.titulo.split(": ")[1].toLowerCase());
+  lab.setAttribute("for", "ta-" + i);
+  panel.appendChild(lab);
+  const ta = crear("textarea");
+  ta.id = "ta-" + i;
+  ta.spellcheck = true;
+  ta.addEventListener("input", () => {
+    estado.parrafos[i] = ta.value;
+    guardarPractica();
+    pintarConteoParrafo(i);
+    marcarEstados();
+    marcarNav();
+  });
+  panel.appendChild(ta);
+  const conteo = crear("p", "conteo-parrafo");
+  conteo.id = "conteo-" + i;
+  conteo.setAttribute("aria-live", "polite");
+  panel.appendChild(conteo);
+  $("#paneles").appendChild(panel);
+});
+
+function pintarConteoParrafo(i) {
+  const n = contar(estado.parrafos[i]).palabras;
+  $("#conteo-" + i).textContent = n + (n === 1 ? " palabra" : " palabras");
+}
+
+function marcarEstados() {
+  PARRAFOS.forEach((_, i) => {
+    $("#tab-" + i + " .estado").classList.toggle("lleno", !!estado.parrafos[i].trim());
+  });
+}
+
+function irAParrafo(i, enfocar) {
+  actual = i;
+  PARRAFOS.forEach((_, j) => {
+    const sel = j === i;
+    $("#tab-" + j).setAttribute("aria-selected", String(sel));
+    $("#tab-" + j).tabIndex = sel ? 0 : -1;
+    $("#panel-" + j).hidden = !sel;
+  });
+  $("#btn-anterior").disabled = i === 0;
+  $("#btn-siguiente").textContent = i === PARRAFOS.length - 1 ? "Revisar mi respuesta →" : "Siguiente párrafo →";
+  if (enfocar) $("#ta-" + i).focus();
+}
+
+$("#btn-anterior").addEventListener("click", () => { if (actual > 0) irAParrafo(actual - 1, true); });
+$("#btn-siguiente").addEventListener("click", () => {
+  if (actual < PARRAFOS.length - 1) { irAParrafo(actual + 1, true); return; }
+  actualizarRevision();
+  location.hash = "paso-revision";
+  $("#borrador").focus({ preventScroll: true });
+});
+
+/* ════════════════════════════════════════════════════════════════════
+   8. REVISIÓN
+   ════════════════════════════════════════════════════════════════════ */
+function ensayoCompleto() {
+  return estado.parrafos.map((p) => p.trim()).filter(Boolean).join("\n\n");
+}
+
+function actualizarRevision() {
+  const b = $("#borrador");
+  b.innerHTML = "";
+  const partes = estado.parrafos.map((p) => p.trim()).filter(Boolean);
+  if (!partes.length) b.appendChild(crear("p", "vacio", "Todavía no has escrito ningún párrafo. Empieza en el paso 4."));
+  partes.forEach((p) => b.appendChild(crear("p", null, p.replace(/\s*\n\s*/g, " "))));
+
+  const c = contar(ensayoCompleto());
+  $("#c-palabras").textContent = c.palabras;
+  $("#c-parrafos").textContent = c.parrafos;
+  $("#c-oraciones").textContent = c.palabras ? c.oraciones : 0;
+  const barra = $("#barra-ext");
+  barra.style.width = Math.min((c.palabras / 600) * 100, 100) + "%";
+  barra.className = c.palabras >= 300 && c.palabras <= 500 ? "bien" : "";
+  let msg = "Extensión recomendada: de 300 a 500 palabras, en 4 a 7 párrafos.";
+  if (c.palabras === 0) { /* mensaje base */ }
+  else if (c.palabras < 120) msg = "Faltan " + (300 - c.palabras) + " palabras para el mínimo recomendado. El evaluador necesita al menos 120 para calificar.";
+  else if (c.palabras < 300) msg = "Faltan " + (300 - c.palabras) + " palabras para el mínimo recomendado de 300.";
+  else if (c.palabras <= 500) msg = "Extensión adecuada. " + (c.parrafos >= 4 && c.parrafos <= 7 ? "El número de párrafos también es apropiado." : "Conviene organizar el texto en 4 a 7 párrafos.");
+  else msg = "El texto excede las 500 palabras recomendadas. Más extensión no mejora la puntuación si la evidencia no es específica.";
+  $("#medidor-desc").textContent = msg;
+}
+
+function pintarTotales() {
+  const n = contar(ensayoCompleto()).palabras;
+  $("#barra-palabras").textContent = n;
+  $("#total-escritura").textContent = n;
+}
+
+function marcarNav() {
+  pintarTotales();
+  const t = !!temaActual();
+  $("#nav-tema").classList.toggle("hecho", t);
+  $("#nav-plan").classList.toggle("hecho", t && estado.plan.length === PLAN.length);
+  $("#nav-escritura").classList.toggle("hecho", t && estado.parrafos.every((p) => p.trim()));
+  actualizarRevision();
+}
+
+$("#btn-editar").addEventListener("click", () => {
+  const vacio = estado.parrafos.findIndex((p) => !p.trim());
+  irAParrafo(vacio === -1 ? 0 : vacio, false);
+  location.hash = "paso-escritura";
+  $("#ta-" + actual).focus({ preventScroll: true });
+});
+
+$("#btn-copiar").addEventListener("click", async () => {
+  const texto = ensayoCompleto();
+  if (!texto) { mostrarAviso("#aviso-revision", "error", "No hay nada que copiar.", "Escribe tu respuesta en el paso 4."); return; }
+  let ok = false;
+  try { await navigator.clipboard.writeText(texto); ok = true; } catch (e) {
+    const ta = crear("textarea");
+    ta.value = texto;
+    ta.style.cssText = "position:fixed;top:0;left:0;width:1px;height:1px;opacity:0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { ok = document.execCommand("copy"); } catch (e2) { ok = false; }
+    ta.remove();
+  }
+  if (ok) mostrarAviso("#aviso-revision", "exito", "Respuesta copiada.", "Ya puedes pegarla donde la necesites con Ctrl+V (en Mac, Cmd+V).");
+  else mostrarAviso("#aviso-revision", "error", "No se pudo copiar automáticamente.", "Selecciona el texto del recuadro de revisión y cópialo con Ctrl+C.");
+});
+
+$("#btn-imprimir").addEventListener("click", () => {
+  const t = temaActual();
+  const w = window.open("", "_blank");
+  if (!w) { mostrarAviso("#aviso-revision", "error", "El navegador bloqueó la ventana.", "Permite las ventanas emergentes de esta página e inténtalo de nuevo."); return; }
+  const d = w.document;
+  d.open();
+  d.write("<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><title>Respuesta extendida</title>" +
+    "<style>body{font-family:Georgia,serif;margin:40px;line-height:1.8;color:#000}h1{font-size:1.3rem;margin:0 0 6px}" +
+    ".c{font-size:.9rem;border-left:4px solid #0f5c63;padding:6px 12px;margin:0 0 24px;color:#333}p{text-indent:2em;margin:0 0 1em}</style></head><body></body></html>");
+  d.close();
+  d.body.appendChild(Object.assign(d.createElement("h1"), { textContent: "Respuesta extendida: " + (t ? t.name : "Práctica GED") }));
+  if (t) d.body.appendChild(Object.assign(d.createElement("div"), { className: "c", textContent: consignaDe(t) }));
+  estado.parrafos.map((p) => p.trim()).filter(Boolean).forEach((p) =>
+    d.body.appendChild(Object.assign(d.createElement("p"), { textContent: p })));
+  w.focus();
+  w.print();
+});
+
+$("#btn-nueva").addEventListener("click", () => {
+  if (hayEscritura()) {
+    confirmarEnPagina("#aviso-revision", "¿Empezar una práctica nueva?",
+      "Se borrará tu respuesta actual. Si quieres conservarla, primero cópiala o imprímela.",
+      "Sí, empezar de nuevo", nuevaPractica);
+    return;
+  }
+  nuevaPractica();
+});
+
+function nuevaPractica() {
+  estado = { tema: "", parrafos: ["", "", "", "", ""], plan: [] };
+  document.querySelectorAll(".panel textarea").forEach((ta) => { ta.value = ""; });
+  alm(PRACTICA_ALM, null);
+  $("#sel-tema").value = "";
+  $("#aviso-tema").innerHTML = "";
+  $("#aviso-revision").innerHTML = "";
+  pintarPlan();
+  PARRAFOS.forEach((_, i) => pintarConteoParrafo(i));
+  marcarEstados();
+  irAParrafo(0, false);
+  mostrarTema(false);
+  marcarNav();
+  location.hash = "paso-tema";
+  $("#sel-tema").focus({ preventScroll: true });
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   9. EVALUACIÓN: envío del paquete al evaluador
+   Canal 1: almacenamiento local (si esta página está en zhemaria.github.io).
+   Canal 2: mensaje entre ventanas (si se abrió desde otro sitio, p. ej.
+   un aula virtual): el evaluador avisa que está listo y se le responde.
+   ════════════════════════════════════════════════════════════════════ */
+let paqueteActual = null;
+let ventanaEvaluador = null;
+
+function textoFuente(f) {
+  return f.title + "\nFuente: " + f.source + "\n\n" + f.content;
+}
+
+$("#btn-evaluar").addEventListener("click", () => {
+  const t = temaActual();
+  const ensayo = ensayoCompleto();
+  const c = contar(ensayo);
+  if (!t) { mostrarAviso("#aviso-revision", "error", "Falta elegir el tema.", "Vuelve al paso 1."); return; }
+  if (c.palabras < 120) {
+    mostrarAviso("#aviso-revision", "error", "Tu respuesta es todavía muy breve para evaluarla.",
+      "Tiene " + c.palabras + " palabras y el evaluador necesita al menos 120. Lo recomendable son de 300 a 500. Vuelve al paso 4 y desarrolla tus párrafos.");
+    return;
+  }
+  paqueteActual = {
+    tema: t.name,
+    consigna: consignaDe(t),
+    a: textoFuente(t.text1),
+    b: textoFuente(t.text2),
+    ensayo: ensayo,
+    fecha: Date.now()
+  };
+  alm(PAQUETE_ALM, JSON.stringify(paqueteActual));
+  ventanaEvaluador = window.open(URL_EVALUADOR, "_blank");
+  if (!ventanaEvaluador) {
+    mostrarAviso("#aviso-revision", "error", "El navegador bloqueó la nueva pestaña.",
+      "Permite las ventanas emergentes de esta página y vuelve a pulsar «Evaluar con la rúbrica oficial».");
+    return;
+  }
+  mostrarAviso("#aviso-revision", "exito", "Evaluador abierto en otra pestaña.",
+    "Tu respuesta, la consigna y los dos textos ya van cargados. Si es la primera vez en este equipo, el evaluador te pedirá una clave de Groq.");
+});
+
+window.addEventListener("message", (e) => {
+  if (e.origin !== ORIGEN_EVALUADOR || !paqueteActual) return;
+  if (!ventanaEvaluador || e.source !== ventanaEvaluador) return;
+  if (e.data && e.data.tipo === "ged-re-listo") {
+    e.source.postMessage({ tipo: "ged-re-paquete", paquete: paqueteActual }, ORIGEN_EVALUADOR);
+    alm(PAQUETE_ALM, null);
+  }
+});
+
+/* ════════════════════════════════════════════════════════════════════
+   10. CRONÓMETRO
+   ════════════════════════════════════════════════════════════════════ */
+let relojInt = null, relojSeg = 45 * 60, relojActivo = false;
+function pintarReloj() {
+  const m = Math.floor(relojSeg / 60), s = relojSeg % 60;
+  const txt = String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+  $("#reloj").textContent = txt;
+  $("#reloj").classList.toggle("alerta", relojSeg <= 300);
+  $("#barra-reloj").textContent = txt;
+  $("#estado-tiempo").classList.toggle("alerta", relojSeg <= 300);
+}
+$("#duracion").addEventListener("change", function () {
+  if (relojActivo) return;
+  relojSeg = Number(this.value) * 60;
+  pintarReloj();
+});
+$("#btn-reloj").addEventListener("click", function () {
+  if (relojActivo) {
+    clearInterval(relojInt); relojActivo = false;
+    this.textContent = "Reanudar"; $("#reloj-pie").textContent = "En pausa";
+    return;
+  }
+  relojActivo = true;
+  this.textContent = "Pausar"; $("#reloj-pie").textContent = "En marcha";
+  relojInt = setInterval(() => {
+    relojSeg = Math.max(0, relojSeg - 1);
+    pintarReloj();
+    if (relojSeg === 300) $("#reloj-pie").textContent = "Quedan 5 minutos: dedica este tiempo a revisar.";
+    if (relojSeg === 0) {
+      clearInterval(relojInt); relojActivo = false;
+      $("#btn-reloj").textContent = "Iniciar";
+      $("#reloj-pie").textContent = "Tiempo terminado";
+      $("#estado-tiempo").firstChild.textContent = "Tiempo terminado ";
+      if (temaActual()) {
+        actualizarRevision();
+        location.hash = "paso-revision";
+        mostrarAviso("#aviso-revision", "", "Se acabaron los 45 minutos.",
+          " En el examen real tu respuesta se entregaría así. Revísala y pulsa «Evaluar con la rúbrica oficial». Si quieres, puedes seguir escribiendo para practicar.");
+      }
+    }
+  }, 1000);
+});
+$("#btn-reloj-reset").addEventListener("click", () => {
+  clearInterval(relojInt); relojActivo = false;
+  relojSeg = Number($("#duracion").value) * 60;
+  $("#btn-reloj").textContent = "Iniciar"; $("#reloj-pie").textContent = "Detenido";
+  $("#estado-tiempo").firstChild.textContent = "Tiempo restante ";
+  pintarReloj();
+});
+
+/* ════════════════════════════════════════════════════════════════════
+   10 b. CARACTERES ESPECIALES (botón o F7, como en el examen)
+   ════════════════════════════════════════════════════════════════════ */
+CARACTERES.forEach((ch) => {
+  const b = crear("button", null, ch);
+  b.type = "button";
+  b.setAttribute("aria-label", "Insertar " + ch);
+  b.addEventListener("mousedown", (e) => e.preventDefault()); // conserva el cursor en el recuadro
+  b.addEventListener("click", () => insertarCaracter(ch));
+  $("#paleta-rejilla").appendChild(b);
+});
+
+function insertarCaracter(ch) {
+  const ta = $("#ta-" + actual);
+  const ini = ta.selectionStart, fin = ta.selectionEnd;
+  ta.value = ta.value.slice(0, ini) + ch + ta.value.slice(fin);
+  ta.selectionStart = ta.selectionEnd = ini + ch.length;
+  ta.focus();
+  ta.dispatchEvent(new Event("input"));
+}
+
+function alternarPaleta(abrir) {
+  const pal = $("#paleta");
+  const visible = abrir === undefined ? pal.hidden : abrir;
+  pal.hidden = !visible;
+  $("#btn-caracteres").setAttribute("aria-expanded", String(visible));
+  if (!visible && !$("#paso-escritura").hidden) $("#ta-" + actual).focus({ preventScroll: true });
+}
+$("#btn-caracteres").addEventListener("click", () => alternarPaleta());
+document.addEventListener("keydown", (e) => {
+  if (e.key === "F7") {
+    e.preventDefault();
+    if ($("#paso-escritura").hidden) return;
+    alternarPaleta();
+    if (!$("#paleta").hidden) $("#ta-" + actual).scrollIntoView({ block: "center" });
+  } else if (e.key === "Escape" && !$("#paleta").hidden && !$("#velo-instr").classList.contains("abierto")) {
+    alternarPaleta(false);
+  }
+});
+
+/* ════════════════════════════════════════════════════════════════════
+   10 c. PRESENTACIÓN E INSTRUCCIONES
+   Como en el examen: 3 minutos para leer; al terminar o al pulsar
+   «Comenzar», arranca el cronómetro de la tarea.
+   ════════════════════════════════════════════════════════════════════ */
+let instrSeg = 180, instrInt = null, practicaIniciada = false, focoPrevio = null;
+
+function pintarInstr() {
+  $("#instr-reloj").textContent = Math.floor(instrSeg / 60) + ":" + String(instrSeg % 60).padStart(2, "0");
+}
+function abrirInstrucciones(e) {
+  focoPrevio = (e && e.currentTarget) || document.activeElement;
+  $("#velo-instr").classList.add("abierto");
+  document.body.style.overflow = "hidden";
+  $("#btn-instrucciones").setAttribute("aria-expanded", "true");
+  $("#cuenta-instr").hidden = practicaIniciada;
+  $("#btn-comenzar").textContent = practicaIniciada ? "Volver a la práctica" : "Comenzar la práctica";
+  $("#btn-comenzar").focus({ preventScroll: true });
+  $("#velo-instr").scrollTop = 0;
+}
+function cerrarInstrucciones() {
+  $("#velo-instr").classList.remove("abierto");
+  document.body.style.overflow = "";
+  $("#btn-instrucciones").setAttribute("aria-expanded", "false");
+  if (!practicaIniciada) comenzarPractica();
+  if (focoPrevio && focoPrevio.focus && focoPrevio !== document.body) focoPrevio.focus();
+  else $("#sel-tema").focus();
+}
+function comenzarPractica() {
+  if (practicaIniciada) return;
+  practicaIniciada = true;
+  clearInterval(instrInt);
+  if (!relojActivo) $("#btn-reloj").click();
+}
+$("#btn-comenzar").addEventListener("click", cerrarInstrucciones);
+$("#btn-instrucciones").addEventListener("click", abrirInstrucciones);
+document.querySelectorAll("[data-cierra-instr]").forEach((b) => b.addEventListener("click", cerrarInstrucciones));
+$("#velo-instr").addEventListener("click", (e) => { if (e.target === $("#velo-instr")) cerrarInstrucciones(); });
+document.addEventListener("keydown", (e) => {
+  if (!$("#velo-instr").classList.contains("abierto")) return;
+  if (e.key === "Escape") { cerrarInstrucciones(); return; }
+  if (e.key !== "Tab") return;
+  const f = $("#velo-instr").querySelectorAll("button");
+  const primero = f[0], ultimo = f[f.length - 1];
+  if (e.shiftKey && document.activeElement === primero) { e.preventDefault(); ultimo.focus(); }
+  else if (!e.shiftKey && document.activeElement === ultimo) { e.preventDefault(); primero.focus(); }
+});
+
+/* ════════════════════════════════════════════════════════════════════
+   11. ARRANQUE
+   ════════════════════════════════════════════════════════════════════ */
+(function iniciar() {
+  aplicarPreferencias();
+  try {
+    const g = JSON.parse(alm(PRACTICA_ALM) || "null");
+    if (g && TEMAS.some((t) => t.id === g.tema)) {
+      estado = {
+        tema: g.tema,
+        parrafos: PARRAFOS.map((_, i) => String((g.parrafos || [])[i] || "")),
+        plan: Array.isArray(g.plan) ? g.plan : []
+      };
+    }
+  } catch (e) { /* sin borrador */ }
+  PARRAFOS.forEach((_, i) => { $("#ta-" + i).value = estado.parrafos[i]; pintarConteoParrafo(i); });
+  pintarPlan();
+  marcarEstados();
+  irAParrafo(0, false);
+  mostrarTema(false);
+  marcarNav();
+  pintarReloj();
+  if (hayEscritura()) {
+    mostrarAviso("#aviso-tema", "info", "Recuperamos tu práctica anterior.",
+      " Sigue donde la dejaste o pulsa «Nueva práctica» en el paso 5 para empezar otra.");
+  }
+  pintarInstr();
+  abrirInstrucciones();
+  instrInt = setInterval(() => {
+    instrSeg = Math.max(0, instrSeg - 1);
+    pintarInstr();
+    if (instrSeg === 0) cerrarInstrucciones();
+  }, 1000);
+})();
+</script>
 </body>
 </html>

@@ -7,7 +7,7 @@ Exámenes de práctica de las cuatro materias del GED, con la cantidad de pregun
 | Examen | Dirección |
 |---|---|
 | Artes del Lenguaje · lectura y lenguaje (45 preguntas, dos partes cronometradas) | <https://zhemaria.github.io/examen/lenguaje_lectura> |
-| Artes del Lenguaje · Respuesta Extendida (45 minutos, evaluada por los tres rasgos oficiales) | <https://zhemaria.github.io/examen/lenguaje_escritura> |
+| Artes del Lenguaje · Respuesta Extendida (práctica guiada de cinco temas, 45 minutos; se evalúa en vivo con el evaluador de la rúbrica oficial) | <https://zhemaria.github.io/examen/lenguaje_escritura> |
 | Matemáticas (Razonamiento Matemático) | <https://zhemaria.github.io/examen/matematicas> |
 | Matemáticas · las primeras preguntas, sin calculadora | <https://zhemaria.github.io/examen/sin_calculadora> |
 | Ciencias | <https://zhemaria.github.io/examen/ciencias> |
